@@ -8,6 +8,7 @@ module.exports = {
   },
   devtool: 'source-map',
   devServer: {
+    publicPath: '/js/',
     contentBase: path.resolve(__dirname, 'public'),
     watchContentBase: true,
   }
