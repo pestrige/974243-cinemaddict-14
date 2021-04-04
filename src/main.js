@@ -28,8 +28,8 @@ renderElement(main, createSortBlock());
 renderElement(main, createFilmsSection());
 
 const filmsList = main.querySelector('.films-list__container');
-const filmsTopRatedList = main.querySelector('.films-list--extra .films-list__container');
-const filmsMostCommentedList = main.querySelector('.films-list--extra:last-child .films-list__container');
+const filmsTopRatedList = main.querySelector('.films-list--top-rated .films-list__container');
+const filmsMostCommentedList = main.querySelector('.films-list--most-commented .films-list__container');
 
 renderElements(filmsList, createFilmCardBlock(), FILMS_CARDS_COUNT);
 renderElements(filmsTopRatedList, createFilmCardBlock(), EXTRA_FILMS_CARDS_COUNT);
