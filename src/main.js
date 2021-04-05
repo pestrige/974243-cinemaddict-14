@@ -5,15 +5,18 @@ import { createFilmsSection } from './view/films-section.js';
 import { createFilmCardBlock } from './view/film-card-block.js';
 import { createFilmDetailsPopup } from './view/film-details-popup.js';
 import { generateFilm } from './mock/film.js';
+import { generateFilteredFilmsCounts } from './mock/filter.js';
 
 const FILMS_CARDS_COUNT = 20;
 const EXTRA_FILMS_CARDS_COUNT = 2;
 
-const films = new Array(FILMS_CARDS_COUNT).fill().map(generateFilm);
-
 const header = document.querySelector('.header');
 const main = document.querySelector('.main');
 const footer = document.querySelector('.footer');
+
+const films = new Array(FILMS_CARDS_COUNT).fill().map(generateFilm);
+const filters = generateFilteredFilmsCounts(films);
+console.log(filters);
 
 const renderElement = (container, element, place = 'beforeend') => {
   container.insertAdjacentHTML(place, element);
@@ -26,7 +29,7 @@ const renderElements = (container, element, elementsCount, place = 'beforeend') 
 };
 
 renderElement(header, createProfileBlock());
-renderElement(main, createMainNavBlock());
+renderElement(main, createMainNavBlock(filters));
 renderElement(main, createSortBlock());
 renderElement(main, createFilmsSection());
 
