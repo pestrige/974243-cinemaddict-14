@@ -1,4 +1,4 @@
-import {getRandomNumber, getRandomDate } from '../util.js';
+import {getRandomNumber, generateFloat, getRandomDate } from '../util.js';
 import { MAX_COMMENTS } from '../const.js';
 
 const FILM_TITLES = [
@@ -49,6 +49,8 @@ const GENRES = [
 
 const generateFilmId = () => Math.random().toString();
 
+const generateRating = () => generateFloat(1, 10);
+
 const generateDescription = () => {
   const descriptionLength = getRandomNumber(1, DESCRIPTION.length - 1);
   return DESCRIPTION.slice(0, descriptionLength).join(' ');
@@ -67,7 +69,7 @@ const generateCommentsId = () => {
     .map(() => getRandomNumber(0, MAX_COMMENTS - 1));
 };
 
-// generate mock film-card data
+// Генерируем моковые данные фильма
 const generateFilm = () => {
   const filmTitleId = getRandomNumber(0, FILM_TITLES.length - 1);
 
@@ -76,7 +78,7 @@ const generateFilm = () => {
       id: generateFilmId(),
       title: FILM_TITLES[filmTitleId],
       alternativeTitle: ALTER_FILM_TITLES[filmTitleId],
-      rating: 8.3,
+      rating: generateRating(),
       ageRating: 18,
       poster: POSTERS[filmTitleId],
       description: generateDescription(),

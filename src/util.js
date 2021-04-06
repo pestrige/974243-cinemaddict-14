@@ -6,12 +6,23 @@ const DATE_RANGES = {
   days: 31,
 };
 
-// Генерируем рандомное число
+// Генерируем рандомное целое число
 const getRandomNumber = (a = 0, b = 0) => {
   const min = Math.ceil(Math.min(a, b));
   const max = Math.floor(Math.max(a, b));
 
   return Math.floor(Math.random() * (max - min + 1) + min);
+};
+
+// Генерируем нецелое случайное число
+const generateFloat = (a, b, digits = 1) => {
+  const min = Math.min(a, b);
+  const max = Math.max(a, b);
+
+  const exponent = Math.pow(10, digits);
+  const random = min + Math.random() * (max - min);
+
+  return (Math.trunc(random * exponent) / exponent).toFixed(digits); //toFixed для отображения нулей
 };
 
 // Получаем рандомный элемент массива
@@ -38,6 +49,7 @@ const humanizeDuration = (duration) => {
 
 export {
   getRandomNumber,
+  generateFloat,
   getRandomArrayElement,
   getRandomDate,
   getYearFromDate,
