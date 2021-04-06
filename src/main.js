@@ -6,10 +6,9 @@ import { createFilmCardBlock } from './view/film-card-block.js';
 import { createFooterStats } from './view/footer-stats.js';
 import { createFilmPopup } from './view/film-popup.js';
 import { generateFilm } from './mock/film.js';
+import { gererateComment } from './mock/comment.js';
 import { generateFilteredFilmsCounts } from './mock/filter.js';
-
-const FILMS_CARDS_COUNT = 20;
-const EXTRA_FILMS_CARDS_COUNT = 2;
+import { FILMS_CARDS_COUNT, EXTRA_FILMS_CARDS_COUNT, MAX_COMMENTS } from './const.js';
 
 const header = document.querySelector('.header');
 const main = document.querySelector('.main');
@@ -17,6 +16,7 @@ const footer = document.querySelector('.footer');
 const footerStats = footer.querySelector('.footer__statistics');
 
 const films = new Array(FILMS_CARDS_COUNT).fill().map(generateFilm);
+const comments = new Array(MAX_COMMENTS).fill().map(gererateComment);
 const filters = generateFilteredFilmsCounts(films);
 //console.log(filters);
 
@@ -56,7 +56,7 @@ const filmsListHandler = (evt) => {
 
   const filmCardId = target.closest('.film-card').dataset.id;
   const film = films.find(({filmInfo}) => filmCardId === filmInfo.id);
-  renderElement(footer, createFilmPopup(film), 'afterend');
+  renderElement(footer, createFilmPopup(film, comments), 'afterend');
 
   document.querySelector('.film-details__close-btn').addEventListener('click', () => {
     document.querySelector('.film-details').remove();

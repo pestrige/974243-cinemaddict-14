@@ -1,6 +1,5 @@
 import { getYearFromDate, humanizeDuration } from '../util.js';
-
-const MAX_DESCRIPTION_SIZE = 140;
+import { MAX_DESCRIPTION_SIZE } from '../const.js';
 
 const createFilmCardBlock = ({filmInfo, userDetails, comments}) => {
   const {

@@ -1,4 +1,5 @@
-import { getRandomNumber, getRandomDate } from '../util.js';
+import {getRandomNumber, getRandomDate } from '../util.js';
+import { MAX_COMMENTS } from '../const.js';
 
 const FILM_TITLES = [
   'Made For Each Other',
@@ -45,11 +46,8 @@ const GENRES = [
   'Mystery',
   'Drama',
 ];
-const MAX_COMMENTS = 5;
 
 const generateFilmId = () => Math.random().toString();
-
-const generateFilmTitleId = () => getRandomNumber(0, FILM_TITLES.length - 1);
 
 const generateDescription = () => {
   const descriptionLength = getRandomNumber(1, DESCRIPTION.length - 1);
@@ -63,13 +61,15 @@ const generateGenres = () => {
     .slice(0, maxGenres);
 };
 
-const generateEmptyComments = () => {
-  return new Array(getRandomNumber(0, MAX_COMMENTS)).fill('');
+const generateCommentsId = () => {
+  return new Array(getRandomNumber(0, MAX_COMMENTS))
+    .fill('')
+    .map(() => getRandomNumber(0, MAX_COMMENTS - 1));
 };
 
 // generate mock film-card data
 const generateFilm = () => {
-  const filmTitleId = generateFilmTitleId();
+  const filmTitleId = getRandomNumber(0, FILM_TITLES.length - 1);
 
   return {
     filmInfo: {
@@ -96,7 +96,7 @@ const generateFilm = () => {
       isFavorite: Boolean(getRandomNumber(0, 1)),
       date: '2019-05-11T00:00:00.000Z',
     },
-    comments: generateEmptyComments(),
+    comments: generateCommentsId(),
   };
 };
 

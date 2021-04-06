@@ -14,6 +14,12 @@ const getRandomNumber = (a = 0, b = 0) => {
   return Math.floor(Math.random() * (max - min + 1) + min);
 };
 
+// Получаем рандомный элемент массива
+const getRandomArrayElement = (array) => {
+  const randomId = getRandomNumber(0, array.length - 1);
+  return array[randomId];
+};
+
 // Функции с датой
 const getRandomDate = () => dayjs().add(getRandomNumber(DATE_RANGES.years), 'year')
   .add(getRandomNumber(DATE_RANGES.months), 'month')
@@ -21,6 +27,7 @@ const getRandomDate = () => dayjs().add(getRandomNumber(DATE_RANGES.years), 'yea
   .toDate();
 const getYearFromDate = (date) => dayjs(date).year();
 const humanizeDate = (date) => dayjs(date).format('D MMMM YYYY');
+const humanizeFullDate = (date) => dayjs(date).format('YYYY/MM/DD HH:mm');
 
 // Переводим минуты в часы и минуты
 const humanizeDuration = (duration) => {
@@ -29,4 +36,12 @@ const humanizeDuration = (duration) => {
   return `${hours}h ${minutes}m`;
 };
 
-export { getRandomNumber, getRandomDate, getYearFromDate, humanizeDate, humanizeDuration };
+export {
+  getRandomNumber,
+  getRandomArrayElement,
+  getRandomDate,
+  getYearFromDate,
+  humanizeDate,
+  humanizeFullDate,
+  humanizeDuration
+};
