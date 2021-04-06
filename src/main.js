@@ -3,6 +3,7 @@ import { createMainNavBlock } from './view/main-nav-block.js';
 import { createSortBlock } from './view/sort-block.js';
 import { createFilmsSection } from './view/films-section.js';
 import { createFilmCardBlock } from './view/film-card-block.js';
+import { createFooterStats } from './view/footer-stats.js';
 import { createFilmDetailsPopup } from './view/film-details-popup.js';
 import { generateFilm } from './mock/film.js';
 import { generateFilteredFilmsCounts } from './mock/filter.js';
@@ -13,10 +14,11 @@ const EXTRA_FILMS_CARDS_COUNT = 2;
 const header = document.querySelector('.header');
 const main = document.querySelector('.main');
 const footer = document.querySelector('.footer');
+const footerStats = footer.querySelector('.footer__statistics');
 
 const films = new Array(FILMS_CARDS_COUNT).fill().map(generateFilm);
 const filters = generateFilteredFilmsCounts(films);
-console.log(filters);
+//console.log(filters);
 
 const renderElement = (container, element, place = 'beforeend') => {
   container.insertAdjacentHTML(place, element);
@@ -32,6 +34,7 @@ renderElement(header, createProfileBlock());
 renderElement(main, createMainNavBlock(filters));
 renderElement(main, createSortBlock());
 renderElement(main, createFilmsSection());
+renderElement(footerStats, createFooterStats(films));
 
 const filmsList = main.querySelector('.films-list__container');
 const filmsTopRatedList = main.querySelector('.films-list--top-rated .films-list__container');
