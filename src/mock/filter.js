@@ -1,4 +1,5 @@
 const generateFilteredFilmsCounts = (films) => {
+  // фильтруем массив по переданному ключу
   const getCount = (filter) => films.filter(({userDetails}) => userDetails[filter]).length;
 
   const watchlistedCount = getCount('isWatchlisted');
