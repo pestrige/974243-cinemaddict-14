@@ -22,14 +22,9 @@ const comments = new Array(MAX_COMMENTS).fill().map(gererateComment);
 //создаем массив с количеством фильмов по фильтрам
 const filters = generateFilteredFilmsCounts(films);
 
+// шаблон для рендера компонентов
 const renderElement = (container, element, place = 'beforeend') => {
   container.insertAdjacentHTML(place, element);
-};
-
-const renderElements = (container, element, elementsCount, place = 'beforeend') => {
-  for (let i = 0; i < elementsCount; i++) {
-    renderElement(container, element(films[i]), place);
-  }
 };
 
 // рендерим основные компоненты
@@ -49,7 +44,7 @@ for (let i = 0; i < Math.min(films.length, FILMS_PER_STEP); i++) {
   renderElement(filmsList, createFilmCardBlock(films[i]));
 }
 
-// рендерим кнопку если есть еще фильмы
+// рендерим кнопку показа фильмов если есть еще фильмы
 if (FILMS_PER_STEP < films.length) {
   let renderedFilms = FILMS_PER_STEP;
   renderElement(filmsSection, createShowMoreButton());
@@ -69,8 +64,20 @@ if (FILMS_PER_STEP < films.length) {
   });
 }
 
-renderElements(filmsTopRatedList, createFilmCardBlock, EXTRA_FILMS_CARDS_COUNT);
-renderElements(filmsMostCommentedList, createFilmCardBlock, EXTRA_FILMS_CARDS_COUNT);
+// шаблон для рендера фильмов осортированных по ключу
+const renderExtraFilmsBlock = (container, sortingKey) => {
+  const [key, value] = sortingKey.split('.');
+  const sortedFilms = films.slice();
+  sortedFilms
+    .sort((a, b) => b[key][value] - a[key][value])
+    .slice(0, EXTRA_FILMS_CARDS_COUNT)
+    .forEach((film) => renderElement(container, createFilmCardBlock(film)));
+};
+
+// рендерим фильмы с наивысшим рейтингом
+renderExtraFilmsBlock(filmsTopRatedList, 'filmInfo.rating');
+// рендерим самые комментируемые фильмы
+renderExtraFilmsBlock(filmsMostCommentedList, 'comments.length');
 
 // Обработчик клика по карточке фильма
 const filmsListHandler = (evt) => {

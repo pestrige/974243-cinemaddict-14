@@ -1,10 +1,6 @@
 import dayjs from 'dayjs';
+import { DATE_RANGES } from './const.js';
 
-const DATE_RANGES = {
-  years: -50,
-  months: 12,
-  days: 31,
-};
 
 // Генерируем рандомное целое число
 const getRandomNumber = (a = 0, b = 0) => {

@@ -16,7 +16,7 @@ const COMMENT_AUTHORS = [
   'Ted Kaczynski',
 ];
 
-const gererateComment = () => {
+export const gererateComment = () => {
   return {
     id: Math.random(),
     author: getRandomArrayElement(COMMENT_AUTHORS),
@@ -25,5 +25,3 @@ const gererateComment = () => {
     emotion: getRandomArrayElement(EMOTIONS),
   };
 };
-
-export { gererateComment };
