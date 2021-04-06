@@ -57,6 +57,10 @@ const filmsListHandler = (evt) => {
   const filmCardId = target.closest('.film-card').dataset.id;
   const film = films.find(({filmInfo}) => filmCardId === filmInfo.id);
   renderElement(footer, createFilmPopup(film), 'afterend');
+
+  document.querySelector('.film-details__close-btn').addEventListener('click', () => {
+    document.querySelector('.film-details').remove();
+  });
 };
 
 filmsList.addEventListener('click', filmsListHandler);
