@@ -4,7 +4,7 @@ import { createSortBlock } from './view/sort-block.js';
 import { createFilmsSection } from './view/films-section.js';
 import { createFilmCardBlock } from './view/film-card-block.js';
 import { createFooterStats } from './view/footer-stats.js';
-import { createFilmDetailsPopup } from './view/film-details-popup.js';
+import { createFilmPopup } from './view/film-popup.js';
 import { generateFilm } from './mock/film.js';
 import { generateFilteredFilmsCounts } from './mock/filter.js';
 
@@ -44,4 +44,19 @@ renderElements(filmsList, createFilmCardBlock, FILMS_CARDS_COUNT);
 renderElements(filmsTopRatedList, createFilmCardBlock, EXTRA_FILMS_CARDS_COUNT);
 renderElements(filmsMostCommentedList, createFilmCardBlock, EXTRA_FILMS_CARDS_COUNT);
 
-renderElement(footer, createFilmDetailsPopup(), 'afterend');
+const filmsListHandler = (evt) => {
+  evt.preventDefault();
+  const target = evt.target;
+  const isTargetCorrect = target.classList.contains('film-card__title')
+    || target.classList.contains('film-card__poster')
+    || target.classList.contains('film-card__comments');
+  if (!isTargetCorrect) {
+    return false;
+  }
+
+  const filmCardId = target.closest('.film-card').dataset.id;
+  const film = films.find(({filmInfo}) => filmCardId === filmInfo.id);
+  renderElement(footer, createFilmPopup(film), 'afterend');
+};
+
+filmsList.addEventListener('click', filmsListHandler);

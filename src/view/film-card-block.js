@@ -1,12 +1,15 @@
+import { getYearFromDate, humanizeDuration } from '../util.js';
+
 const MAX_DESCRIPTION_SIZE = 140;
 
 const createFilmCardBlock = ({filmInfo, userDetails, comments}) => {
   const {
+    id,
     title,
     rating,
     poster,
     description,
-    genre,
+    genres,
     release,
     duration,
   } = filmInfo;
@@ -20,23 +23,17 @@ const createFilmCardBlock = ({filmInfo, userDetails, comments}) => {
     ? `${description.slice(0, MAX_DESCRIPTION_SIZE)} ...`
     : description;
 
-  const oneGenre = genre.slice(0, 1);
-
-  const humanizeDuration = (duration) => {
-    const hours = Math.trunc(duration / 60);
-    const minutes = duration % 60;
-    return `${hours}h ${minutes}m`;
-  };
+  const oneGenre = genres.slice(0, 1);
 
   const userDetailsActiveClass = (isKey) => {
     return isKey ? 'film-card__controls-item--active' : '';
   };
 
-  return `<article class="film-card">
+  return `<article class="film-card" data-id="${id}">
   <h3 class="film-card__title">${title}</h3>
   <p class="film-card__rating">${rating}</p>
   <p class="film-card__info">
-    <span class="film-card__year">${release}</span>
+    <span class="film-card__year">${getYearFromDate(release.date)}</span>
     <span class="film-card__duration">${humanizeDuration(duration)}</span>
     <span class="film-card__genre">${oneGenre}</span>
   </p>

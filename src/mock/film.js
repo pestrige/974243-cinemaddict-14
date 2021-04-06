@@ -1,4 +1,4 @@
-import { getRandomNumber } from '../util.js';
+import { getRandomNumber, getRandomDate } from '../util.js';
 
 const FILM_TITLES = [
   'Made For Each Other',
@@ -8,6 +8,16 @@ const FILM_TITLES = [
   'The Dance Of Life',
   'The Great Flamarion',
   'The Man With The Golden Arm',
+];
+
+const ALTER_FILM_TITLES = [
+  'Alternative Made For Each Other',
+  'Alternative Popeye Meets Sinbad',
+  'Alternative Sagebrush Trail',
+  'Alternative Santa Claus Conquers The Martians',
+  'Alternative The Dance Of Life',
+  'Alternative The Great Flamarion',
+  'Alternative The Man With The Golden Arm',
 ];
 const POSTERS = [
   './images/posters/made-for-each-other.png',
@@ -30,11 +40,16 @@ const GENRES = [
   'Musical',
   'Action',
   'Adventures',
-  'Horror',
+  'Cartoon',
+  'Film-Noir',
+  'Mystery',
+  'Drama',
 ];
 const MAX_COMMENTS = 5;
 
-const generateFilmId = () => getRandomNumber(0, FILM_TITLES.length - 1);
+const generateFilmId = () => Math.random().toString();
+
+const generateFilmTitleId = () => getRandomNumber(0, FILM_TITLES.length - 1);
 
 const generateDescription = () => {
   const descriptionLength = getRandomNumber(1, DESCRIPTION.length - 1);
@@ -43,7 +58,9 @@ const generateDescription = () => {
 
 const generateGenres = () => {
   const maxGenres = getRandomNumber(1, GENRES.length - 1);
-  return GENRES.slice(0, maxGenres);
+  return GENRES
+    .sort(() => Math.random() - 0.5) // Перемешиваем массив
+    .slice(0, maxGenres);
 };
 
 const generateEmptyComments = () => {
@@ -52,20 +69,26 @@ const generateEmptyComments = () => {
 
 // generate mock film-card data
 const generateFilm = () => {
-  const filmId = generateFilmId();
+  const filmTitleId = generateFilmTitleId();
 
   return {
     filmInfo: {
-      id: filmId,
-      title: FILM_TITLES[filmId],
+      id: generateFilmId(),
+      title: FILM_TITLES[filmTitleId],
+      alternativeTitle: ALTER_FILM_TITLES[filmTitleId],
       rating: 8.3,
       ageRating: 18,
-      poster: POSTERS[filmId],
+      poster: POSTERS[filmTitleId],
       description: generateDescription(),
-      genre: generateGenres(),
-      release: '1929',
+      genres: generateGenres(),
+      release: {
+        date: getRandomDate(),
+        country: 'Finland',
+      },
       duration: 77,
       director: 'Tom Ford',
+      writers: ['Takeshi Kitano', 'Quentin Tarantino', 'Christopher Nolan'],
+      actors: ['Morgan Freeman', 'Leonardo DiCaprio', 'Robert De Niro', 'Brad Pitt'],
     },
     userDetails: {
       isWatchlisted: Boolean(getRandomNumber(0, 1)),
