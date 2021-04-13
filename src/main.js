@@ -113,12 +113,23 @@ const filmsListHandler = (evt) => {
   render(body, filmPopupElement);
   body.classList.add('hide-overflow');
 
-  // удаляем попап по клику на кнопке
-  filmPopupElement.querySelector('.film-details__close-btn').addEventListener('click', () => {
+  // Удаляем попап
+  const removePopup = () => {
     filmPopupElement.remove();
     filmPopupComponent.removeElement();
     body.classList.remove('hide-overflow');
-  });
+  };
+
+  // обработчик Esc
+  const onEscKeyDown = (evt) => {
+    if (evt.key === 'Escape' || evt.key === 'Esc') {
+      removePopup();
+      document.removeEventListener('keydown', onEscKeyDown);
+    }
+  };
+
+  document.addEventListener('keydown', onEscKeyDown);
+  filmPopupElement.querySelector('.film-details__close-btn').addEventListener('click', removePopup);
 };
 
 filmsList.addEventListener('click', filmsListHandler);
