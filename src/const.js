@@ -12,6 +12,10 @@ const RENDER_POSITION = {
   start: 'afterbegin',
   end: 'beforeend',
 };
+const SORT_BY = {
+  rating: 'filmInfo.rating',
+  comments: 'comments.length',
+};
 
 export {
   MAX_COMMENTS,
@@ -20,5 +24,6 @@ export {
   FILMS_PER_STEP,
   EXTRA_FILMS_CARDS_COUNT,
   DATE_RANGES,
-  RENDER_POSITION
+  RENDER_POSITION,
+  SORT_BY
 };

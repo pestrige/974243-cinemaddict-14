@@ -10,7 +10,7 @@ import { createFilmPopup } from './view/film-popup.js';
 import { generateFilm } from './mock/film.js';
 import { gererateComment } from './mock/comment.js';
 import { generateFilteredFilmsCounts } from './mock/filter.js';
-import { FILMS_CARDS_COUNT, FILMS_PER_STEP, EXTRA_FILMS_CARDS_COUNT, MAX_COMMENTS } from './const.js';
+import { FILMS_CARDS_COUNT, FILMS_PER_STEP, EXTRA_FILMS_CARDS_COUNT, MAX_COMMENTS, SORT_BY } from './const.js';
 
 const header = document.querySelector('.header');
 const main = document.querySelector('.main');
@@ -71,9 +71,9 @@ const renderExtraFilmsBlock = (container, sortingKey) => {
 };
 
 // рендерим фильмы с наивысшим рейтингом
-renderExtraFilmsBlock(filmsTopRatedList, 'filmInfo.rating');
+renderExtraFilmsBlock(filmsTopRatedList, SORT_BY.rating);
 // рендерим самые комментируемые фильмы
-renderExtraFilmsBlock(filmsMostCommentedList, 'comments.length');
+renderExtraFilmsBlock(filmsMostCommentedList, SORT_BY.comments);
 
 // Обработчик клика по карточке фильма
 const filmsListHandler = (evt) => {
