@@ -4,7 +4,7 @@ import MainNavBlockView from './view/main-nav-block.js';
 import SortBlockView from './view/sort-block.js';
 import FilmsSectionView from './view/films-section.js';
 import FooterStatsView from './view/footer-stats.js';
-import { createFilmCardBlock } from './view/film-card-block.js';
+import FilmCardBlockView from './view/film-card-block.js';
 import { createShowMoreButton } from './view/button-show-more.js';
 import { createFilmPopup } from './view/film-popup.js';
 import { generateFilm } from './mock/film.js';
@@ -37,7 +37,7 @@ const filmsMostCommentedList = main.querySelector('.films-list--most-commented .
 
 // рендерим первые N фильмов
 for (let i = 0; i < Math.min(films.length, FILMS_PER_STEP); i++) {
-  renderElement(filmsList, createFilmCardBlock(films[i]));
+  render(filmsList, new FilmCardBlockView(films[i]).getElement());
 }
 
 // рендерим кнопку показа фильмов если есть еще фильмы
@@ -51,7 +51,7 @@ if (FILMS_PER_STEP < films.length) {
     evt.preventDefault();
     films
       .slice(renderedFilms, renderedFilms + FILMS_PER_STEP) // берем кусок массива от уже показанных до + шаг
-      .forEach((film) => renderElement(filmsList, createFilmCardBlock(film)));
+      .forEach((film) => render(filmsList, new FilmCardBlockView(film).getElement()));
     renderedFilms += FILMS_PER_STEP; // прибавляем к счетчику показанные фильмы
 
     if (renderedFilms >= films.length) {
@@ -67,7 +67,7 @@ const renderExtraFilmsBlock = (container, sortingKey) => {
   sortedFilms
     .sort((a, b) => b[key][value] - a[key][value])
     .slice(0, EXTRA_FILMS_CARDS_COUNT)
-    .forEach((film) => renderElement(container, createFilmCardBlock(film)));
+    .forEach((film) => render(container, new FilmCardBlockView(film).getElement()));
 };
 
 // рендерим фильмы с наивысшим рейтингом
