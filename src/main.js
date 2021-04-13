@@ -1,3 +1,4 @@
+import { renderElement } from './util.js';
 import { createProfileBlock } from './view/profile-block.js';
 import { createMainNavBlock } from './view/main-nav-block.js';
 import { createSortBlock } from './view/sort-block.js';
@@ -21,11 +22,6 @@ const films = new Array(FILMS_CARDS_COUNT).fill().map(generateFilm);
 const comments = new Array(MAX_COMMENTS).fill().map(gererateComment);
 //создаем массив с количеством фильмов по фильтрам
 const filters = generateFilteredFilmsCounts(films);
-
-// шаблон для рендера компонентов
-const renderElement = (container, element, place = 'beforeend') => {
-  container.insertAdjacentHTML(place, element);
-};
 
 // рендерим основные компоненты
 renderElement(header, createProfileBlock());

@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { DATE_RANGES } from './const.js';
+import { DATE_RANGES, RENDER_POSITION } from './const.js';
 
 
 // Генерируем рандомное целое число
@@ -43,6 +43,32 @@ const humanizeDuration = (duration) => {
   return `${hours}h ${minutes}m`;
 };
 
+// шаблон рендера компонента из строки
+const renderElement = (container, element, place = RENDER_POSITION.end ) => {
+  container.insertAdjacentHTML(place, element);
+};
+
+// шаблон рендера компонента
+const render = (container, element, place) => {
+  switch (place) {
+    case RENDER_POSITION.start:
+      container.prepend(element);
+      break;
+    case RENDER_POSITION.end:
+      container.append(element);
+      break;
+    default:
+      container.append(element);
+  }
+};
+
+// шаблон создания DOM элемента
+const createDomElement = (template) => {
+  const templateContainer = document.createElement('template');
+  templateContainer.innerHTML = template;
+  return templateContainer.content;
+};
+
 export {
   getRandomNumber,
   generateFloat,
@@ -51,5 +77,8 @@ export {
   getYearFromDate,
   humanizeDate,
   humanizeFullDate,
-  humanizeDuration
+  humanizeDuration,
+  renderElement,
+  render,
+  createDomElement
 };

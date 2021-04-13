@@ -8,6 +8,10 @@ const DATE_RANGES = {
   months: 12,
   days: 31,
 };
+const RENDER_POSITION = {
+  start: 'afterbegin',
+  end: 'beforeend',
+};
 
 export {
   MAX_COMMENTS,
@@ -15,5 +19,6 @@ export {
   FILMS_CARDS_COUNT,
   FILMS_PER_STEP,
   EXTRA_FILMS_CARDS_COUNT,
-  DATE_RANGES
+  DATE_RANGES,
+  RENDER_POSITION
 };
