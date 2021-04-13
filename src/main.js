@@ -1,11 +1,11 @@
-import { renderElement } from './util.js';
-import { createProfileBlock } from './view/profile-block.js';
-import { createMainNavBlock } from './view/main-nav-block.js';
-import { createSortBlock } from './view/sort-block.js';
-import { createFilmsSection } from './view/films-section.js';
+import { renderElement, render } from './util.js';
+import ProfileBlockView from './view/profile-block.js';
+import MainNavBlockView from './view/main-nav-block.js';
+import SortBlockView from './view/sort-block.js';
+import FilmsSectionView from './view/films-section.js';
+import FooterStatsView from './view/footer-stats.js';
 import { createFilmCardBlock } from './view/film-card-block.js';
 import { createShowMoreButton } from './view/button-show-more.js';
-import { createFooterStats } from './view/footer-stats.js';
 import { createFilmPopup } from './view/film-popup.js';
 import { generateFilm } from './mock/film.js';
 import { gererateComment } from './mock/comment.js';
@@ -24,11 +24,11 @@ const comments = new Array(MAX_COMMENTS).fill().map(gererateComment);
 const filters = generateFilteredFilmsCounts(films);
 
 // рендерим основные компоненты
-renderElement(header, createProfileBlock());
-renderElement(main, createMainNavBlock(filters));
-renderElement(main, createSortBlock());
-renderElement(main, createFilmsSection());
-renderElement(footerStats, createFooterStats(films));
+render(header, new ProfileBlockView().getElement());
+render(main, new MainNavBlockView(filters).getElement());
+render(main, new SortBlockView().getElement());
+render(main, new FilmsSectionView().getElement());
+render(footerStats, new FooterStatsView(films).getElement());
 
 const filmsSection = main.querySelector('.films-list');
 const filmsList = filmsSection.querySelector('.films-list__container');

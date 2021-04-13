@@ -1,3 +1,5 @@
+import { createDomElement } from '../util.js';
+
 const createProfileBlock = () => {
   return `<section class="header__profile profile">
   <p class="profile__rating">Movie Buff</p>
@@ -5,4 +7,23 @@ const createProfileBlock = () => {
 </section>`;
 };
 
-export { createProfileBlock };
+export default class ProfileBlock {
+  constructor() {
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createProfileBlock();
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createDomElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

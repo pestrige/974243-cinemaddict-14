@@ -1,3 +1,5 @@
+import { createDomElement } from '../util.js';
+
 const createMainNavBlock = (filters) => {
   const [watchlisted, watched, favorite] = filters;
 
@@ -12,4 +14,25 @@ const createMainNavBlock = (filters) => {
 </nav>`;
 };
 
-export { createMainNavBlock };
+export default class MainNavBlock {
+  constructor(filters) {
+    this._element = null;
+    this._filters = filters;
+  }
+
+  getTemplate() {
+    return createMainNavBlock(this._filters);
+  }
+
+  getElement() {
+    if(!this._element) {
+      this._element = createDomElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
+
