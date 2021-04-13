@@ -66,7 +66,7 @@ const render = (container, element, place) => {
 const createDomElement = (template) => {
   const templateContainer = document.createElement('template');
   templateContainer.innerHTML = template;
-  return templateContainer.content;
+  return templateContainer.content.firstElementChild;
 };
 
 export {

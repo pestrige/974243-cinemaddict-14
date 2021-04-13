@@ -1,64 +1,81 @@
-import { renderElement, render } from './util.js';
+import { render } from './util.js';
 import ProfileBlockView from './view/profile-block.js';
 import MainNavBlockView from './view/main-nav-block.js';
 import SortBlockView from './view/sort-block.js';
 import FilmsSectionView from './view/films-section.js';
 import FooterStatsView from './view/footer-stats.js';
 import FilmCardBlockView from './view/film-card-block.js';
-import { createShowMoreButton } from './view/button-show-more.js';
-import { createFilmPopup } from './view/film-popup.js';
+import ShowMoreButtonView from './view/button-show-more.js';
+import FilmPopupView from './view/film-popup.js';
 import { generateFilm } from './mock/film.js';
 import { gererateComment } from './mock/comment.js';
 import { generateFilteredFilmsCounts } from './mock/filter.js';
 import { FILMS_CARDS_COUNT, FILMS_PER_STEP, EXTRA_FILMS_CARDS_COUNT, MAX_COMMENTS, SORT_BY } from './const.js';
 
+const body = document.querySelector('body');
 const header = document.querySelector('.header');
 const main = document.querySelector('.main');
 const footer = document.querySelector('.footer');
 const footerStats = footer.querySelector('.footer__statistics');
 
+// =====
 // создаем моковые массивы фильмов и комментариев
+// =====
 const films = new Array(FILMS_CARDS_COUNT).fill().map(generateFilm);
 const comments = new Array(MAX_COMMENTS).fill().map(gererateComment);
-//создаем массив с количеством фильмов по фильтрам
+// создаем массив с количеством фильмов по фильтрам
 const filters = generateFilteredFilmsCounts(films);
 
+// =====
 // рендерим основные компоненты
+// =====
+const filmSectionComponent = new FilmsSectionView();
+const filmSectionElement = filmSectionComponent.getElement();
+
 render(header, new ProfileBlockView().getElement());
 render(main, new MainNavBlockView(filters).getElement());
 render(main, new SortBlockView().getElement());
-render(main, new FilmsSectionView().getElement());
+render(main, filmSectionElement);
 render(footerStats, new FooterStatsView(films).getElement());
 
-const filmsSection = main.querySelector('.films-list');
+const filmsSection = filmSectionElement.querySelector('.films-list');
 const filmsList = filmsSection.querySelector('.films-list__container');
-const filmsTopRatedList = main.querySelector('.films-list--top-rated .films-list__container');
-const filmsMostCommentedList = main.querySelector('.films-list--most-commented .films-list__container');
+const filmsTopRatedList = filmSectionElement.querySelector('.films-list--top-rated .films-list__container');
+const filmsMostCommentedList = filmSectionElement.querySelector('.films-list--most-commented .films-list__container');
 
+// =====
 // рендерим первые N фильмов
+// =====
 for (let i = 0; i < Math.min(films.length, FILMS_PER_STEP); i++) {
   render(filmsList, new FilmCardBlockView(films[i]).getElement());
 }
 
-// рендерим кнопку показа фильмов если есть еще фильмы
+// =====
+// рендерим кнопку показа фильмов, если есть еще фильмы
+// =====
 if (FILMS_PER_STEP < films.length) {
   let renderedFilms = FILMS_PER_STEP;
-  renderElement(filmsSection, createShowMoreButton());
+  const showMoreButtonComponent = new ShowMoreButtonView();
+  const showMoreButtonElement = showMoreButtonComponent.getElement();
+  render(filmsSection, showMoreButtonElement);
 
-  const showMoreButton = main.querySelector('.films-list__show-more');
   // по клику рендерим больше фильмов
-  showMoreButton.addEventListener('click', (evt) => {
+  showMoreButtonElement.addEventListener('click', (evt) => {
     evt.preventDefault();
     films
-      .slice(renderedFilms, renderedFilms + FILMS_PER_STEP) // берем кусок массива от уже показанных до + шаг
+      .slice(renderedFilms, renderedFilms + FILMS_PER_STEP) // берем кусок массива от уже показанных, до + шаг
       .forEach((film) => render(filmsList, new FilmCardBlockView(film).getElement()));
     renderedFilms += FILMS_PER_STEP; // прибавляем к счетчику показанные фильмы
 
     if (renderedFilms >= films.length) {
-      showMoreButton.remove();
+      showMoreButtonElement.remove();
+      showMoreButtonComponent.removeElement();
     }
   });
 }
+// =====
+// рендерим доп фильмы
+// =====
 
 // шаблон для рендера фильмов осортированных по ключу
 const renderExtraFilmsBlock = (container, sortingKey) => {
@@ -70,12 +87,12 @@ const renderExtraFilmsBlock = (container, sortingKey) => {
     .forEach((film) => render(container, new FilmCardBlockView(film).getElement()));
 };
 
-// рендерим фильмы с наивысшим рейтингом
 renderExtraFilmsBlock(filmsTopRatedList, SORT_BY.rating);
-// рендерим самые комментируемые фильмы
 renderExtraFilmsBlock(filmsMostCommentedList, SORT_BY.comments);
 
+// =====
 // Обработчик клика по карточке фильма
+// =====
 const filmsListHandler = (evt) => {
   evt.preventDefault();
   const target = evt.target;
@@ -86,16 +103,24 @@ const filmsListHandler = (evt) => {
   if (!isTargetCorrect) {
     return false;
   }
+
   // сопоставляем id в карточке фильма с id фильма в массиве
-  // и рендерим попап на его основе
   const filmCardId = target.closest('.film-card').dataset.id;
   const film = films.find(({filmInfo}) => filmCardId === filmInfo.id);
-  renderElement(footer, createFilmPopup(film, comments), 'afterend');
+  // рендерим попап на основе найденного фильма
+  const filmPopupComponent = new FilmPopupView(film, comments);
+  const filmPopupElement = filmPopupComponent.getElement();
+  render(body, filmPopupElement);
+  body.classList.add('hide-overflow');
 
   // удаляем попап по клику на кнопке
-  document.querySelector('.film-details__close-btn').addEventListener('click', () => {
-    document.querySelector('.film-details').remove();
+  filmPopupElement.querySelector('.film-details__close-btn').addEventListener('click', () => {
+    filmPopupElement.remove();
+    filmPopupComponent.removeElement();
+    body.classList.remove('hide-overflow');
   });
 };
 
 filmsList.addEventListener('click', filmsListHandler);
+filmsTopRatedList.addEventListener('click', filmsListHandler);
+filmsMostCommentedList.addEventListener('click', filmsListHandler);
