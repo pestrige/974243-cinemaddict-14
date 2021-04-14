@@ -1,4 +1,4 @@
-// const createFilmsSection = () => '<section class="films"></section>';
+import { createDomElement } from '../util.js';
 
 const createFilmsSection = () => {
   return `<section class="films">
@@ -22,4 +22,23 @@ const createFilmsSection = () => {
     </section>`;
 };
 
-export { createFilmsSection };
+export default class FilmsSection {
+  constructor() {
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createFilmsSection();
+  }
+
+  getElement() {
+    if(!this._element) {
+      this._element = createDomElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

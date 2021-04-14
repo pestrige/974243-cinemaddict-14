@@ -1,7 +1,8 @@
 import {
   humanizeDate,
   humanizeFullDate,
-  humanizeDuration
+  humanizeDuration,
+  createDomElement
 } from '../util.js';
 
 // в функцию создания попапа передаем
@@ -173,4 +174,25 @@ const createFilmPopup = ({filmInfo, userDetails, comments}, fullComments) => {
 </section>`;
 };
 
-export { createFilmPopup };
+export default class FilmPopup {
+  constructor(film, comments) {
+    this._element = null;
+    this._film = film;
+    this._comments = comments;
+  }
+
+  getTemplate() {
+    return createFilmPopup(this._film, this._comments);
+  }
+
+  getElement() {
+    if(!this._element) {
+      this._element = createDomElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

@@ -1,3 +1,5 @@
+import { createDomElement } from '../util.js';
+
 const createSortBlock = () => {
   return `<ul class="sort">
   <li><a href="#" class="sort__button sort__button--active">Sort by default</a></li>
@@ -6,4 +8,24 @@ const createSortBlock = () => {
 </ul>`;
 };
 
-export { createSortBlock };
+export default class SortBlock {
+  constructor() {
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createSortBlock();
+  }
+
+  getElement() {
+    if(!this._element) {
+      this._element = createDomElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
+

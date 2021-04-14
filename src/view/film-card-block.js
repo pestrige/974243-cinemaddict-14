@@ -1,4 +1,4 @@
-import { getYearFromDate, humanizeDuration } from '../util.js';
+import { getYearFromDate, humanizeDuration, createDomElement } from '../util.js';
 import { MAX_DESCRIPTION_SIZE } from '../const.js';
 
 const createFilmCardBlock = ({filmInfo, userDetails, comments}) => {
@@ -47,4 +47,24 @@ const createFilmCardBlock = ({filmInfo, userDetails, comments}) => {
 </article>`;
 };
 
-export { createFilmCardBlock };
+export default class FilmCardBlock {
+  constructor(film) {
+    this._element = null;
+    this._film = film;
+  }
+
+  getTemplate() {
+    return createFilmCardBlock(this._film);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createDomElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
