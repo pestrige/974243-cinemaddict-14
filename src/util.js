@@ -43,11 +43,6 @@ const humanizeDuration = (duration) => {
   return `${hours}h ${minutes}m`;
 };
 
-// шаблон рендера компонента из строки
-const renderElement = (container, element, place = RENDER_POSITION.end ) => {
-  container.insertAdjacentHTML(place, element);
-};
-
 // шаблон рендера компонента
 const render = (container, element, place) => {
   switch (place) {
@@ -76,7 +71,6 @@ export {
   humanizeDate,
   humanizeFullDate,
   humanizeDuration,
-  renderElement,
   render,
   createDomElement
 };
