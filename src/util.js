@@ -55,8 +55,6 @@ const render = (container, element, place) => {
       container.prepend(element);
       break;
     case RENDER_POSITION.end:
-      container.append(element);
-      break;
     default:
       container.append(element);
   }
