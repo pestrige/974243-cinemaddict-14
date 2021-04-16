@@ -1,5 +1,4 @@
 import AbstractView from '../view/abstract.js';
-import ButtonShowMoreView from '../view/button-show-more.js';
 import { RENDER_POSITION, FILMS_PER_STEP, SORT_BY, EXTRA_FILMS_CARDS_COUNT } from '../const.js';
 
 // =====
@@ -46,14 +45,14 @@ export const remove = (component) => {
 // =====
 // рендер фильмов
 // =====
-export const renderFilms = (container, filmCard, filmsArray) => {
+export const renderFilms = (container, filmCard, filmsArray, button) => {
   if (container instanceof AbstractView) {
     container = container.getElement();
   }
   const filmsList = container.querySelector('.films-list');
   const filmsListContainer = filmsList.querySelector('.films-list__container');
 
-  // рендерим первые N фильмов или заглушку, если фильмов нет
+  // рендерим первые N фильмов
   for (let i = 0; i < Math.min(filmsArray.length, FILMS_PER_STEP); i++) {
     render(filmsListContainer, new filmCard(filmsArray[i]));
   }
@@ -61,12 +60,11 @@ export const renderFilms = (container, filmCard, filmsArray) => {
   // рендерим кнопку показа фильмов, если есть еще фильмы
   if (FILMS_PER_STEP < filmsArray.length) {
     let renderedFilms = FILMS_PER_STEP;
-    const buttonShowMoreComponent = new ButtonShowMoreView();
-    const buttonShowMoreElement = buttonShowMoreComponent.getElement();
+    const buttonShowMoreComponent = new button();
     render(filmsList, buttonShowMoreComponent);
 
     // по клику рендерим больше фильмов
-    buttonShowMoreElement.addEventListener('click', (evt) => {
+    buttonShowMoreComponent.setClickHandler((evt) => {
       evt.preventDefault();
       filmsArray
         .slice(renderedFilms, renderedFilms + FILMS_PER_STEP) // берем кусок массива от уже показанных, до + шаг

@@ -14,4 +14,8 @@ export default class FilmsSection extends AbstractView {
   getTemplate() {
     return createFilmsSection();
   }
+
+  setFilmCardClickHandler(callback) {
+    this.getElement().addEventListener('click', callback);
+  }
 }

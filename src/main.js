@@ -8,7 +8,7 @@ import FilmsByCommentsView from './view/films-by-comments.js';
 import FooterStatsView from './view/footer-stats.js';
 import FilmCardBlockView from './view/film-card-block.js';
 import NoFilmsBlockView from './view/no-films-block.js';
-//import ShowMoreButtonView from './view/button-show-more.js';
+import ShowMoreButtonView from './view/button-show-more.js';
 import FilmPopupView from './view/film-popup.js';
 import { generateFilm } from './mock/film.js';
 import { gererateComment } from './mock/comment.js';
@@ -91,7 +91,7 @@ render(footerStats, new FooterStatsView(films));
 // рендерим фильмы
 // =====
 if (films.length > 0) {
-  renderFilms(filmSectionComponent, FilmCardBlockView, films);
+  renderFilms(filmSectionComponent, FilmCardBlockView, films, ShowMoreButtonView);
   renderFilmsByKey(filmsByRatingComponent, FilmCardBlockView, films);
   renderFilmsByKey(filmsByCommentsComponent, FilmCardBlockView, films);
 } else {
@@ -99,9 +99,6 @@ if (films.length > 0) {
 }
 
 // =====
-// Слушатели кликов
+// отлавливаем клики по эдементам карточки фильма
 // =====
-filmSectionComponent.getElement().addEventListener('click', filmsListHandler);
-// filmSectionElement.querySelector('.films-list__container').addEventListener('click', filmsListHandler);
-// filmsByRatingElement.querySelector('.films-list__container').addEventListener('click', filmsListHandler);
-// filmsByCommentsElement.querySelector('.films-list__container').addEventListener('click', filmsListHandler);
+filmSectionComponent.setFilmCardClickHandler(filmsListHandler);
