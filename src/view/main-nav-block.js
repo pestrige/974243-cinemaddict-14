@@ -1,4 +1,4 @@
-import { createDomElement } from '../util.js';
+import AbstractView from './abstract.js';
 
 const createMainNavBlock = (filters) => {
   const [watchlisted, watched, favorite] = filters;
@@ -14,25 +14,14 @@ const createMainNavBlock = (filters) => {
 </nav>`;
 };
 
-export default class MainNavBlock {
+export default class MainNavBlock extends AbstractView {
   constructor(filters) {
-    this._element = null;
+    super();
     this._filters = filters;
   }
 
   getTemplate() {
     return createMainNavBlock(this._filters);
-  }
-
-  getElement() {
-    if(!this._element) {
-      this._element = createDomElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
 

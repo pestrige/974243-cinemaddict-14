@@ -1,4 +1,4 @@
-import { createDomElement } from '../util.js';
+import AbstractView from './abstract.js';
 
 const createFilmsByRatingSection = () => {
   return `<section class="films-list films-list--extra films-list--top-rated">
@@ -7,23 +7,8 @@ const createFilmsByRatingSection = () => {
 </section>`;
 };
 
-export default class FilmsByRatingSection {
-  constructor() {
-    this._element = null;
-  }
-
+export default class FilmsByRatingSection extends AbstractView {
   getTemplate() {
     return createFilmsByRatingSection();
-  }
-
-  getElement() {
-    if(!this._element) {
-      this._element = createDomElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

@@ -1,4 +1,5 @@
-import { getYearFromDate, humanizeDuration, createDomElement } from '../util.js';
+import AbstractView from './abstract.js';
+import { getYearFromDate, humanizeDuration } from '../util.js';
 import { MAX_DESCRIPTION_SIZE } from '../const.js';
 
 const createFilmCardBlock = ({filmInfo, userDetails, comments}) => {
@@ -47,24 +48,14 @@ const createFilmCardBlock = ({filmInfo, userDetails, comments}) => {
 </article>`;
 };
 
-export default class FilmCardBlock {
+export default class FilmCardBlock extends AbstractView {
   constructor(film) {
+    super();
     this._element = null;
     this._film = film;
   }
 
   getTemplate() {
     return createFilmCardBlock(this._film);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createDomElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
