@@ -39,6 +39,8 @@ export const remove = (component) => {
   if (component instanceof AbstractView) {
     component.getElement().remove();
     component.removeElement();
+  } else {
+    throw new Error('Can remove components only');
   }
 };
 
