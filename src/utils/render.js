@@ -3,7 +3,16 @@ import ButtonShowMoreView from '../view/button-show-more.js';
 import { RENDER_POSITION, FILMS_PER_STEP, SORT_BY, EXTRA_FILMS_CARDS_COUNT } from '../const.js';
 
 // =====
-// шаблон рендера компонента
+// создание DOM элемента
+// =====
+export const createDomElement = (template) => {
+  const templateContainer = document.createElement('template');
+  templateContainer.innerHTML = template;
+  return templateContainer.content.firstElementChild;
+};
+
+// =====
+// рендер компонента
 // =====
 export const render = (container, element, place) => {
   if (container instanceof AbstractView) {
@@ -25,7 +34,17 @@ export const render = (container, element, place) => {
 };
 
 // =====
-// шаблон рендера фильмов
+// удаление компонента
+// =====
+export const remove = (component) => {
+  if (component instanceof AbstractView) {
+    component.getElement().remove();
+    component.removeElement();
+  }
+};
+
+// =====
+// рендер фильмов
 // =====
 export const renderFilms = (container, filmCard, filmsArray) => {
   if (container instanceof AbstractView) {
@@ -55,15 +74,14 @@ export const renderFilms = (container, filmCard, filmsArray) => {
       renderedFilms += FILMS_PER_STEP; // прибавляем к счетчику показанные фильмы
 
       if (renderedFilms >= filmsArray.length) {
-        buttonShowMoreElement.remove();
-        buttonShowMoreComponent.removeElement();
+        remove(buttonShowMoreComponent);
       }
     });
   }
 };
 
 // =====
-// шаблон для рендера фильмов, осортированных по ключу
+// рендера фильмов, осортированных по ключу
 // =====
 export const renderFilmsByKey = (container, filmCard, filmsArray) => {
   if (container instanceof AbstractView) {
@@ -81,13 +99,4 @@ export const renderFilmsByKey = (container, filmCard, filmsArray) => {
     .sort((a, b) => b[key][value] - a[key][value])
     .slice(0, EXTRA_FILMS_CARDS_COUNT)
     .forEach((film) => render(filmsList, new filmCard(film)));
-};
-
-// =====
-// шаблон создания DOM элемента
-// =====
-export const createDomElement = (template) => {
-  const templateContainer = document.createElement('template');
-  templateContainer.innerHTML = template;
-  return templateContainer.content.firstElementChild;
 };

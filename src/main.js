@@ -1,4 +1,4 @@
-import { render, renderFilms, renderFilmsByKey } from './utils/render.js';
+import { render, renderFilms, renderFilmsByKey, remove } from './utils/render.js';
 import ProfileBlockView from './view/profile-block.js';
 import MainNavBlockView from './view/main-nav-block.js';
 import SortBlockView from './view/sort-block.js';
@@ -48,14 +48,12 @@ const filmsListHandler = (evt) => {
   const film = films.find(({filmInfo}) => filmCardId === filmInfo.id);
   // рендерим попап на основе найденного фильма
   const filmPopupComponent = new FilmPopupView(film, comments);
-  const filmPopupElement = filmPopupComponent.getElement();
   render(body, filmPopupComponent);
   body.classList.add('hide-overflow');
 
   // Удаляем попап
   const removePopup = () => {
-    filmPopupElement.remove();
-    filmPopupComponent.removeElement();
+    remove(filmPopupComponent);
     body.classList.remove('hide-overflow');
   };
 
@@ -68,7 +66,7 @@ const filmsListHandler = (evt) => {
   };
 
   document.addEventListener('keydown', onEscKeyDown);
-  filmPopupElement.querySelector('.film-details__close-btn').addEventListener('click', removePopup);
+  filmPopupComponent.setCloseButtonClickHandler(removePopup);
 };
 
 // =====
