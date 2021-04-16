@@ -1,4 +1,4 @@
-import { render } from './util.js';
+import { render, renderFilms, renderFilmsByKey } from './utils/render.js';
 import ProfileBlockView from './view/profile-block.js';
 import MainNavBlockView from './view/main-nav-block.js';
 import SortBlockView from './view/sort-block.js';
@@ -8,12 +8,12 @@ import FilmsByCommentsView from './view/films-by-comments.js';
 import FooterStatsView from './view/footer-stats.js';
 import FilmCardBlockView from './view/film-card-block.js';
 import NoFilmsBlockView from './view/no-films-block.js';
-import ShowMoreButtonView from './view/button-show-more.js';
+//import ShowMoreButtonView from './view/button-show-more.js';
 import FilmPopupView from './view/film-popup.js';
 import { generateFilm } from './mock/film.js';
 import { gererateComment } from './mock/comment.js';
 import { generateFilteredFilmsCounts } from './mock/filter.js';
-import { FILMS_CARDS_COUNT, FILMS_PER_STEP, EXTRA_FILMS_CARDS_COUNT, MAX_COMMENTS, SORT_BY } from './const.js';
+import { FILMS_CARDS_COUNT, MAX_COMMENTS } from './const.js';
 
 const body = document.querySelector('body');
 const header = document.querySelector('.header');
@@ -28,58 +28,6 @@ const films = new Array(FILMS_CARDS_COUNT).fill().map(generateFilm);
 const comments = new Array(MAX_COMMENTS).fill().map(gererateComment);
 // создаем массив с количеством фильмов по фильтрам
 const filters = generateFilteredFilmsCounts(films);
-
-// =====
-// шаблон рендера фильмов
-// =====
-const renderFilms = (container, films) => {
-  const filmsList = container.querySelector('.films-list');
-  const filmsListContainer = filmsList.querySelector('.films-list__container');
-
-  // рендерим первые N фильмов или заглушку, если фильмов нет
-  for (let i = 0; i < Math.min(films.length, FILMS_PER_STEP); i++) {
-    render(filmsListContainer, new FilmCardBlockView(films[i]).getElement());
-  }
-
-  // рендерим кнопку показа фильмов, если есть еще фильмы
-  if (FILMS_PER_STEP < films.length) {
-    let renderedFilms = FILMS_PER_STEP;
-    const showMoreButtonComponent = new ShowMoreButtonView();
-    const showMoreButtonElement = showMoreButtonComponent.getElement();
-    render(filmsList, showMoreButtonElement);
-
-    // по клику рендерим больше фильмов
-    showMoreButtonElement.addEventListener('click', (evt) => {
-      evt.preventDefault();
-      films
-        .slice(renderedFilms, renderedFilms + FILMS_PER_STEP) // берем кусок массива от уже показанных, до + шаг
-        .forEach((film) => render(filmsListContainer, new FilmCardBlockView(film).getElement()));
-      renderedFilms += FILMS_PER_STEP; // прибавляем к счетчику показанные фильмы
-
-      if (renderedFilms >= films.length) {
-        showMoreButtonElement.remove();
-        showMoreButtonComponent.removeElement();
-      }
-    });
-  }
-};
-
-// =====
-// шаблон для рендера фильмов, осортированных по ключу
-// =====
-const renderFilmsByKey = (container, films) => {
-  const isTopRated = container.classList.contains('films-list--top-rated');
-  const filmsList = isTopRated
-    ? container.querySelector('.films-list--top-rated .films-list__container')
-    : container.querySelector('.films-list--most-commented .films-list__container');
-  const [key, value] = isTopRated ? SORT_BY.rating.split('.') : SORT_BY.comments.split('.');
-  const sortedFilms = films.slice();
-
-  sortedFilms
-    .sort((a, b) => b[key][value] - a[key][value])
-    .slice(0, EXTRA_FILMS_CARDS_COUNT)
-    .forEach((film) => render(filmsList, new FilmCardBlockView(film).getElement()));
-};
 
 // =====
 // Обработчик клика по карточке фильма
@@ -101,7 +49,7 @@ const filmsListHandler = (evt) => {
   // рендерим попап на основе найденного фильма
   const filmPopupComponent = new FilmPopupView(film, comments);
   const filmPopupElement = filmPopupComponent.getElement();
-  render(body, filmPopupElement);
+  render(body, filmPopupComponent);
   body.classList.add('hide-overflow');
 
   // Удаляем попап
@@ -126,36 +74,36 @@ const filmsListHandler = (evt) => {
 // =====
 // Создаем экземпляры классов
 // =====
-const filmSectionElement = new FilmsSectionView().getElement();
-const filmsByRatingElement = new FilmsByRatingView().getElement();
-const filmsByCommentsElement = new FilmsByCommentsView().getElement();
+const filmSectionComponent = new FilmsSectionView();
+const filmsByRatingComponent = new FilmsByRatingView();
+const filmsByCommentsComponent = new FilmsByCommentsView();
 
 // =====
 // рендерим основные компоненты
 // =====
-render(header, new ProfileBlockView().getElement());
-render(main, new MainNavBlockView(filters).getElement());
-render(main, new SortBlockView().getElement());
-render(main, filmSectionElement);
-render(filmSectionElement, filmsByRatingElement);
-render(filmSectionElement, filmsByCommentsElement);
-render(footerStats, new FooterStatsView(films).getElement());
+render(header, new ProfileBlockView());
+render(main, new MainNavBlockView(filters));
+render(main, new SortBlockView());
+render(main, filmSectionComponent);
+render(filmSectionComponent, filmsByRatingComponent);
+render(filmSectionComponent, filmsByCommentsComponent);
+render(footerStats, new FooterStatsView(films));
 
 // =====
 // рендерим фильмы
 // =====
 if (films.length > 0) {
-  renderFilms(filmSectionElement, films);
-  renderFilmsByKey(filmsByRatingElement, films);
-  renderFilmsByKey(filmsByCommentsElement, films);
+  renderFilms(filmSectionComponent, FilmCardBlockView, films);
+  renderFilmsByKey(filmsByRatingComponent, FilmCardBlockView, films);
+  renderFilmsByKey(filmsByCommentsComponent, FilmCardBlockView, films);
 } else {
-  render(filmSectionElement, new NoFilmsBlockView().getElement());
+  render(filmSectionComponent, new NoFilmsBlockView());
 }
 
 // =====
 // Слушатели кликов
 // =====
-filmSectionElement.addEventListener('click', filmsListHandler);
+filmSectionComponent.getElement().addEventListener('click', filmsListHandler);
 // filmSectionElement.querySelector('.films-list__container').addEventListener('click', filmsListHandler);
 // filmsByRatingElement.querySelector('.films-list__container').addEventListener('click', filmsListHandler);
 // filmsByCommentsElement.querySelector('.films-list__container').addEventListener('click', filmsListHandler);

@@ -1,5 +1,5 @@
 import AbstractView from './abstract.js';
-import { getYearFromDate, humanizeDuration } from '../util.js';
+import { getYearFromDate, humanizeDuration } from '../utils/dates.js';
 import { MAX_DESCRIPTION_SIZE } from '../const.js';
 
 const createFilmCardBlock = ({filmInfo, userDetails, comments}) => {

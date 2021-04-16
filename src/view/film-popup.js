@@ -1,5 +1,5 @@
 import AbstractView from './abstract.js';
-import { humanizeDate, humanizeFullDate, humanizeDuration } from '../util.js';
+import { humanizeDate, humanizeFullDate, humanizeDuration } from '../utils/dates.js';
 
 // в функцию создания попапа передаем
 // объект с данными по фильму и массив комментариев

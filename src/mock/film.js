@@ -1,4 +1,5 @@
-import {getRandomNumber, generateFloat, getRandomDate } from '../util.js';
+import {getRandomNumber, generateFloat } from '../utils/common.js';
+import { getRandomDate } from '../utils/dates.js';
 import { MAX_COMMENTS } from '../const.js';
 
 const FILM_TITLES = [
