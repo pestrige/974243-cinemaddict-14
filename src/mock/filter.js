@@ -1,4 +1,4 @@
-const generateFilteredFilmsCounts = (films) => {
+export const generateFilteredFilmsCounts = (films) => {
   // фильтруем массив по переданному ключу
   const getCount = (filter) => films.filter(({userDetails}) => userDetails[filter]).length;
 
@@ -8,5 +8,3 @@ const generateFilteredFilmsCounts = (films) => {
 
   return [watchlistedCount, watchedCount, favoriteCount];
 };
-
-export { generateFilteredFilmsCounts };

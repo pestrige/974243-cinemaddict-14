@@ -1,4 +1,5 @@
-import {getRandomArrayElement, getRandomDate } from '../util.js';
+import { getRandomArrayElement } from '../utils/common.js';
+import { getRandomDate } from '../utils/dates.js';
 
 const EMOTIONS = ['smile', 'sleeping', 'puke', 'angry'];
 const COMMENT_TEXTS = [

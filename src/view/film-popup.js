@@ -1,9 +1,5 @@
-import {
-  humanizeDate,
-  humanizeFullDate,
-  humanizeDuration,
-  createDomElement
-} from '../util.js';
+import AbstractView from './abstract.js';
+import { humanizeDate, humanizeFullDate, humanizeDuration } from '../utils/dates.js';
 
 // в функцию создания попапа передаем
 // объект с данными по фильму и массив комментариев
@@ -174,25 +170,28 @@ const createFilmPopup = ({filmInfo, userDetails, comments}, fullComments) => {
 </section>`;
 };
 
-export default class FilmPopup {
+export default class FilmPopup extends AbstractView {
   constructor(film, comments) {
+    super();
     this._element = null;
     this._film = film;
     this._comments = comments;
+    this._closeButtonClickHandler = this._closeButtonClickHandler.bind(this);
+  }
+
+  _closeButtonClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.closeButtonClick();
   }
 
   getTemplate() {
     return createFilmPopup(this._film, this._comments);
   }
 
-  getElement() {
-    if(!this._element) {
-      this._element = createDomElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
+  setCloseButtonClickHandler(callback) {
+    this._callback.closeButtonClick = callback;
+    this.getElement()
+      .querySelector('.film-details__close-btn')
+      .addEventListener('click', this._closeButtonClickHandler);
   }
 }

@@ -1,4 +1,4 @@
-import { createDomElement } from '../util.js';
+import AbstractView from './abstract.js';
 
 const createProfileBlock = () => {
   return `<section class="header__profile profile">
@@ -7,23 +7,8 @@ const createProfileBlock = () => {
 </section>`;
 };
 
-export default class ProfileBlock {
-  constructor() {
-    this._element = null;
-  }
-
+export default class ProfileBlock extends AbstractView {
   getTemplate() {
     return createProfileBlock();
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createDomElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

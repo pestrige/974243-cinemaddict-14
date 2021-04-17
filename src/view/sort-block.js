@@ -1,4 +1,4 @@
-import { createDomElement } from '../util.js';
+import AbstractView from './abstract.js';
 
 const createSortBlock = () => {
   return `<ul class="sort">
@@ -8,24 +8,9 @@ const createSortBlock = () => {
 </ul>`;
 };
 
-export default class SortBlock {
-  constructor() {
-    this._element = null;
-  }
-
+export default class SortBlock extends AbstractView {
   getTemplate() {
     return createSortBlock();
-  }
-
-  getElement() {
-    if(!this._element) {
-      this._element = createDomElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
 
