@@ -85,12 +85,9 @@ export default class FilmsList {
     for (let i = 0; i < Math.min(filmsArray.length, FILMS_PER_STEP); i++) {
       this._renderFilm(this._filmsListContainer, filmsArray[i]);
     }
-
     // рендерим кнопку показа фильмов, если есть еще фильмы
     if (FILMS_PER_STEP < filmsArray.length) {
       this._renderButtonShowMore();
-      // по клику рендерим больше фильмов
-      this._buttonShowMoreComponent.setClickHandler(this._handleButtonShowMore);
     }
   }
 
@@ -114,6 +111,9 @@ export default class FilmsList {
 
   _renderButtonShowMore() {
     render(this._filmsListSection, this._buttonShowMoreComponent);
+    // по клику рендерим больше фильмов
+    this._buttonShowMoreComponent.setClickHandler(this._handleButtonShowMore);
+
   }
 
   _renderFilm(container, film) {
