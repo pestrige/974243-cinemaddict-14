@@ -12,6 +12,7 @@ const header = document.querySelector('.header');
 const main = document.querySelector('.main');
 const footer = document.querySelector('.footer');
 const footerStats = footer.querySelector('.footer__statistics');
+const filmsListPresenter = new FilmsListPresenter(main);
 
 // =====
 // создаем моковые данные
@@ -28,5 +29,4 @@ render(header, new ProfileBlockView());
 render(main, new MainNavBlockView(filters));
 render(footerStats, new FooterStatsView(films));
 // инициализируем презентер списка фильмов
-const filmsListPresenter = new FilmsListPresenter(main);
 filmsListPresenter.init(films, comments);

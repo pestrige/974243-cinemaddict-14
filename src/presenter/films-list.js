@@ -119,11 +119,18 @@ export default class FilmsList {
     render(container, new FilmCardBlockView(film));
   }
 
-  _renderPopup(film) {
+  _renderPopup(target) {
+    // сопоставляем id в карточке фильма с id фильма в массиве
+    const filmCardId = target.closest('.film-card').dataset.id;
+    const film = this._films.find(({filmInfo}) => filmCardId === filmInfo.id);
+    //рендерим попап нужного фильма
     this._filmPopupComponent = new FilmPopupView(film, this._comments);
     render(this._filmsContainer, this._filmPopupComponent);
+    // навешиваем нужные классы и слушатели
     document.body.classList.add('hide-overflow');
+    document.addEventListener('keydown', this._handleEscKeyDown);
     this._filmsSectionComponent.removeFilmCardClickHandler();
+    this._filmPopupComponent.setCloseButtonClickHandler(this._handleClosePopupButton);
   }
 
   _removePopup() {
@@ -149,18 +156,6 @@ export default class FilmsList {
     }
   }
 
-  // обработчик закрытия попапа
-  _handleClosePopupButton() {
-    this._removePopup();
-  }
-
-  // обработчик Esc
-  _handleEscKeyDown(evt) {
-    if (evt.key === 'Escape' || evt.key === 'Esc') {
-      this._removePopup();
-    }
-  }
-
   // обработчик кликов по карточкам фильмов
   _handleFilmsList(evt) {
     const target = evt.target;
@@ -171,13 +166,19 @@ export default class FilmsList {
     if (!isTargetCorrect) {
       return false;
     }
-    // сопоставляем id в карточке фильма с id фильма в массиве
-    const filmCardId = target.closest('.film-card').dataset.id;
-    const film = this._films.find(({filmInfo}) => filmCardId === filmInfo.id);
-    // рендерим попап на основе найденного фильма
-    this._renderPopup(film);
-    // слушаем клики и Esc
-    this._filmPopupComponent.setCloseButtonClickHandler(this._handleClosePopupButton);
-    document.addEventListener('keydown', this._handleEscKeyDown);
+    // рендерим попап
+    this._renderPopup(target);
+  }
+
+  // обработчик закрытия попапа
+  _handleClosePopupButton() {
+    this._removePopup();
+  }
+
+  // обработчик Esc
+  _handleEscKeyDown(evt) {
+    if (evt.key === 'Escape' || evt.key === 'Esc') {
+      this._removePopup();
+    }
   }
 }
