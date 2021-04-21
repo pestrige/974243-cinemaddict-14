@@ -18,7 +18,7 @@ export default class FilmsList {
     this._renderedFilms = FILMS_PER_STEP;
 
     this._sortBlockComponent = new SortBlockView();
-    this._filmSectionComponent = new FilmsSectionView();
+    this._filmsSectionComponent = new FilmsSectionView();
     this._filmsByRatingComponent = new FilmsByRatingView();
     this._filmsByCommentsComponent = new FilmsByCommentsView();
     this._noFilmsBlockComponent = new NoFilmsBlockView();
@@ -30,7 +30,7 @@ export default class FilmsList {
     this._handleClosePopupButton = this._handleClosePopupButton.bind(this);
     this._handleEscKeyDown = this._handleEscKeyDown.bind(this);
 
-    this._filmsListSection = this._filmSectionComponent.getElement().querySelector('.films-list');
+    this._filmsListSection = this._filmsSectionComponent.getElement().querySelector('.films-list');
     this._filmsListContainer = this._filmsListSection.querySelector('.films-list__container');
 
   }
@@ -54,9 +54,9 @@ export default class FilmsList {
   //=====
 
   _renderFilmsContainer() {
-    render(this._filmsContainer, this._filmSectionComponent);
+    render(this._filmsContainer, this._filmsSectionComponent);
     // ловим клики по карточкам фильмов
-    this._filmSectionComponent.setFilmCardClickHandler(this._handleFilmsList);
+    this._filmsSectionComponent.setFilmCardClickHandler(this._handleFilmsList);
   }
 
   _renderNoFilmsBlock() {
@@ -76,8 +76,8 @@ export default class FilmsList {
 
   }
   _renderExtraFilmsBlock() {
-    render(this._filmSectionComponent, this._filmsByRatingComponent);
-    render(this._filmSectionComponent, this._filmsByCommentsComponent);
+    render(this._filmsSectionComponent, this._filmsByRatingComponent);
+    render(this._filmsSectionComponent, this._filmsByCommentsComponent);
   }
 
   _renderFilms(filmsArray) {
@@ -113,7 +113,6 @@ export default class FilmsList {
     render(this._filmsListSection, this._buttonShowMoreComponent);
     // по клику рендерим больше фильмов
     this._buttonShowMoreComponent.setClickHandler(this._handleButtonShowMore);
-
   }
 
   _renderFilm(container, film) {
@@ -124,12 +123,14 @@ export default class FilmsList {
     this._filmPopupComponent = new FilmPopupView(film, this._comments);
     render(this._filmsContainer, this._filmPopupComponent);
     document.body.classList.add('hide-overflow');
+    this._filmsSectionComponent.removeFilmCardClickHandler();
   }
 
   _removePopup() {
     remove(this._filmPopupComponent);
     document.body.classList.remove('hide-overflow');
     document.removeEventListener('keydown', this._handleEscKeyDown);
+    this._filmsSectionComponent.setFilmCardClickHandler(this._handleFilmsList);
   }
 
   //=====
@@ -137,8 +138,7 @@ export default class FilmsList {
   //=====
 
   // обработчик кнопки "Show More"
-  _handleButtonShowMore(evt) {
-    evt.preventDefault();
+  _handleButtonShowMore() {
     this._films
       .slice(this._renderedFilms, this._renderedFilms + FILMS_PER_STEP) // берем кусок массива от уже показанных, до + шаг
       .forEach((film) => this._renderFilm(this._filmsListContainer, film));
@@ -163,7 +163,6 @@ export default class FilmsList {
 
   // обработчик кликов по карточкам фильмов
   _handleFilmsList(evt) {
-    evt.preventDefault();
     const target = evt.target;
     // отлавливаем клики по заголовку, постеру и комментариям
     const isTargetCorrect = target.classList.contains('film-card__title')
