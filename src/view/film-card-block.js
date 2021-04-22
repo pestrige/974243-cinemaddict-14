@@ -53,9 +53,22 @@ export default class FilmCardBlock extends AbstractView {
     super();
     this._element = null;
     this._film = film;
+    this._watchlistButtonClickHandler = this._watchlistButtonClickHandler.bind(this);
+  }
+
+  _watchlistButtonClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.buttonClick(evt);
   }
 
   getTemplate() {
     return createFilmCardBlock(this._film);
+  }
+
+  setWatchlistButtonClick(callback) {
+    this._callback.buttonClick = callback;
+    this.getElement()
+      .querySelector('.film-card__controls-item--add-to-watchlist')
+      .addEventListener('click', this._watchlistButtonClickHandler);
   }
 }

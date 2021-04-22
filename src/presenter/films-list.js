@@ -3,10 +3,10 @@ import SortBlockView from '../view/sort-block.js';
 import FilmsSectionView from '../view/films-section.js';
 import FilmsByRatingView from '../view/films-by-rating.js';
 import FilmsByCommentsView from '../view/films-by-comments.js';
-import FilmCardBlockView from '../view/film-card-block.js';
 import NoFilmsBlockView from '../view/no-films-block.js';
 import ShowMoreButtonView from '../view/button-show-more.js';
 import FilmPopupView from '../view/film-popup.js';
+import FilmPresenter from '../presenter/film.js';
 import { render, remove } from '../utils/render.js';
 import { FILMS_PER_STEP, SORT_BY, EXTRA_FILMS_CARDS_COUNT } from '../const.js';
 
@@ -16,6 +16,7 @@ export default class FilmsList {
     this._films = null;
     this._comments = null;
     this._renderedFilms = FILMS_PER_STEP;
+    this._filmPresentersList = new Map(); // для сохранения всех экземпляров карточек фильмов
 
     this._sortBlockComponent = new SortBlockView();
     this._filmsSectionComponent = new FilmsSectionView();
@@ -47,6 +48,8 @@ export default class FilmsList {
       this._renderFilmsContainer();
       this._renderNoFilmsBlock();
     }
+    console.log(this._filmPresentersList);
+    console.log(this._filmPresentersList.values());
   }
 
   //=====
@@ -109,14 +112,16 @@ export default class FilmsList {
       .forEach((film) => this._renderFilm(filmsList, film));
   }
 
+  _renderFilm(container, film) {
+    const filmPresenter = new FilmPresenter(container);
+    filmPresenter.init(film);
+    this._filmPresentersList.set(filmPresenter, film.filmInfo.id);
+  }
+
   _renderButtonShowMore() {
     render(this._filmsListSection, this._buttonShowMoreComponent);
     // по клику рендерим больше фильмов
     this._buttonShowMoreComponent.setClickHandler(this._handleButtonShowMore);
-  }
-
-  _renderFilm(container, film) {
-    render(container, new FilmCardBlockView(film));
   }
 
   _renderPopup(target) {
@@ -133,11 +138,23 @@ export default class FilmsList {
     this._filmPopupComponent.setCloseButtonClickHandler(this._handleClosePopupButton);
   }
 
+  //=====
+  // Методы удаления и очистки
+  //=====
+
   _removePopup() {
     remove(this._filmPopupComponent);
     document.body.classList.remove('hide-overflow');
     document.removeEventListener('keydown', this._handleEscKeyDown);
     this._filmsSectionComponent.setFilmCardClickHandler(this._handleFilmsList);
+  }
+
+  _clearFilmsList() {
+    this._filmPresentersList
+      .forEach((_id, film) => film.destroy());
+    this._filmPresentersList.clear();
+    this._renderedFilms = FILMS_PER_STEP;
+    remove(this._buttonShowMoreComponent);
   }
 
   //=====
@@ -154,6 +171,8 @@ export default class FilmsList {
     if (this._renderedFilms >= this._films.length) {
       remove(this._buttonShowMoreComponent);
     }
+    console.log(this._filmPresentersList);
+    console.log(this._filmPresentersList.values());
   }
 
   // обработчик кликов по карточкам фильмов
