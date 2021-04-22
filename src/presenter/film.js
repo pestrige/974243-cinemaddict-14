@@ -7,7 +7,7 @@ export default class FilmPresenter {
     this._filmContainer = container;
     this._changeData = handleFilmChange;
     this._filmComponent = null;
-    this._handleControlButtons = this._handleControlButtons.bind(this);
+    this.handleControlButtons = this.handleControlButtons.bind(this);
   }
 
   init(film) {
@@ -15,7 +15,7 @@ export default class FilmPresenter {
     const oldFilmComponent = this._filmComponent;
 
     this._filmComponent = new FilmCardBlockView(this._film);
-    this._filmComponent.setControlButtonsClick(this._handleControlButtons);
+    this._filmComponent.setControlButtonsClick(this.handleControlButtons);
 
     if (oldFilmComponent === null) {
       render(this._filmContainer, this._filmComponent);
@@ -30,7 +30,7 @@ export default class FilmPresenter {
     remove(this._filmComponent);
   }
 
-  _handleControlButtons(evt) {
+  handleControlButtons(evt) {
     const buttonType = evt.target.dataset.type;
     // делаем копию данных фильма
     const changedUserDetails = {...this._film.userDetails};

@@ -139,11 +139,11 @@ export default class FilmsList {
       this._filmPopupComponent.getElement().scrollTop = scrollY;
       remove(oldPopupComponent);
     }
-    // находим экземпляр фильма
+    // находим экземпляр презентера фильма
     let filmPresenter;
-    this._filmPresentersList.forEach((id, component) => {
+    this._filmPresentersList.forEach((id, presenter) => {
       if (id === film.filmInfo.id) {
-        filmPresenter = component;
+        filmPresenter = presenter;
       }
     });
     // навешиваем нужные классы и слушатели
@@ -151,7 +151,7 @@ export default class FilmsList {
     document.addEventListener('keydown', this._handleEscKeyDown);
     this._filmsSectionComponent.removeFilmCardClickHandler();
     this._filmPopupComponent.setCloseButtonClickHandler(this._handleClosePopupButton);
-    this._filmPopupComponent.setControlButtonsClick(filmPresenter._handleControlButtons);
+    this._filmPopupComponent.setControlButtonsClick(filmPresenter.handleControlButtons);
   }
 
   //=====
