@@ -1,27 +1,58 @@
 import FilmCardBlockView from '../view/film-card-block.js';
-import { render, remove } from '../utils/render.js';
+import { render, remove, replace } from '../utils/render.js';
+import { BUTTON_TYPE } from '../const.js';
 
 export default class FilmPresenter {
-  constructor(container) {
+  constructor(container, handleFilmChange) {
     this._filmContainer = container;
+    this._changeData = handleFilmChange;
     this._filmComponent = null;
-    this._handleWatchlistButton = this._handleWatchlistButton.bind(this);
+    this._handleControlButtons = this._handleControlButtons.bind(this);
   }
 
   init(film) {
-    if (!(this._filmComponent === null)) {
-      remove(this._filmComponent);
+    this._film = film;
+    const oldFilmComponent = this._filmComponent;
+
+    this._filmComponent = new FilmCardBlockView(this._film);
+    this._filmComponent.setControlButtonsClick(this._handleControlButtons);
+
+    if (oldFilmComponent === null) {
+      render(this._filmContainer, this._filmComponent);
+      return;
     }
-    this._filmComponent = new FilmCardBlockView(film);
-    render(this._filmContainer, this._filmComponent);
-    this._filmComponent.setWatchlistButtonClick(this._handleWatchlistButton);
+
+    replace(oldFilmComponent, this._filmComponent);
+    remove(oldFilmComponent);
   }
 
   destroy() {
     remove(this._filmComponent);
   }
 
-  _handleWatchlistButton(evt) {
-    console.log(evt.target);
+  _handleControlButtons(evt) {
+    const buttonType = evt.target.dataset.type;
+    // делаем копию данных фильма
+    const changedUserDetails = {...this._film.userDetails};
+
+    if (!buttonType) {
+      return;
+    }
+    // изменяем ключи на противоположное значение
+    // в зависимости от типа кнопки
+    switch (buttonType) {
+      case BUTTON_TYPE.watchlisted:
+        changedUserDetails.isWatchlisted = !this._film.userDetails.isWatchlisted;
+        break;
+      case BUTTON_TYPE.watched:
+        changedUserDetails.isWatched = !this._film.userDetails.isWatched;
+        break;
+      case BUTTON_TYPE.favorite:
+        changedUserDetails.isFavorite = !this._film.userDetails.isFavorite;
+        break;
+    }
+
+    // и передаем объект с измененными данными фильма
+    this._changeData({...this._film, userDetails: changedUserDetails});
   }
 }
