@@ -41,9 +41,9 @@ const createFilmCardBlock = ({filmInfo, userDetails, comments}) => {
   <p class="film-card__description">${shortDescription}</p>
   <a class="film-card__comments">${comments.length} comments</a>
   <div class="film-card__controls">
-    <button class="${userDetailsActiveClass(isWatchlisted)} film-card__controls-item button film-card__controls-item--add-to-watchlist" type="button">Add to watchlist</button>
-    <button class="${userDetailsActiveClass(isWatched)} film-card__controls-item button film-card__controls-item--mark-as-watched" type="button">Mark as watched</button>
-    <button class="${userDetailsActiveClass(isFavorite)} film-card__controls-item button film-card__controls-item--favorite" type="button">Mark as favorite</button>
+    <button class="${userDetailsActiveClass(isWatchlisted)} film-card__controls-item button film-card__controls-item--add-to-watchlist" type="button" data-type="watchlist">Add to watchlist</button>
+    <button class="${userDetailsActiveClass(isWatched)} film-card__controls-item button film-card__controls-item--mark-as-watched" type="button" data-type="watched">Mark as watched</button>
+    <button class="${userDetailsActiveClass(isFavorite)} film-card__controls-item button film-card__controls-item--favorite" type="button" data-type="favorite">Mark as favorite</button>
   </div>
 </article>`;
 };
@@ -53,9 +53,22 @@ export default class FilmCardBlock extends AbstractView {
     super();
     this._element = null;
     this._film = film;
+    this._controlButtonsClickHandler = this._controlButtonsClickHandler.bind(this);
+  }
+
+  _controlButtonsClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.buttonsClick(evt);
   }
 
   getTemplate() {
     return createFilmCardBlock(this._film);
+  }
+
+  setControlButtonsClick(callback) {
+    this._callback.buttonsClick = callback;
+    this.getElement()
+      .querySelector('.film-card__controls')
+      .addEventListener('click', this._controlButtonsClickHandler);
   }
 }

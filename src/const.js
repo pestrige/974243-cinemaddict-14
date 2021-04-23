@@ -16,6 +16,11 @@ const SORT_BY = {
   rating: 'filmInfo.rating',
   comments: 'comments.length',
 };
+const BUTTON_TYPE = {
+  watchlisted: 'watchlist',
+  watched: 'watched',
+  favorite: 'favorite',
+};
 
 export {
   MAX_COMMENTS,
@@ -25,5 +30,6 @@ export {
   EXTRA_FILMS_CARDS_COUNT,
   DATE_RANGES,
   RENDER_POSITION,
-  SORT_BY
+  SORT_BY,
+  BUTTON_TYPE
 };

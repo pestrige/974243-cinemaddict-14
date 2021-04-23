@@ -119,13 +119,13 @@ const createFilmPopup = ({filmInfo, userDetails, comments}, fullComments) => {
 
       <section class="film-details__controls">
         <input ${setChecked(isWatchlisted)} type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist">
-        <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist">Add to watchlist</label>
+        <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist" data-type="watchlist">Add to watchlist</label>
 
         <input ${setChecked(isWatched)} type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched">
-        <label for="watched" class="film-details__control-label film-details__control-label--watched">Already watched</label>
+        <label for="watched" class="film-details__control-label film-details__control-label--watched" data-type="watched">Already watched</label>
 
         <input ${setChecked(isFavorite)} type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite">
-        <label for="favorite" class="film-details__control-label film-details__control-label--favorite">Add to favorites</label>
+        <label for="favorite" class="film-details__control-label film-details__control-label--favorite" data-type="favorite">Add to favorites</label>
       </section>
     </div>
 
@@ -177,11 +177,17 @@ export default class FilmPopup extends AbstractView {
     this._film = film;
     this._comments = comments;
     this._closeButtonClickHandler = this._closeButtonClickHandler.bind(this);
+    this._controlButtonsClickHandler = this._controlButtonsClickHandler.bind(this);
   }
 
   _closeButtonClickHandler(evt) {
     evt.preventDefault();
     this._callback.closeButtonClick();
+  }
+
+  _controlButtonsClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.buttonsClick(evt);
   }
 
   getTemplate() {
@@ -193,5 +199,12 @@ export default class FilmPopup extends AbstractView {
     this.getElement()
       .querySelector('.film-details__close-btn')
       .addEventListener('click', this._closeButtonClickHandler);
+  }
+
+  setControlButtonsClick(callback) {
+    this._callback.buttonsClick = callback;
+    this.getElement()
+      .querySelector('.film-details__controls')
+      .addEventListener('click', this._controlButtonsClickHandler);
   }
 }
