@@ -23,15 +23,12 @@ export const getRandomArrayElement = (array) => {
   return array[randomId];
 };
 
-// Заменяем один эдемент в массиве
+// Заменяем один элемент в массиве
 export const updateItem = (itemsArray, updatedItem) => {
-  const index = itemsArray.findIndex((item) => item.filmInfo.id === updatedItem.filmInfo.id);
-  if (index === -1 ) {
-    return itemsArray;
+  const newItemsArray = [...itemsArray];
+  const index = newItemsArray.findIndex((item) => item.filmInfo.id === updatedItem.filmInfo.id);
+  if (!(index === -1)) {
+    newItemsArray.splice(index, 1, updatedItem);
   }
-  return [
-    ...itemsArray.slice(0, index),
-    updatedItem,
-    ...itemsArray.slice(index + 1),
-  ];
+  return newItemsArray;
 };
