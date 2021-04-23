@@ -27,7 +27,7 @@ export const getRandomArrayElement = (array) => {
 export const updateItem = (itemsArray, updatedItem) => {
   const newItemsArray = [...itemsArray];
   const index = newItemsArray.findIndex((item) => item.filmInfo.id === updatedItem.filmInfo.id);
-  if (!(index === -1)) {
+  if (index !== -1) {
     newItemsArray.splice(index, 1, updatedItem);
   }
   return newItemsArray;
