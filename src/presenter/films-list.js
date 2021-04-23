@@ -232,7 +232,7 @@ export default class FilmsList {
       }
     });
     // перерисовка попапа, если есть
-    if (!(this._filmPopupComponent === null)) {
+    if (this._filmPopupComponent !== null) {
       this._renderPopup(updatedFilm);
     }
   }
