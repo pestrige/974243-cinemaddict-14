@@ -32,6 +32,7 @@ export default class FilmsList {
     this._handleClosePopupButton = this._handleClosePopupButton.bind(this);
     this._handleEscKeyDown = this._handleEscKeyDown.bind(this);
     this._handleFilmChange = this._handleFilmChange.bind(this);
+    this._handleSortButtons = this._handleSortButtons.bind(this);
 
     this._filmsListSection = this._filmsSectionComponent.getElement().querySelector('.films-list');
     this._filmsListContainer = this._filmsListSection.querySelector('.films-list__container');
@@ -71,6 +72,7 @@ export default class FilmsList {
 
   _renderSortBlock() {
     render(this._filmsContainer, this._sortBlockComponent);
+    this._sortBlockComponent.setSortButtonsClickHandler(this._handleSortButtons);
   }
 
   _renderFilmsList(films) {
@@ -235,5 +237,13 @@ export default class FilmsList {
     if (this._filmPopupComponent !== null) {
       this._renderPopup(updatedFilm);
     }
+  }
+
+  // обработчик кнопок сортировки
+  _handleSortButtons(sortType) {
+    // отсортировать фильмы
+    // очистить список фильмов
+    // отрендендерить новый список фильмов
+    console.log(sortType);
   }
 }
