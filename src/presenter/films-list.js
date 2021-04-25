@@ -8,15 +8,16 @@ import ShowMoreButtonView from '../view/button-show-more.js';
 import FilmPopupView from '../view/film-popup.js';
 import FilmPresenter from '../presenter/film.js';
 import { render, remove, replace } from '../utils/render.js';
-import { updateItem } from '../utils/common.js';
-import { FILMS_PER_STEP, SORT_BY, EXTRA_FILMS_CARDS_COUNT } from '../const.js';
+import { updateItem, sortByDate, sortByRating } from '../utils/common.js';
+import { FILMS_PER_STEP, SORT_BY, SORT_TYPE, EXTRA_FILMS_CARDS_COUNT } from '../const.js';
 
 export default class FilmsList {
   constructor(filmsContainer) {
     this._filmsContainer = filmsContainer;
     this._films = null;
     this._comments = null;
-    this._renderedFilms = FILMS_PER_STEP;
+    this._renderedFilmsCount = FILMS_PER_STEP;
+    this._currentSortType = SORT_TYPE.default;
     this._filmPresentersList = new Map(); // для сохранения всех экземпляров карточек фильмов
 
     this._sortBlockComponent = new SortBlockView();
@@ -41,6 +42,7 @@ export default class FilmsList {
 
   init(films, comments) {
     this._films = films.slice();
+    this._initialFilms = films.slice(); // для сортировки по умолчанию
     this._comments = comments;
 
     if (this._films.length > 0) {
@@ -89,7 +91,7 @@ export default class FilmsList {
 
   _renderFilms(filmsArray) {
     // рендерим первые N фильмов
-    for (let i = 0; i < Math.min(filmsArray.length, FILMS_PER_STEP); i++) {
+    for (let i = 0; i < Math.min(filmsArray.length, this._renderedFilmsCount); i++) {
       this._renderFilm(this._filmsListContainer, filmsArray[i]);
     }
     // рендерим кнопку показа фильмов, если есть еще фильмы
@@ -157,7 +159,7 @@ export default class FilmsList {
   }
 
   //=====
-  // Методы удаления и очистки
+  // Методы удаления, сортировки и очистки
   //=====
 
   _removePopup() {
@@ -172,8 +174,22 @@ export default class FilmsList {
     this._filmPresentersList
       .forEach((_id, film) => film.destroy());
     this._filmPresentersList.clear();
-    this._renderedFilms = FILMS_PER_STEP;
+    this._renderedFilmsCount = FILMS_PER_STEP;
     remove(this._buttonShowMoreComponent);
+  }
+
+  _sortFilms(sortType) {
+    switch (sortType) {
+      case SORT_TYPE.date:
+        this._films.sort(sortByDate);
+        break;
+      case SORT_TYPE.rating:
+        this._films.sort(sortByRating);
+        break;
+      default:
+        this._films = this._initialFilms.slice();
+    }
+    this._currentSortType = sortType;
   }
 
   //=====
@@ -183,11 +199,10 @@ export default class FilmsList {
   // обработчик кнопки "Show More"
   _handleButtonShowMore() {
     this._films
-      .slice(this._renderedFilms, this._renderedFilms + FILMS_PER_STEP) // берем кусок массива от уже показанных, до + шаг
+      .slice(this._renderedFilmsCount, this._renderedFilmsCount + FILMS_PER_STEP) // берем кусок массива от уже показанных, до + шаг
       .forEach((film) => this._renderFilm(this._filmsListContainer, film));
-    this._renderedFilms += FILMS_PER_STEP; // прибавляем к счетчику показанные фильмы
-
-    if (this._renderedFilms >= this._films.length) {
+    this._renderedFilmsCount += FILMS_PER_STEP; // прибавляем к счетчику показанные фильмы
+    if (this._renderedFilmsCount >= this._films.length) {
       remove(this._buttonShowMoreComponent);
     }
   }
@@ -225,6 +240,7 @@ export default class FilmsList {
   _handleFilmChange(updatedFilm) {
     // заменяем в массиве данных измененный фильм
     this._films = updateItem(this._films, updatedFilm);
+    this._initialFilms = updateItem(this._initialFilms, updatedFilm); // дефолтный список тоже актуализируем
     // ищем все экземпляры отрендеренных карточек фильмов по id
     // * иногда карточки дублируются в дополнительных блоках
     this._filmPresentersList.forEach((id, component) => {
@@ -241,9 +257,8 @@ export default class FilmsList {
 
   // обработчик кнопок сортировки
   _handleSortButtons(sortType) {
-    // отсортировать фильмы
-    // очистить список фильмов
-    // отрендендерить новый список фильмов
-    console.log(sortType);
+    this._sortFilms(sortType);
+    this._clearFilmsList();
+    this._renderFilmsList(this._films);
   }
 }
