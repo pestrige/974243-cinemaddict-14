@@ -21,6 +21,11 @@ const BUTTON_TYPE = {
   watched: 'watched',
   favorite: 'favorite',
 };
+const SORT_TYPE = {
+  default: 'default',
+  date: 'date',
+  rating: 'rating',
+};
 
 export {
   MAX_COMMENTS,
@@ -31,5 +36,6 @@ export {
   DATE_RANGES,
   RENDER_POSITION,
   SORT_BY,
-  BUTTON_TYPE
+  BUTTON_TYPE,
+  SORT_TYPE
 };

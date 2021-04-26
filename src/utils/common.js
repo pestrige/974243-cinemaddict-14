@@ -1,3 +1,5 @@
+import dayjs from 'dayjs';
+
 // Генерируем рандомное целое число
 export const getRandomNumber = (a = 0, b = 0) => {
   const min = Math.ceil(Math.min(a, b));
@@ -31,4 +33,18 @@ export const updateItem = (itemsArray, updatedItem) => {
     newItemsArray.splice(index, 1, updatedItem);
   }
   return newItemsArray;
+};
+
+// Сортируем по дате
+export const sortByDate = (filmA, filmB) => {
+  const dateFilmA = filmA.filmInfo.release.date;
+  const dateFilmB = filmB.filmInfo.release.date;
+  return dayjs(dateFilmB).diff(dateFilmA);
+};
+
+// Сорируем по рейтингу
+export const sortByRating = (filmA, filmB) => {
+  const ratingFilmA = filmA.filmInfo.rating;
+  const ratingFilmB = filmB.filmInfo.rating;
+  return ratingFilmB - ratingFilmA;
 };
