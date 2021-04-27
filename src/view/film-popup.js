@@ -70,11 +70,12 @@ const createFilmPopup = ({filmInfo, userDetails, comments}, fullComments, state)
     const emojies = ['smile', 'sleeping', 'puke', 'angry'];
     return emojies.map((emoji) => {
       const isChecked = emoji === emojiType ? 'checked' : '';
-      return `<input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${emoji}" value="${emoji}" ${isChecked}>
+      return `
+<input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${emoji}" value="${emoji}" ${isChecked}>
 <label class="film-details__emoji-label" for="emoji-${emoji}">
   <img src="./images/emoji/${emoji}.png" width="30" height="30" alt="emoji">
 </label>`;
-    }).join('');
+    }).join('').trim();
   };
 
   // создаем попап
