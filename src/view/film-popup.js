@@ -68,17 +68,13 @@ const createFilmPopup = ({filmInfo, userDetails, comments}, fullComments, state)
   // создаем список Emoji
   const createEmojiList = (emojiType) => {
     const emojies = ['smile', 'sleeping', 'puke', 'angry'];
-    // создаем скрытые инпуты с нужными атрибутами
-    const emojiesList = emojies.map((emoji) => {
+    return emojies.map((emoji) => {
       const isChecked = emoji === emojiType ? 'checked' : '';
-      return `<input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${emoji}" value="${emoji}" ${isChecked}>`;
-    });
-    // добавляем лейбл и смайлик
-    return emojiesList.map((emoji, i) => {
-      return `${emoji}
-<label class="film-details__emoji-label" for="emoji-${emojies[i]}">
-  <img src="./images/emoji/${emojies[i]}.png" width="30" height="30" alt="emoji">
-</label>`;}).join('');
+      return `<input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${emoji}" value="${emoji}" ${isChecked}>
+<label class="film-details__emoji-label" for="emoji-${emoji}">
+  <img src="./images/emoji/${emoji}.png" width="30" height="30" alt="emoji">
+</label>`;
+    }).join('');
   };
 
   // создаем попап
