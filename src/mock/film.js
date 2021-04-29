@@ -47,6 +47,10 @@ const GENRES = [
   'Mystery',
   'Drama',
 ];
+const DURATION_RANGE = {
+  min: 60,
+  max: 120,
+};
 
 const generateFilmId = () => Math.random().toString();
 
@@ -73,6 +77,7 @@ const generateCommentsId = () => {
 // Генерируем моковые данные фильма
 const generateFilm = () => {
   const filmTitleId = getRandomNumber(0, FILM_TITLES.length - 1);
+  const duration = getRandomNumber(DURATION_RANGE.min, DURATION_RANGE.max);
 
   return {
     filmInfo: {
@@ -88,7 +93,7 @@ const generateFilm = () => {
         date: getRandomDate(),
         country: 'Finland',
       },
-      duration: 77,
+      duration,
       director: 'Tom Ford',
       writers: ['Takeshi Kitano', 'Quentin Tarantino', 'Christopher Nolan'],
       actors: ['Morgan Freeman', 'Leonardo DiCaprio', 'Robert De Niro', 'Brad Pitt'],
