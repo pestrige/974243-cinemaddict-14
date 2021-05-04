@@ -8,13 +8,13 @@ import ShowMoreButtonView from '../view/button-show-more.js';
 import FilmPresenter from '../presenter/film.js';
 import PopupPresenter from '../presenter/film-popup.js';
 import { render, remove } from '../utils/render.js';
-import { updateItem, sortByDate, sortByRating } from '../utils/common.js';
-import { FILMS_PER_STEP, SORT_BY, SORT_TYPE, EXTRA_FILMS_CARDS_COUNT } from '../const.js';
+import { sortByDate, sortByRating } from '../utils/common.js';
+import { FILMS_PER_STEP, SORT_BY, SORT_TYPE, EXTRA_FILMS_CARDS_COUNT, UPDATE_TYPE } from '../const.js';
 
 export default class FilmsList {
-  constructor(filmsContainer) {
+  constructor(filmsContainer, filmsModel) {
     this._filmsContainer = filmsContainer;
-    this._films = null;
+    this._filmsModel = filmsModel;
     this._comments = null;
     this._renderedFilmsCount = FILMS_PER_STEP;
     this._currentSortType = SORT_TYPE.default;
@@ -30,28 +30,43 @@ export default class FilmsList {
 
     this._handleButtonShowMore = this._handleButtonShowMore.bind(this);
     this._handleFilmsList = this._handleFilmsList.bind(this);
-    this._handleFilmChange = this._handleFilmChange.bind(this);
+    //this._handleFilmChange = this._handleFilmChange.bind(this);
+    this._handleViewAction = this._handleViewAction.bind(this);
+    this._handleModelEvent = this._handleModelEvent.bind(this);
     this._handleSortButtons = this._handleSortButtons.bind(this);
     this._clearPopupPresenter = this._clearPopupPresenter.bind(this);
 
+    this._filmsModel.addObserver(this._handleModelEvent);
     this._filmsListSection = this._filmsSectionComponent.getElement().querySelector('.films-list');
     this._filmsListContainer = this._filmsListSection.querySelector('.films-list__container');
 
   }
 
-  init(films, comments) {
-    this._films = films.slice();
-    this._initialFilms = films.slice(); // для сортировки по умолчанию
+  init(comments) {
     this._comments = comments;
 
-    if (this._films.length > 0) {
+    if (this._getFilms().length > 0) {
       this._renderSortBlock();
       this._renderFilmsContainer();
-      this._renderFilmsList(this._films);
+      this._renderFilmsList(this._getFilms());
     } else {
       this._renderFilmsContainer();
       this._renderNoFilmsBlock();
     }
+  }
+
+  // Получаем массив фильмов из модели с сортировкой
+  _getFilms() {
+    const films = this._filmsModel.getFilms().slice();
+    switch (this._currentSortType) {
+      case SORT_TYPE.date:
+        films.sort(sortByDate);
+        break;
+      case SORT_TYPE.rating:
+        films.sort(sortByRating);
+        break;
+    }
+    return films;
   }
 
   //=====
@@ -116,7 +131,8 @@ export default class FilmsList {
   }
 
   _renderFilm(container, film) {
-    const filmPresenter = new FilmPresenter(container, this._handleFilmChange);
+    //const filmPresenter = new FilmPresenter(container, this._handleFilmChange);
+    const filmPresenter = new FilmPresenter(container, this._handleViewAction);
     filmPresenter.init(film);
     this._filmPresentersList.set(filmPresenter, film.filmInfo.id);
   }
@@ -128,13 +144,28 @@ export default class FilmsList {
   }
 
   _renderPopup(container, film, callback) {
-    this._popupPresenter = new PopupPresenter(container, this._handleFilmChange, callback);
+    this._popupPresenter = new PopupPresenter(container, this._handleViewAction, callback);
     this._popupPresenter.init(film, this._comments);
     this._filmsSectionComponent.removeFilmCardClickHandler();
   }
 
+  _rerenderChangedFilm(updatedFilm) {
+    // ищем все экземпляры отрендеренных карточек фильмов по id
+    // так как иногда карточки дублируются в дополнительных блоках
+    this._filmPresentersList.forEach((id, component) => {
+      if (id === updatedFilm.filmInfo.id) {
+        // запускаем их перерисовку
+        component.init(updatedFilm);
+      }
+    });
+    // и перерисовку попапа, если он открыт
+    if (this._popupPresenter !== null) {
+      this._popupPresenter.init(updatedFilm, this._comments);
+    }
+  }
+
   //=====
-  // Методы очистки и сортировки
+  // Методы очистки
   //=====
 
   _clearFilmsList() {
@@ -150,31 +181,17 @@ export default class FilmsList {
     this._filmsSectionComponent.setFilmCardClickHandler(this._handleFilmsList);
   }
 
-  _sortFilms(sortType) {
-    switch (sortType) {
-      case SORT_TYPE.date:
-        this._films.sort(sortByDate);
-        break;
-      case SORT_TYPE.rating:
-        this._films.sort(sortByRating);
-        break;
-      default:
-        this._films = this._initialFilms.slice();
-    }
-    this._currentSortType = sortType;
-  }
-
   //=====
   // Обработчики
   //=====
 
   // обработчик кнопки "Show More"
   _handleButtonShowMore() {
-    this._films
+    this._getFilms()
       .slice(this._renderedFilmsCount, this._renderedFilmsCount + FILMS_PER_STEP) // берем кусок массива от уже показанных, до + шаг
       .forEach((film) => this._renderFilm(this._filmsListContainer, film));
     this._renderedFilmsCount += FILMS_PER_STEP; // прибавляем к счетчику показанные фильмы
-    if (this._renderedFilmsCount >= this._films.length) {
+    if (this._renderedFilmsCount >= this._getFilms().length) {
       remove(this._buttonShowMoreComponent);
     }
   }
@@ -191,34 +208,30 @@ export default class FilmsList {
     }
     // сопоставляем id в карточке фильма с id фильма в массиве
     const filmCardId = target.closest('.film-card').dataset.id;
-    const film = this._films.find(({filmInfo}) => filmCardId === filmInfo.id);
+    const film = this._getFilms().find(({filmInfo}) => filmCardId === filmInfo.id);
     // рендерим попап
     this._renderPopup(this._filmsContainer, film, this._clearPopupPresenter);
   }
 
-  // обработчик изменения данных фильма
-  _handleFilmChange(updatedFilm) {
-    // заменяем в массиве данных измененный фильм
-    this._films = updateItem(this._films, updatedFilm);
-    this._initialFilms = updateItem(this._initialFilms, updatedFilm); // дефолтный список тоже актуализируем
-    // ищем все экземпляры отрендеренных карточек фильмов по id
-    // * иногда карточки дублируются в дополнительных блоках
-    this._filmPresentersList.forEach((id, component) => {
-      if (id === updatedFilm.filmInfo.id) {
-        // запускаем их перерисовку
-        component.init(updatedFilm);
-      }
-    });
-    // и перерисовку попапа, если он открыт
-    if (this._popupPresenter !== null) {
-      this._popupPresenter.init(updatedFilm, this._comments);
-    }
-  }
-
   // обработчик кнопок сортировки
   _handleSortButtons(sortType) {
-    this._sortFilms(sortType);
+    this._currentSortType = sortType;
     this._clearFilmsList();
-    this._renderFilmsList(this._films);
+    this._renderFilmsList(this._getFilms());
+  }
+
+  // обработчик действий на карточке фильма
+  // вызывает обновление модели
+  _handleViewAction(updateType, updatedFilm) {
+    this._filmsModel.updateFilm(updateType, updatedFilm);
+  }
+
+  // обработчик изменений модели
+  // вызывает перерисовку компонентов по типу обновления
+  _handleModelEvent(updateType, data) {
+    switch (updateType) {
+      case UPDATE_TYPE.minor:
+        this._rerenderChangedFilm(data);
+    }
   }
 }

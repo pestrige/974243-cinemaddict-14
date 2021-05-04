@@ -1,7 +1,7 @@
 import AbstractFilmPresenter from './abstract-film.js';
 import FilmCardBlockView from '../view/film-card-block.js';
 import { render, remove, replace } from '../utils/render.js';
-//import { BUTTON_TYPE } from '../const.js';
+//import { UPDATE_TYPE } from '../const.js';
 
 export default class FilmPresenter extends AbstractFilmPresenter {
   constructor(container, handleFilmChange) {

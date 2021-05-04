@@ -26,6 +26,11 @@ const SORT_TYPE = {
   date: 'date',
   rating: 'rating',
 };
+const UPDATE_TYPE = {
+  patch: 'patch',
+  minor: 'minor',
+  major: 'major',
+};
 
 export {
   MAX_COMMENTS,
@@ -37,5 +42,6 @@ export {
   RENDER_POSITION,
   SORT_BY,
   BUTTON_TYPE,
-  SORT_TYPE
+  SORT_TYPE,
+  UPDATE_TYPE
 };
