@@ -24,11 +24,6 @@ export default class Films extends Observer {
     this._notify(updateType, update);
   }
 
-  addFilm(updateType, update) {
-    this._films = [update, ...this._films];
-    this._notify(updateType, update);
-  }
-
   deleteFilm(updateType, update) {
     this._films = [...this._films];
     const index = this._films.findIndex((film) => film.filmInfo.id === update.filmInfo.id);

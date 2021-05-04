@@ -142,8 +142,8 @@ const createFilmPopup = ({filmInfo, userDetails, comments}, fullComments, state)
         <input ${setChecked(isWatchlisted)} type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist">
         <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist" data-type="watchlist">Add to watchlist</label>
 
-        <input ${setChecked(isWatched)} type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched">
-        <label for="watched" class="film-details__control-label film-details__control-label--watched" data-type="watched">Already watched</label>
+        <input ${setChecked(isWatched)} type="checkbox" class="film-details__control-input visually-hidden" id="history" name="history">
+        <label for="history" class="film-details__control-label film-details__control-label--watched" data-type="history">Already watched</label>
 
         <input ${setChecked(isFavorite)} type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite">
         <label for="favorite" class="film-details__control-label film-details__control-label--favorite" data-type="favorite">Add to favorites</label>

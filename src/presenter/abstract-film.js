@@ -16,10 +16,10 @@ export default class AbstractFilm {
     // изменяем ключи на противоположное значение
     // в зависимости от типа кнопки
     switch (buttonType) {
-      case BUTTON_TYPE.watchlisted:
+      case BUTTON_TYPE.watchlist:
         changedUserDetails.isWatchlisted = !this._film.userDetails.isWatchlisted;
         break;
-      case BUTTON_TYPE.watched:
+      case BUTTON_TYPE.history:
         changedUserDetails.isWatched = !this._film.userDetails.isWatched;
         break;
       case BUTTON_TYPE.favorite:

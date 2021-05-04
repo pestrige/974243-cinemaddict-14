@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import { FILTER_TYPE } from '../const.js';
 
 // Генерируем рандомное целое число
 export const getRandomNumber = (a = 0, b = 0) => {
@@ -47,4 +48,23 @@ export const sortByRating = (filmA, filmB) => {
   const ratingFilmA = filmA.filmInfo.rating;
   const ratingFilmB = filmB.filmInfo.rating;
   return ratingFilmB - ratingFilmA;
+};
+
+// Получаем массив с количеством фильмов по ключу
+export const generateFilteredFilmsCounts = (films) => {
+  // фильтруем массив по переданному ключу
+  const getCount = (filter) => films.filter(({userDetails}) => userDetails[filter]).length;
+
+  const watchlistedCount = getCount('isWatchlisted');
+  const watchedCount = getCount('isWatched');
+  const favoriteCount = getCount('isFavorite');
+
+  return [watchlistedCount, watchedCount, favoriteCount];
+};
+
+export const filter = {
+  [FILTER_TYPE.all]: (films) => films.slice(),
+  [FILTER_TYPE.watchlist]: (films) => films.filter(({userDetails}) => userDetails['isWatchlisted']),
+  [FILTER_TYPE.history]: (films) => films.filter(({userDetails}) => userDetails['isWatched']),
+  [FILTER_TYPE.favorites]: (films) => films.filter(({userDetails}) => userDetails['isFavorite']),
 };

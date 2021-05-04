@@ -17,8 +17,8 @@ const SORT_BY = {
   comments: 'comments.length',
 };
 const BUTTON_TYPE = {
-  watchlisted: 'watchlist',
-  watched: 'watched',
+  watchlist: 'watchlist',
+  history: 'history',
   favorite: 'favorite',
 };
 const SORT_TYPE = {
@@ -30,6 +30,12 @@ const UPDATE_TYPE = {
   patch: 'patch',
   minor: 'minor',
   major: 'major',
+};
+const FILTER_TYPE = {
+  all: 'all',
+  watchlist: 'watchlist',
+  history: 'history',
+  favorites: 'favorites',
 };
 
 export {
@@ -43,5 +49,6 @@ export {
   SORT_BY,
   BUTTON_TYPE,
   SORT_TYPE,
-  UPDATE_TYPE
+  UPDATE_TYPE,
+  FILTER_TYPE
 };
