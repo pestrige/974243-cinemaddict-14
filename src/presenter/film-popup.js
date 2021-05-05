@@ -18,6 +18,7 @@ export default class FilmPopupPresenter extends AbstractFilmPresenter {
     this._handleEscKeyDown = this._handleEscKeyDown.bind(this);
     this._handleClosePopupButton = this._handleClosePopupButton.bind(this);
     this._handleDeleteCommentButton = this._handleDeleteCommentButton.bind(this);
+    this._handleCommentFormSubmit = this._handleCommentFormSubmit.bind(this);
   }
 
   init(film) {
@@ -38,6 +39,7 @@ export default class FilmPopupPresenter extends AbstractFilmPresenter {
     this._filmPopupComponent.setCloseButtonClickHandler(this._handleClosePopupButton);
     this._filmPopupComponent.setControlButtonsClick(this._handleControlButtons);
     this._filmPopupComponent.setCommentsListClickHandler(this._handleDeleteCommentButton);
+    this._filmPopupComponent.setCommentsFormKeydownHandler(this._handleCommentFormSubmit);
   }
 
   // обработчик Esc
@@ -63,5 +65,9 @@ export default class FilmPopupPresenter extends AbstractFilmPresenter {
   // обновляет модель комментариев
   _handleDeleteCommentButton(commentId, film) {
     this._commentsModel.deleteComment(UPDATE_TYPE.minor, commentId, film);
+  }
+
+  _handleCommentFormSubmit(text, emoji, film) {
+    this._commentsModel.createComment(UPDATE_TYPE.minor, text, emoji, film);
   }
 }

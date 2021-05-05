@@ -1,3 +1,4 @@
+import { generateComment } from '../mock/comment.js';
 import Observer from '../utils/observer.js';
 
 export default class Comments extends Observer {
@@ -14,9 +15,11 @@ export default class Comments extends Observer {
     return this._comments;
   }
 
-  addComment(updateType, newComment) {
-    this._comments = [newComment, ...this._comments];
-    this._notify(updateType, newComment);
+  createComment(updateType, text, emoji, film) {
+    const newComment = generateComment(text, emoji, {newDate: true});
+    this._comments = [...this._comments, newComment];
+    const commentIndex = this._comments.length - 1;
+    this._notify(updateType, film, commentIndex);
   }
 
   deleteComment(updateType, deletedCommentId, film) {

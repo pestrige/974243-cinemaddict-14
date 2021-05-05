@@ -14,7 +14,7 @@ import { FILMS_CARDS_COUNT, MAX_COMMENTS } from './const.js';
 // создаем моковые данные
 // =====
 const films = new Array(FILMS_CARDS_COUNT).fill().map(generateFilm);
-const comments = new Array(MAX_COMMENTS).fill().map(generateComment);
+const comments = new Array(MAX_COMMENTS).fill().map(() => generateComment());
 
 // Создаем экземпляры моделей
 const filmsModel = new FilmsModel();

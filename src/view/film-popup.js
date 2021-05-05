@@ -1,5 +1,6 @@
 import SmartView from './abstract-smart.js';
 import { humanizeDate, humanizeFullDate, humanizeDuration } from '../utils/dates.js';
+import { EMOJIES } from '../const.js';
 
 // в функцию создания попапа передаем
 // объект с данными по фильму, массив комментариев и состояние
@@ -23,7 +24,7 @@ const createFilmPopup = ({filmInfo, userDetails, comments}, fullComments, state)
     isWatched,
     isFavorite,
   } = userDetails;
-  const { emojiType } = state;
+  const { emojiType, textComment } = state;
 
   // создаем список жанров из массива
   const createGenresList = (genres) => {
@@ -67,7 +68,7 @@ const createFilmPopup = ({filmInfo, userDetails, comments}, fullComments, state)
 
   // создаем список Emoji
   const createEmojiList = (emojiType) => {
-    const emojies = ['smile', 'sleeping', 'puke', 'angry'];
+    const emojies = Object.values(EMOJIES);
     return emojies.map((emoji) => {
       const isChecked = emoji === emojiType ? 'checked' : '';
       return `
@@ -160,7 +161,7 @@ const createFilmPopup = ({filmInfo, userDetails, comments}, fullComments, state)
           <div class="film-details__add-emoji-label">${createEmojiImage(emojiType)}</div>
 
           <label class="film-details__comment-label">
-            <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
+            <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${textComment ? textComment : ''}</textarea>
           </label>
 
           <div class="film-details__emoji-list">${createEmojiList(emojiType)}</div>
@@ -183,7 +184,8 @@ export default class FilmPopup extends SmartView {
     this._controlButtonsClickHandler = this._controlButtonsClickHandler.bind(this);
     this._emojiListClickHandler = this._emojiListClickHandler.bind(this);
     this._commentsListClickHandler = this._commentsListClickHandler.bind(this);
-    this._setEmojiListClick();
+    this._commentsFormKeydownHandler = this._commentsFormKeydownHandler.bind(this);
+    this._setEmojiListClickHandler();
   }
 
   getTemplate() {
@@ -191,10 +193,11 @@ export default class FilmPopup extends SmartView {
   }
 
   restoreHandlers() {
-    this._setEmojiListClick();
+    this._setEmojiListClickHandler();
     this.setCloseButtonClickHandler(this._callback.closeButtonClick);
     this.setControlButtonsClick(this._callback.buttonsClick);
     this.setCommentsListClickHandler(this._callback.deleteButtonClick);
+    this.setCommentsFormKeydownHandler(this._callback.commentsFormKeydown);
   }
 
   _closeButtonClickHandler(evt) {
@@ -217,8 +220,12 @@ export default class FilmPopup extends SmartView {
     if (!inputValue) {
       return;
     }
+    const commentText = evt.target
+      .closest('.film-details__new-comment')
+      .querySelector('.film-details__comment-input')
+      .value;
     evt.preventDefault();
-    this.updateState({emojiType: inputValue});
+    this.updateState({emojiType: inputValue, textComment: commentText});
   }
 
   _commentsListClickHandler(evt) {
@@ -229,6 +236,22 @@ export default class FilmPopup extends SmartView {
     evt.preventDefault();
     const deletedCommentId = evt.target.closest(`.${this._commentContainerClass}`).dataset.id;
     this._callback.deleteButtonClick(deletedCommentId, this._film);
+  }
+
+  _commentsFormKeydownHandler(evt) {
+    const isSubmit = evt.key === 'Enter' && (evt.metaKey || evt.ctrlKey);
+    if (!isSubmit) {
+      return;
+    }
+
+    const commentText = evt.target.value.trim();
+    if (!commentText) {
+      return;
+    }
+    if (!this._state.emojiType) {
+      this.updateState({emojiType: EMOJIES.smile});
+    }
+    this._callback.commentsFormKeydown(commentText, this._state.emojiType, this._film);
   }
 
   setCloseButtonClickHandler(callback) {
@@ -252,7 +275,14 @@ export default class FilmPopup extends SmartView {
       .addEventListener('click', this._commentsListClickHandler);
   }
 
-  _setEmojiListClick() {
+  setCommentsFormKeydownHandler(callback) {
+    this._callback.commentsFormKeydown = callback;
+    this.getElement()
+      .querySelector('.film-details__comment-input')
+      .addEventListener('keydown', this._commentsFormKeydownHandler);
+  }
+
+  _setEmojiListClickHandler() {
     this.getElement()
       .querySelector('.film-details__emoji-list')
       .addEventListener('click', this._emojiListClickHandler);

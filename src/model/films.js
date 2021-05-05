@@ -27,7 +27,11 @@ export default class Films extends Observer {
   deleteComment(updateType, film, commentIndex) {
     const {comments} = film;
     const index = comments.findIndex((comment) => comment === commentIndex);
-    comments.splice(index, 1);
+    if (index !== -1) {
+      comments.splice(index, 1);
+    } else {
+      comments.push(commentIndex);
+    }
     const updatedFilm = {...film, comments};
     this.updateFilm(updateType, updatedFilm);
   }
