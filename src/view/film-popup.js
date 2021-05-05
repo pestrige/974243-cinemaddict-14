@@ -1,6 +1,7 @@
 import SmartView from './abstract-smart.js';
 import { humanizeDate, humanizeFullDate, humanizeDuration } from '../utils/dates.js';
 import { EMOJIES } from '../const.js';
+import he from 'he';
 
 // в функцию создания попапа передаем
 // объект с данными по фильму, массив комментариев и состояние
@@ -48,7 +49,7 @@ const createFilmPopup = ({filmInfo, userDetails, comments}, fullComments, state)
         <img src="./images/emoji/${emotion}.png" width="55" height="55" alt="emoji-${emotion}">
       </span>
       <div>
-        <p class="film-details__comment-text">${comment}</p>
+        <p class="film-details__comment-text">${he.encode(comment)}</p>
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${author}</span>
           <span class="film-details__comment-day">${humanizeFullDate(date)}</span>
@@ -161,7 +162,7 @@ const createFilmPopup = ({filmInfo, userDetails, comments}, fullComments, state)
           <div class="film-details__add-emoji-label">${createEmojiImage(emojiType)}</div>
 
           <label class="film-details__comment-label">
-            <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${textComment ? textComment : ''}</textarea>
+            <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${textComment ? he.encode(textComment) : ''}</textarea>
           </label>
 
           <div class="film-details__emoji-list">${createEmojiList(emojiType)}</div>
