@@ -12,11 +12,12 @@ import { sortByDate, sortByRating, filter } from '../utils/common.js';
 import { FILMS_PER_STEP, SORT_BY, SORT_TYPE, EXTRA_FILMS_CARDS_COUNT, UPDATE_TYPE } from '../const.js';
 
 export default class FilmsList {
-  constructor(filmsContainer, filmsModel, filtersModel) {
+  constructor(filmsContainer, filmsModel, commentsModel, filtersModel) {
     this._filmsContainer = filmsContainer;
     this._filmsModel = filmsModel;
+    this._commentsModel = commentsModel;
     this._filtersModel = filtersModel;
-    this._comments = null;
+    //this._comments = null;
     this._renderedFilmsCount = FILMS_PER_STEP;
     this._currentSortType = SORT_TYPE.default;
     this._filmPresentersList = new Map(); // для сохранения всех экземпляров карточек фильмов
@@ -35,16 +36,15 @@ export default class FilmsList {
     this._handleFilmsList = this._handleFilmsList.bind(this);
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
+    this._handleCommentsModelEvent = this._handleCommentsModelEvent.bind(this);
     this._handleSortButtons = this._handleSortButtons.bind(this);
     this._clearPopupPresenter = this._clearPopupPresenter.bind(this);
-
-    this._filmsModel.addObserver(this._handleModelEvent);
-    this._filtersModel.addObserver(this._handleModelEvent);
   }
 
-  init(comments) {
-    this._comments = comments;
+  init() {
     this._renderFilmsBoard();
+    this._filmsModel.addObserver(this._handleModelEvent);
+    this._filtersModel.addObserver(this._handleModelEvent);
   }
 
   // Получаем массив отсортированных фильмов из модели
@@ -78,7 +78,7 @@ export default class FilmsList {
       this._renderNoFilmsBlock();
     }
     if (this._popupPresenter !== null) {
-      this._popupPresenter.init(update, this._comments);
+      this._popupPresenter.init(update);
     }
   }
 
@@ -168,9 +168,10 @@ export default class FilmsList {
   }
 
   _renderPopup(container, film, callback) {
-    this._popupPresenter = new PopupPresenter(container, this._handleViewAction, callback);
-    this._popupPresenter.init(film, this._comments);
+    this._popupPresenter = new PopupPresenter(container, this._commentsModel, this._handleViewAction, callback);
+    this._popupPresenter.init(film);
     this._filmsSectionComponent.removeFilmCardClickHandler();
+    this._commentsModel.addObserver(this._handleCommentsModelEvent);
   }
 
   //=====
@@ -200,6 +201,7 @@ export default class FilmsList {
   _clearPopupPresenter() {
     this._popupPresenter = null;
     this._filmsSectionComponent.setFilmCardClickHandler(this._handleFilmsList);
+    this._commentsModel.removeObserver(this._handleCommentsModelEvent);
   }
 
   _rerenderChangedFilm(updatedFilm) {
@@ -213,7 +215,7 @@ export default class FilmsList {
     });
     // и перерисовку попапа, если он открыт
     if (this._popupPresenter !== null) {
-      this._popupPresenter.init(updatedFilm, this._comments);
+      this._popupPresenter.init(updatedFilm);
     }
   }
 
@@ -276,6 +278,18 @@ export default class FilmsList {
       case UPDATE_TYPE.major:
         this._clearFilmsBoard({resetRenderedFilmsCount: true, resetSortType: true});
         this._renderFilmsBoard(data);
+        break;
+    }
+  }
+
+  // обработчик изменений модели комментариев
+  // при изменении комментариев запускает изменение модели фильмов,
+  // где хранятся индексы комментариев конкретного фильма,
+  // чтобы при удалении комментария в попапе перерисовались все фильмы
+  _handleCommentsModelEvent(updateType, updatedFilm, commentIndex) {
+    switch (updateType) {
+      case UPDATE_TYPE.minor:
+        this._filmsModel.deleteComment(updateType, updatedFilm, commentIndex);
         break;
     }
   }

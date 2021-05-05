@@ -1,6 +1,6 @@
-import {getRandomNumber, generateFloat } from '../utils/common.js';
+import { getRandomNumber, generateFloat } from '../utils/common.js';
 import { getRandomDate } from '../utils/dates.js';
-import { MAX_COMMENTS } from '../const.js';
+import { MAX_SHOWN_COMMENTS, MAX_COMMENTS } from '../const.js';
 
 const FILM_TITLES = [
   'Made For Each Other',
@@ -69,7 +69,7 @@ const generateGenres = () => {
 };
 
 const generateCommentsId = () => {
-  return new Array(getRandomNumber(0, MAX_COMMENTS))
+  return new Array(getRandomNumber(0, MAX_SHOWN_COMMENTS))
     .fill('')
     .map(() => getRandomNumber(0, MAX_COMMENTS - 1));
 };
