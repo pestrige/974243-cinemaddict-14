@@ -36,6 +36,9 @@ export const render = (container, element, place) => {
 // удаление компонента
 // =====
 export const remove = (component) => {
+  if (component === null) {
+    return;
+  }
   if (component instanceof AbstractView) {
     component.getElement().remove();
     component.removeElement();

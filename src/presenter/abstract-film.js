@@ -1,4 +1,4 @@
-import { BUTTON_TYPE } from '../const.js';
+import { BUTTON_TYPE, UPDATE_TYPE } from '../const.js';
 
 export default class AbstractFilm {
   constructor() {
@@ -16,10 +16,10 @@ export default class AbstractFilm {
     // изменяем ключи на противоположное значение
     // в зависимости от типа кнопки
     switch (buttonType) {
-      case BUTTON_TYPE.watchlisted:
+      case BUTTON_TYPE.watchlist:
         changedUserDetails.isWatchlisted = !this._film.userDetails.isWatchlisted;
         break;
-      case BUTTON_TYPE.watched:
+      case BUTTON_TYPE.history:
         changedUserDetails.isWatched = !this._film.userDetails.isWatched;
         break;
       case BUTTON_TYPE.favorite:
@@ -28,6 +28,6 @@ export default class AbstractFilm {
     }
 
     // и передаем объект с измененными данными фильма
-    this._changeData({...this._film, userDetails: changedUserDetails});
+    this._changeData(UPDATE_TYPE.minor, {...this._film, userDetails: changedUserDetails});
   }
 }

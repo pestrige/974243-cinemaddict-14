@@ -1,4 +1,5 @@
-const MAX_COMMENTS = 5;
+const MAX_COMMENTS = 50;
+const MAX_SHOWN_COMMENTS = 5;
 const MAX_DESCRIPTION_SIZE = 140;
 const FILMS_CARDS_COUNT = 20;
 const EXTRA_FILMS_CARDS_COUNT = 2;
@@ -7,6 +8,12 @@ const DATE_RANGES = {
   years: -50,
   months: 12,
   days: 31,
+};
+const EMOJIES = {
+  smile: 'smile',
+  sleeping: 'sleeping',
+  puke: 'puke',
+  angry: 'angry',
 };
 const RENDER_POSITION = {
   start: 'afterbegin',
@@ -17,8 +24,8 @@ const SORT_BY = {
   comments: 'comments.length',
 };
 const BUTTON_TYPE = {
-  watchlisted: 'watchlist',
-  watched: 'watched',
+  watchlist: 'watchlist',
+  history: 'history',
   favorite: 'favorite',
 };
 const SORT_TYPE = {
@@ -26,16 +33,31 @@ const SORT_TYPE = {
   date: 'date',
   rating: 'rating',
 };
+const UPDATE_TYPE = {
+  patch: 'patch',
+  minor: 'minor',
+  major: 'major',
+};
+const FILTER_TYPE = {
+  all: 'all',
+  watchlist: 'watchlist',
+  history: 'history',
+  favorites: 'favorites',
+};
 
 export {
   MAX_COMMENTS,
+  MAX_SHOWN_COMMENTS,
   MAX_DESCRIPTION_SIZE,
   FILMS_CARDS_COUNT,
   FILMS_PER_STEP,
   EXTRA_FILMS_CARDS_COUNT,
   DATE_RANGES,
+  EMOJIES,
   RENDER_POSITION,
   SORT_BY,
   BUTTON_TYPE,
-  SORT_TYPE
+  SORT_TYPE,
+  UPDATE_TYPE,
+  FILTER_TYPE
 };

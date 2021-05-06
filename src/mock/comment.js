@@ -17,12 +17,12 @@ const COMMENT_AUTHORS = [
   'Ted Kaczynski',
 ];
 
-export const gererateComment = () => {
+export const generateComment = (text, emoji, {newDate = false} = {}) => {
   return {
     id: Math.random(),
     author: getRandomArrayElement(COMMENT_AUTHORS),
-    comment: getRandomArrayElement(COMMENT_TEXTS),
-    date: getRandomDate(),
-    emotion: getRandomArrayElement(EMOTIONS),
+    comment: text ? text : getRandomArrayElement(COMMENT_TEXTS),
+    date: newDate ? new Date() : getRandomDate(),
+    emotion: emoji ? emoji : getRandomArrayElement(EMOTIONS),
   };
 };

@@ -42,7 +42,7 @@ const createFilmCardBlock = ({filmInfo, userDetails, comments}) => {
   <a class="film-card__comments">${comments.length} comments</a>
   <div class="film-card__controls">
     <button class="${userDetailsActiveClass(isWatchlisted)} film-card__controls-item button film-card__controls-item--add-to-watchlist" type="button" data-type="watchlist">Add to watchlist</button>
-    <button class="${userDetailsActiveClass(isWatched)} film-card__controls-item button film-card__controls-item--mark-as-watched" type="button" data-type="watched">Mark as watched</button>
+    <button class="${userDetailsActiveClass(isWatched)} film-card__controls-item button film-card__controls-item--mark-as-watched" type="button" data-type="history">Mark as watched</button>
     <button class="${userDetailsActiveClass(isFavorite)} film-card__controls-item button film-card__controls-item--favorite" type="button" data-type="favorite">Mark as favorite</button>
   </div>
 </article>`;
