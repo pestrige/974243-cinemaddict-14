@@ -34,7 +34,7 @@ export default class FilmsList {
     this._noFilmsBlockComponent = new NoFilmsBlockView();
     this._buttonShowMoreComponent = null;
     this._popupPresenter = null;
-    //this._statsPresenter = null;
+    this._statsPresenter = null;
 
     this._handleButtonShowMore = this._handleButtonShowMore.bind(this);
     this._handleFilmsList = this._handleFilmsList.bind(this);

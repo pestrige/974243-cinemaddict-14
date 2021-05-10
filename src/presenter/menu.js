@@ -34,8 +34,8 @@ export default class FilterPresenter {
     return generateFilteredFilmsCounts(films);
   }
 
-  _handleFilterTypeChange(LinkType) {
-    this._menuModel.setState(UPDATE_TYPE.major, LinkType);
+  _handleFilterTypeChange(linkType) {
+    this._menuModel.setState(UPDATE_TYPE.major, linkType);
   }
 
   _handleModelEvent() {

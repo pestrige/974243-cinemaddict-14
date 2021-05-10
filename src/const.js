@@ -39,7 +39,7 @@ const UPDATE_TYPE = {
   major: 'major',
 };
 const FILTER_TYPE = {
-  none: undefined,
+  none: null,
   all: 'all',
   watchlist: 'watchlist',
   history: 'history',
