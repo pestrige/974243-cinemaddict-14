@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { FILTER_TYPE, RANG } from '../const.js';
+import { FILTER_TYPE, RANG, RANG_LEVELS } from '../const.js';
 
 // Генерируем рандомное целое число
 export const getRandomNumber = (a = 0, b = 0) => {
@@ -73,14 +73,29 @@ export const filter = {
 
 // Получаем ранг пользователя по просмотренным фильмам
 export const getRang = (filmsCount) => {
+  const { novice, fan } = RANG_LEVELS;
   if (!filmsCount) {
     return false;
   }
-  if (filmsCount > 0 && filmsCount <= 10) {
+  if (filmsCount >= novice.min && filmsCount <= novice.max) {
     return RANG.novice;
-  } else if (filmsCount > 10 && filmsCount <= 20) {
+  } else if (filmsCount >= fan.min && filmsCount <= fan.max) {
     return RANG.fan;
   } else {
     return RANG.movieBuff;
   }
+};
+
+// находим жанры и их количество, сортируем
+export const getSortedGenres = (films) => {
+  const genresMap = new Map();
+  films.forEach(({filmInfo}) => {
+    filmInfo.genres.forEach((genre) => {
+      const counter = genresMap.get(genre) + 1 || 1;
+      genresMap.set(genre, counter);
+    });
+  });
+  return [...genresMap.entries()].sort((a, b) => b[1] - a[1]);
+  // return  [...genresMap.entries()]
+  //   .reduce((accum, current) => current[1] > accum[1] ? current : accum)[0];
 };

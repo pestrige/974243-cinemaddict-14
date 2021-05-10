@@ -1,36 +1,9 @@
 import SmartView from './abstract-smart.js';
 import { humanizeDuration, isDateInRange, getDateFrom } from '../utils/dates.js';
-import { getRang } from '../utils/common.js';
+import { getRang, getSortedGenres } from '../utils/common.js';
+import { renderChart } from '../utils/statistic.js';
 import { DATE_PERIOD } from '../const.js';
 
-// находим топ жанр из просмотренных фильмов за период
-const findTopGenre = (films) => {
-  const genresMap = new Map();
-  films.forEach(({filmInfo}) => {
-    filmInfo.genres.forEach((genre) => {
-      const counter = genresMap.get(genre) + 1 || 1;
-      genresMap.set(genre, counter);
-    });
-  });
-  return  [...genresMap.entries()]
-    .reduce((accum, current) => current[1] > accum[1] ? current : accum)[0];
-};
-
-// получаем массив фильмов за период
-const getFilmsForPeriod = (period, films) => {
-  const filmsForPeriod = new Array();
-  if (period === DATE_PERIOD.all) {
-    return films.slice();
-  }
-  const dateFrom = getDateFrom(period);
-  films.forEach((film) => {
-    const filmWatchedDate = film.userDetails.date;
-    if (isDateInRange(filmWatchedDate, dateFrom)) {
-      filmsForPeriod.push(film);
-    }
-  });
-  return filmsForPeriod;
-};
 
 // вычисляем данные для статистики
 const setStats = (films) => {
@@ -44,7 +17,7 @@ const setStats = (films) => {
   }
 
   const totalDuration = films.reduce((duration, {filmInfo}) => duration + filmInfo.duration, 0);
-  const topGenre = findTopGenre(films);
+  const topGenre = getSortedGenres(films)[0][0];
   return {
     watchedFilmsCount,
     totalDuration: humanizeDuration(totalDuration, {asObject: true}),
@@ -65,9 +38,8 @@ const humanizePeriod = (period) => {
 
 // создаем HTML-разметку блока
 const createStatsBlock = (state, films) => {
-  const { period } = state;
+  const { period, filmsForPeriod} = state;
   const filmsCount = films.length;
-  const filmsForPeriod = getFilmsForPeriod(period, films);
   const {watchedFilmsCount, totalDuration, topGenre} = setStats(filmsForPeriod);
   const setChecked = (value) => period === value ? 'checked' : '';
 
@@ -126,9 +98,10 @@ export default class Stats extends SmartView {
   constructor(films) {
     super();
     this._films = films;
-    this._state = { period: DATE_PERIOD.all};
+    this._state = { period: DATE_PERIOD.all, filmsForPeriod: this._films.slice()};
     this._dateFiltersClickHandler = this._dateFiltersClickHandler.bind(this);
     this._setDateFiltersClickHandler();
+    this._setChart();
   }
 
   getTemplate() {
@@ -137,6 +110,27 @@ export default class Stats extends SmartView {
 
   restoreHandlers() {
     this._setDateFiltersClickHandler();
+    this._setChart();
+  }
+
+  _setChart() {
+    const statisticCtx = this.getElement().querySelector('.statistic__chart');
+    renderChart(statisticCtx, this._state);
+  }
+
+  _getFilmsForPeriod(period, films) {
+    const filmsForPeriod = new Array();
+    if (period === DATE_PERIOD.all) {
+      return films.slice();
+    }
+    const dateFrom = getDateFrom(period);
+    films.forEach((film) => {
+      const filmWatchedDate = film.userDetails.date;
+      if (isDateInRange(filmWatchedDate, dateFrom)) {
+        filmsForPeriod.push(film);
+      }
+    });
+    return filmsForPeriod;
   }
 
   _dateFiltersClickHandler(evt) {
@@ -145,7 +139,10 @@ export default class Stats extends SmartView {
     if (!isInput(target)) {
       return;
     }
-    this.updateState({period: target.value});
+    this.updateState({
+      period: target.value,
+      filmsForPeriod: this._getFilmsForPeriod(target.value, this._films),
+    });
   }
 
   _setDateFiltersClickHandler() {

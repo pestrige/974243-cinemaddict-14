@@ -63,6 +63,17 @@ const RANG = {
   movieBuff: 'Movie Buff',
 };
 
+const RANG_LEVELS = {
+  novice: {
+    min: 1,
+    max: 10,
+  },
+  fan: {
+    min: 11,
+    max: 20,
+  },
+};
+
 export {
   MAX_COMMENTS,
   MAX_SHOWN_COMMENTS,
@@ -80,5 +91,6 @@ export {
   FILTER_TYPE,
   DAYS_WEEK,
   DATE_PERIOD,
-  RANG
+  RANG,
+  RANG_LEVELS
 };
