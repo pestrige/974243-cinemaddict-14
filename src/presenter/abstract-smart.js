@@ -1,6 +1,6 @@
 import { BUTTON_TYPE, UPDATE_TYPE } from '../const.js';
 
-export default class AbstractFilm {
+export default class AbstractSmart {
   constructor() {
     this._changeData = null;
   }

@@ -1,4 +1,5 @@
 import AbstractView from '../view/abstract.js';
+import ProfileBlockView from '../view/profile-block.js';
 import SortBlockView from '../view/sort-block.js';
 import FilmsSectionView from '../view/films-section.js';
 import FilmsByRatingView from '../view/films-by-rating.js';
@@ -7,21 +8,23 @@ import NoFilmsBlockView from '../view/no-films-block.js';
 import ShowMoreButtonView from '../view/button-show-more.js';
 import FilmPresenter from '../presenter/film.js';
 import PopupPresenter from '../presenter/film-popup.js';
+import StatsPresenter from '../presenter/stats.js';
 import { render, remove } from '../utils/render.js';
 import { sortByDate, sortByRating, filter } from '../utils/common.js';
-import { FILMS_PER_STEP, SORT_BY, SORT_TYPE, EXTRA_FILMS_CARDS_COUNT, UPDATE_TYPE } from '../const.js';
+import { FILMS_PER_STEP, SORT_BY, SORT_TYPE, EXTRA_FILMS_CARDS_COUNT, UPDATE_TYPE, FILTER_TYPE } from '../const.js';
 
 export default class FilmsList {
-  constructor(filmsContainer, filmsModel, commentsModel, filtersModel) {
+  constructor(filmsContainer, headerContainer, filmsModel, commentsModel, menuModel) {
     this._filmsContainer = filmsContainer;
+    this._headerContainer = headerContainer;
     this._filmsModel = filmsModel;
     this._commentsModel = commentsModel;
-    this._filtersModel = filtersModel;
-    //this._comments = null;
+    this._menuModel = menuModel;
     this._renderedFilmsCount = FILMS_PER_STEP;
     this._currentSortType = SORT_TYPE.default;
     this._filmPresentersList = new Map(); // для сохранения всех экземпляров карточек фильмов
 
+    this._profileBlockComponent = null;
     this._sortBlockComponent = null;
     this._filmsSectionComponent = null;
     this._filmsListSection = null;
@@ -31,6 +34,7 @@ export default class FilmsList {
     this._noFilmsBlockComponent = new NoFilmsBlockView();
     this._buttonShowMoreComponent = null;
     this._popupPresenter = null;
+    //this._statsPresenter = null;
 
     this._handleButtonShowMore = this._handleButtonShowMore.bind(this);
     this._handleFilmsList = this._handleFilmsList.bind(this);
@@ -44,13 +48,13 @@ export default class FilmsList {
   init() {
     this._renderFilmsBoard();
     this._filmsModel.addObserver(this._handleModelEvent);
-    this._filtersModel.addObserver(this._handleModelEvent);
+    this._menuModel.addObserver(this._handleModelEvent);
   }
 
   // Получаем массив отсортированных фильмов из модели
   _getFilms() {
     const films = this._filmsModel.getFilms().slice();
-    const filterType = this._filtersModel.getFilter();
+    const filterType = this._menuModel.getActiveFilter();
     const filteredFilms = filter[filterType](films);
     switch (this._currentSortType) {
       case SORT_TYPE.date:
@@ -63,13 +67,24 @@ export default class FilmsList {
     return filteredFilms;
   }
 
+  //получаем массив просмотренных фильмов
+  _getWatchedFilms() {
+    const films = this._filmsModel.getFilms().slice();
+    return filter[FILTER_TYPE.history](films);
+  }
+
   //=====
   // Методы рендера
   //=====
 
   // основной метод отрисовки фильтров, сортировки и фильмов
   _renderFilmsBoard(update = null) {
+    if (this._statsPresenter) {
+      this._statsPresenter.destroy();
+      this._statsPresenter = null;
+    }
     if (this._getFilms().length > 0) {
+      this._renderProfileBlock();
       this._renderSortBlock();
       this._renderFilmsContainer();
       this._renderFilmsList(this._getFilms());
@@ -80,6 +95,11 @@ export default class FilmsList {
     if (this._popupPresenter !== null) {
       this._popupPresenter.init(update);
     }
+  }
+
+  _renderProfileBlock() {
+    this._profileBlockComponent = new ProfileBlockView(this._getWatchedFilms());
+    render(this._headerContainer, this._profileBlockComponent);
   }
 
   _renderSortBlock() {
@@ -174,6 +194,11 @@ export default class FilmsList {
     this._commentsModel.addObserver(this._handleCommentsModelEvent);
   }
 
+  _renderStats() {
+    this._statsPresenter = new StatsPresenter(this._filmsContainer, this._filmsModel);
+    this._statsPresenter.init();
+  }
+
   //=====
   // Методы очистки и перерисовки
   //=====
@@ -183,6 +208,7 @@ export default class FilmsList {
     this._filmPresentersList
       .forEach((_id, film) => film.destroy());
     this._filmPresentersList.clear();
+    remove(this._profileBlockComponent);
     remove(this._buttonShowMoreComponent);
     remove(this._sortBlockComponent);
     remove(this._filmsSectionComponent);
@@ -266,7 +292,13 @@ export default class FilmsList {
 
   // обработчик изменений модели
   // вызывает перерисовку компонентов по типу обновления
-  _handleModelEvent(updateType, data) {
+  _handleModelEvent(updateType, data, statsFlag) {
+    if (statsFlag) {
+      this._clearFilmsBoard();
+      this._renderStats();
+      return;
+    }
+
     switch (updateType) {
       case UPDATE_TYPE.patch:
         this._rerenderChangedFilm(data);

@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { FILTER_TYPE } from '../const.js';
+import { FILTER_TYPE, RANG } from '../const.js';
 
 // Генерируем рандомное целое число
 export const getRandomNumber = (a = 0, b = 0) => {
@@ -62,9 +62,25 @@ export const generateFilteredFilmsCounts = (films) => {
   return [watchlistedCount, watchedCount, favoriteCount];
 };
 
+// Список отфиотрованных массивов фильмов
 export const filter = {
+  [FILTER_TYPE.none]: (films) => films.slice(),
   [FILTER_TYPE.all]: (films) => films.slice(),
   [FILTER_TYPE.watchlist]: (films) => films.filter(({userDetails}) => userDetails['isWatchlisted']),
   [FILTER_TYPE.history]: (films) => films.filter(({userDetails}) => userDetails['isWatched']),
   [FILTER_TYPE.favorites]: (films) => films.filter(({userDetails}) => userDetails['isFavorite']),
+};
+
+// Получаем ранг пользователя по просмотренным фильмам
+export const getRang = (filmsCount) => {
+  if (!filmsCount) {
+    return false;
+  }
+  if (filmsCount > 0 && filmsCount <= 10) {
+    return RANG.novice;
+  } else if (filmsCount > 10 && filmsCount <= 20) {
+    return RANG.fan;
+  } else {
+    return RANG.movieBuff;
+  }
 };

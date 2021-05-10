@@ -5,7 +5,7 @@ const FILMS_CARDS_COUNT = 20;
 const EXTRA_FILMS_CARDS_COUNT = 2;
 const FILMS_PER_STEP = 5;
 const DATE_RANGES = {
-  years: -50,
+  years: -5,
   months: 12,
   days: 31,
 };
@@ -39,10 +39,28 @@ const UPDATE_TYPE = {
   major: 'major',
 };
 const FILTER_TYPE = {
+  none: undefined,
   all: 'all',
   watchlist: 'watchlist',
   history: 'history',
   favorites: 'favorites',
+  stats: 'stats',
+};
+
+const DAYS_WEEK = 6;
+
+const DATE_PERIOD = {
+  all: 'all-time',
+  today: 'today',
+  week: 'week',
+  month: 'month',
+  year: 'year',
+};
+
+const RANG = {
+  novice: 'Novice',
+  fan: 'Fan',
+  movieBuff: 'Movie Buff',
 };
 
 export {
@@ -59,5 +77,8 @@ export {
   BUTTON_TYPE,
   SORT_TYPE,
   UPDATE_TYPE,
-  FILTER_TYPE
+  FILTER_TYPE,
+  DAYS_WEEK,
+  DATE_PERIOD,
+  RANG
 };
