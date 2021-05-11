@@ -1,9 +1,9 @@
-import AbstractFilmPresenter from './abstract-film.js';
+import AbstractSmartPresenter from './abstract-smart.js';
 import FilmPopupView from '../view/film-popup.js';
 import { render, remove } from '../utils/render.js';
 import { UPDATE_TYPE } from '../const.js';
 
-export default class FilmPopupPresenter extends AbstractFilmPresenter {
+export default class FilmPopupPresenter extends AbstractSmartPresenter {
   constructor(container, commentsModel, handleFilmChange, callback) {
     super();
     this._commentsModel = commentsModel;

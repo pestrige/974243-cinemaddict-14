@@ -102,7 +102,7 @@ const generateFilm = () => {
       isWatchlisted: Boolean(getRandomNumber(0, 1)),
       isWatched: Boolean(getRandomNumber(0, 1)),
       isFavorite: Boolean(getRandomNumber(0, 1)),
-      date: '2019-05-11T00:00:00.000Z',
+      date: getRandomDate(),
     },
     comments: generateCommentsId(),
   };

@@ -1,9 +1,9 @@
-import AbstractFilmPresenter from './abstract-film.js';
+import AbstractSmartPresenter from './abstract-smart.js';
 import FilmCardBlockView from '../view/film-card-block.js';
 import { render, remove, replace } from '../utils/render.js';
 //import { UPDATE_TYPE } from '../const.js';
 
-export default class FilmPresenter extends AbstractFilmPresenter {
+export default class FilmPresenter extends AbstractSmartPresenter {
   constructor(container, handleFilmChange) {
     super();
     this._filmContainer = container;

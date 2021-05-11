@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { FILTER_TYPE } from '../const.js';
+import { FILTER_TYPE, RANG, RANG_LEVELS } from '../const.js';
 
 // Генерируем рандомное целое число
 export const getRandomNumber = (a = 0, b = 0) => {
@@ -62,9 +62,40 @@ export const generateFilteredFilmsCounts = (films) => {
   return [watchlistedCount, watchedCount, favoriteCount];
 };
 
+// Список отфиотрованных массивов фильмов
 export const filter = {
+  [FILTER_TYPE.none]: (films) => films.slice(),
   [FILTER_TYPE.all]: (films) => films.slice(),
   [FILTER_TYPE.watchlist]: (films) => films.filter(({userDetails}) => userDetails['isWatchlisted']),
   [FILTER_TYPE.history]: (films) => films.filter(({userDetails}) => userDetails['isWatched']),
   [FILTER_TYPE.favorites]: (films) => films.filter(({userDetails}) => userDetails['isFavorite']),
+};
+
+// Получаем ранг пользователя по просмотренным фильмам
+export const getRang = (filmsCount) => {
+  const { novice, fan } = RANG_LEVELS;
+  if (!filmsCount) {
+    return false;
+  }
+  if (filmsCount >= novice.min && filmsCount <= novice.max) {
+    return RANG.novice;
+  } else if (filmsCount >= fan.min && filmsCount <= fan.max) {
+    return RANG.fan;
+  } else {
+    return RANG.movieBuff;
+  }
+};
+
+// находим жанры и их количество, сортируем
+export const getSortedGenres = (films) => {
+  const genresMap = new Map();
+  films.forEach(({filmInfo}) => {
+    filmInfo.genres.forEach((genre) => {
+      const counter = genresMap.get(genre) + 1 || 1;
+      genresMap.set(genre, counter);
+    });
+  });
+  return [...genresMap.entries()].sort((a, b) => b[1] - a[1]);
+  // return  [...genresMap.entries()]
+  //   .reduce((accum, current) => current[1] > accum[1] ? current : accum)[0];
 };
