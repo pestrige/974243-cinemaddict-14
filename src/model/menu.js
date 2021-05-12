@@ -1,7 +1,10 @@
-import Observer from '../utils/observer.js';
+//import Observer from '../utils/observer.js';
+import Api from './api.js';
+import { observerMixin } from '../utils/observer.js';
+
 import { FILTER_TYPE } from '../const.js';
 
-export default class Menu extends Observer {
+export default class Menu extends observerMixin(Api) {
   constructor() {
     super();
     this._activeFilter = FILTER_TYPE.all;

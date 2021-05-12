@@ -38,12 +38,12 @@ const createFilmPopup = ({filmInfo, userDetails, comments}, fullComments, state)
   // ставим аттрибут checked если есть такой ключ у фильма
   const setChecked = (isKey) => isKey ? 'checked' : '';
 
-  // находим комментарии по id и индексу в массиве
-  const validComments = comments.map((comment) => fullComments.find((_item, id) => comment == id));
+  // // находим комментарии по id и индексу в массиве
+  // const validComments = comments.map((comment) => fullComments.find((_item, id) => comment == id));
 
   // создаем список комментариев из массива
   const createComments = () => {
-    return validComments.map(({id, author, comment, date, emotion}) => {
+    return fullComments.map(({id, author, comment, date, emotion}) => {
       return `<li class="film-details__comment" data-id="${id}">
       <span class="film-details__comment-emoji">
         <img src="./images/emoji/${emotion}.png" width="55" height="55" alt="emoji-${emotion}">
