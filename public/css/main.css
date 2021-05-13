@@ -569,7 +569,19 @@ button {
   overflow-y: auto;
 }
 
+.film-details__overlay {
+  position: fixed;
+  height: 100vh;
+  top: 0;
+  right: 0;
+  left: -10%;
+  background-color: rgba(33, 33, 38, 0.2);
+  overflow-y: auto;
+}
+
 .film-details__inner {
+  position: relative;
+  z-index: 2;
   background-color: #212126;
 }
 

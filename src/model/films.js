@@ -71,4 +71,34 @@ export default class Films extends observerMixin(Api) {
       return adaptedFilm;
     });
   }
+
+  adaptToServer({filmInfo, userDetails, comments}) {
+    return {
+      'id': filmInfo.id,
+      'comments': comments,
+      'film_info': {
+        'title': filmInfo.title,
+        'alternative_title': filmInfo.alternativeTitle,
+        'total_rating': filmInfo.rating,
+        'poster': filmInfo.poster,
+        'age_rating': filmInfo.ageRating,
+        'director': filmInfo.director,
+        'writers': filmInfo.writers,
+        'actors': filmInfo.actors,
+        'release': {
+          'date': filmInfo.release.date.toISOString(),
+          'release_country': filmInfo.release.country,
+        },
+        'runtime': filmInfo.duration,
+        'genre': filmInfo.genres,
+        'description': filmInfo.description,
+      },
+      'user_details': {
+        'watchlist': userDetails.isWatchlisted,
+        'already_watched': userDetails.isWatched,
+        'watching_date': userDetails.date.toISOString(),
+        'favorite': userDetails.isFavorite,
+      },
+    };
+  }
 }

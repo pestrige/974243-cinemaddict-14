@@ -19,8 +19,14 @@ export default class Api {
       .then(Api.toJSON);
   }
 
-  updateData() {
-
+  updateData(data, url) {
+    return this._load({
+      url: `${url}/${data.id}`,
+      method: Method.PUT,
+      body: JSON.stringify(data),
+      headers: new Headers({'Content-Type': 'application/json'}),
+    })
+      .then(Api.toJSON);
   }
 
   _load({url, method = Method.GET, body = null, headers = new Headers()}) {
