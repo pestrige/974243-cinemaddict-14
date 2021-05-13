@@ -11,6 +11,7 @@ const commentsModel = new CommentsModel();
 const menuModel = new MenuModel();
 
 // Получаем данные
+filmsModel.init();
 filmsModel.getData(API_URL.movies)
   .then((movies) => filmsModel.adaptToClient(movies))
   //.then((adaptedFilms) => {console.log(adaptedFilms); return adaptedFilms;})

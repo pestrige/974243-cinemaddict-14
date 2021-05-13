@@ -1,4 +1,5 @@
-import { AUTHORIZATION, END_POINT, API_URL } from '../const.js';
+import { END_POINT, API_URL } from '../const.js';
+
 const Method = {
   GET: 'GET',
   PUT: 'PUT',
@@ -10,8 +11,13 @@ const SuccessServerStatusRange = {
 
 export default class Api {
   constructor() {
-    this._authorization = AUTHORIZATION;
+    this._authorization = null;
     this._endPoint = END_POINT;
+  }
+
+  init() {
+    const token = localStorage.getItem('token');
+    token ? this._authorization = token : this._generateToken();
   }
 
   getData(dataUrl) {
@@ -27,6 +33,12 @@ export default class Api {
       headers: new Headers({'Content-Type': 'application/json'}),
     })
       .then(Api.toJSON);
+  }
+
+  _generateToken() {
+    const randomString = Math.random().toString(36).replace(/[.]/g, '');
+    this._authorization = `Basic ${randomString}`;
+    localStorage.setItem('token', this._authorization);
   }
 
   _load({url, method = Method.GET, body = null, headers = new Headers()}) {

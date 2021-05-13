@@ -67,7 +67,6 @@ const RANG_LEVELS = {
   },
 };
 
-const AUTHORIZATION = 'Basic tD3df4fgDevk2ds3k';
 const END_POINT = 'https://14.ecmascript.pages.academy/cinemaddict';
 const API_URL = {
   movies: 'movies',
@@ -89,7 +88,6 @@ export {
   DATE_PERIOD,
   RANG,
   RANG_LEVELS,
-  AUTHORIZATION,
   END_POINT,
   API_URL
 };
