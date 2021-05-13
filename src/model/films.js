@@ -70,7 +70,7 @@ export default class Films extends observerMixin(Api) {
   }
 
   adaptToClient(data) {
-    return data.length
+    return Array.isArray(data)
       ? data.map((film) => this._adaptFilmToClient(film))
       : this._adaptFilmToClient(data);
   }
