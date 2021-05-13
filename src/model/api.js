@@ -1,4 +1,4 @@
-import { AUTHORIZATION, END_POINT } from '../const.js';
+import { AUTHORIZATION, END_POINT, API_URL } from '../const.js';
 const Method = {
   GET: 'GET',
   PUT: 'PUT',
@@ -19,9 +19,9 @@ export default class Api {
       .then(Api.toJSON);
   }
 
-  updateData(data, url) {
+  updateData(data) {
     return this._load({
-      url: `${url}/${data.id}`,
+      url: `${API_URL.movies}/${data.id}`,
       method: Method.PUT,
       body: JSON.stringify(data),
       headers: new Headers({'Content-Type': 'application/json'}),
@@ -39,9 +39,7 @@ export default class Api {
   static checkStatus(response) {
     if (response.status < SuccessServerStatusRange.MIN || response.status > SuccessServerStatusRange.MAX) {
       throw new Error(`${response.status}: ${response.statusText}`);
-      //return {errorStatus: response.status, errorText: response.statusText};
     }
-    //return response;
     return response;
   }
 

@@ -304,9 +304,14 @@ export default class FilmsList {
   }
 
   // обработчик действий на карточке фильма
-  // вызывает обновление модели
+  // вызывает обновление данных
   _handleViewAction(updateType, updatedFilm) {
-    this._filmsModel.updateFilm(updateType, updatedFilm);
+    const adaptedFilmToServer = this._filmsModel.adaptToServer(updatedFilm);
+    this._filmsModel.updateData(adaptedFilmToServer)
+      .then((response) => {
+        const adaptedFilmToClient = this._filmsModel.adaptToClient(response);
+        this._filmsModel.updateFilm(updateType, adaptedFilmToClient);
+      });
   }
 
   // обработчик изменений модели

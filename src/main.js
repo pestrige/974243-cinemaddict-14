@@ -16,7 +16,6 @@ filmsModel.getData(API_URL.movies)
   //.then((adaptedFilms) => {console.log(adaptedFilms); return adaptedFilms;})
   .then((adaptedFilms) => filmsModel.setFilms(UPDATE_TYPE.init, adaptedFilms))
   .catch(() => filmsModel.setFilms(UPDATE_TYPE.init, []));
-//commentsModel.setComments(comments);
 
 const header = document.querySelector('.header');
 const main = document.querySelector('.main');

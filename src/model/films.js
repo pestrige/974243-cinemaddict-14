@@ -39,37 +39,40 @@ export default class Films extends observerMixin(Api) {
     this.updateFilm(updateType, updatedFilm);
   }
 
-  adaptToClient(films) {
-    return films.map((film) => {
-      const adaptedFilm = {
-        filmInfo: {
-          id: film.id,
-          title: film.film_info.title,
-          alternativeTitle: film.film_info.alternative_title,
-          rating: film.film_info.total_rating,
-          ageRating: film.film_info.age_rating,
-          poster: film.film_info.poster,
-          description: film.film_info.description,
-          genres: film.film_info.genre,
-          release: {
-            date: new Date(film.film_info.release.date),
-            country: film.film_info.release_country,
-          },
-          duration: film.film_info.runtime,
-          director: film.film_info.director,
-          writers: film.film_info.writers,
-          actors: film.film_info.actors,
+  _adaptFilmToClient(film) {
+    return {
+      filmInfo: {
+        id: film.id,
+        title: film.film_info.title,
+        alternativeTitle: film.film_info.alternative_title,
+        rating: film.film_info.total_rating,
+        ageRating: film.film_info.age_rating,
+        poster: film.film_info.poster,
+        description: film.film_info.description,
+        genres: film.film_info.genre,
+        release: {
+          date: new Date(film.film_info.release.date),
+          country: film.film_info.release.release_country,
         },
-        userDetails: {
-          isWatchlisted: film.user_details.watchlist,
-          isWatched: film.user_details.already_watched,
-          isFavorite: film.user_details.favorite,
-          date: new Date(film.user_details.watching_date),
-        },
-        comments: film.comments,
-      };
-      return adaptedFilm;
-    });
+        duration: film.film_info.runtime,
+        director: film.film_info.director,
+        writers: film.film_info.writers,
+        actors: film.film_info.actors,
+      },
+      userDetails: {
+        isWatchlisted: film.user_details.watchlist,
+        isWatched: film.user_details.already_watched,
+        isFavorite: film.user_details.favorite,
+        date: new Date(film.user_details.watching_date),
+      },
+      comments: film.comments,
+    };
+  }
+
+  adaptToClient(data) {
+    return data.length
+      ? data.map((film) => this._adaptFilmToClient(film))
+      : this._adaptFilmToClient(data);
   }
 
   adaptToServer({filmInfo, userDetails, comments}) {
