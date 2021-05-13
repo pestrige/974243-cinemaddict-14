@@ -1,8 +1,6 @@
-//import Observer from '../utils/observer.js';
-import Api from './api.js';
-import { observerMixin } from '../utils/observer.js';
+import AbstractModel from './abstract-model.js';
 
-export default class Films extends observerMixin(Api) {
+export default class Films extends AbstractModel {
   constructor() {
     super();
     this._films = [];

@@ -1,9 +1,7 @@
+import AbstractModel from './abstract-model.js';
 import { generateComment } from '../utils/common.js';
-//import Observer from '../utils/observer.js';
-import Api from './api.js';
-import { observerMixin } from '../utils/observer.js';
 
-export default class Comments extends observerMixin(Api) {
+export default class Comments extends AbstractModel {
   constructor() {
     super();
     this._comments = [];
