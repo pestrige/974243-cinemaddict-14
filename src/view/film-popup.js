@@ -5,7 +5,7 @@ import he from 'he';
 
 // в функцию создания попапа передаем
 // объект с данными по фильму, массив комментариев и состояние
-const createFilmPopup = ({filmInfo, userDetails, comments}, fullComments, state) => {
+const createFilmPopup = ({filmInfo, userDetails}, fullComments, state, error) => {
   const {
     title,
     alternativeTitle,
@@ -26,6 +26,7 @@ const createFilmPopup = ({filmInfo, userDetails, comments}, fullComments, state)
     isFavorite,
   } = userDetails;
   const { emojiType, textComment } = state;
+  const { isLoadError, errorMsg } = error;
 
   // создаем список жанров из массива
   const createGenresList = (genres) => {
@@ -38,10 +39,12 @@ const createFilmPopup = ({filmInfo, userDetails, comments}, fullComments, state)
   // ставим аттрибут checked если есть такой ключ у фильма
   const setChecked = (isKey) => isKey ? 'checked' : '';
 
-  // // находим комментарии по id и индексу в массиве
-  // const validComments = comments.map((comment) => fullComments.find((_item, id) => comment == id));
-
-  // создаем список комментариев из массива
+  // создаем комментарии
+  const createCommentCount = () => {
+    return isLoadError
+      ? `Comments not found. <br>Error ${errorMsg}, reload page please`
+      : `Comments <span class="film-details__comments-count">${fullComments.length}</span>`;
+  };
   const createComments = () => {
     return fullComments.map(({id, author, comment, date, emotion}) => {
       return `<li class="film-details__comment" data-id="${id}">
@@ -154,7 +157,7 @@ const createFilmPopup = ({filmInfo, userDetails, comments}, fullComments, state)
 
     <div class="film-details__bottom-container">
       <section class="film-details__comments-wrap">
-        <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${comments.length}</span></h3>
+        <h3 class="film-details__comments-title">${createCommentCount()}</h3>
 
         <ul class="film-details__comments-list">${createComments()}</ul>
 
@@ -174,11 +177,12 @@ const createFilmPopup = ({filmInfo, userDetails, comments}, fullComments, state)
 };
 
 export default class FilmPopup extends SmartView {
-  constructor(film, comments) {
+  constructor(film, comments, error) {
     super();
     this._element = null;
     this._film = film;
     this._comments = comments;
+    this._error = error;
     this._deleteButtonClass = 'film-details__comment-delete';
     this._commentContainerClass = 'film-details__comment';
     this._closeButtonClickHandler = this._closeButtonClickHandler.bind(this);
@@ -190,7 +194,7 @@ export default class FilmPopup extends SmartView {
   }
 
   getTemplate() {
-    return createFilmPopup(this._film, this._comments, this._state);
+    return createFilmPopup(this._film, this._comments, this._state, this._error);
   }
 
   restoreHandlers() {

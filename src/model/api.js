@@ -25,14 +25,17 @@ export default class Api {
 
   _load({url, method = Method.GET, body = null, headers = new Headers()}) {
     headers.append('Authorization', this._authorization);
-    return fetch(`${this._endPoint}/${url}`, {method, body, headers});
+    return fetch(`${this._endPoint}/${url}`, {method, body, headers})
+      .then(Api.checkStatus)
+      .catch(Api.catchError);
   }
 
   static checkStatus(response) {
     if (response.status < SuccessServerStatusRange.MIN || response.status > SuccessServerStatusRange.MAX) {
       throw new Error(`${response.status}: ${response.statusText}`);
+      //return {errorStatus: response.status, errorText: response.statusText};
     }
-
+    //return response;
     return response;
   }
 

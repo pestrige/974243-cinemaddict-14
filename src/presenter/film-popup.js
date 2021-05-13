@@ -30,15 +30,21 @@ export default class FilmPopupPresenter extends AbstractSmartPresenter {
           this._commentsModel.setComments(comments);
           this._comments = this._commentsModel.getComments();
           this._renderPopup();
+        })
+        .catch((error) => {
+          const errorMsg = error.message;
+          this._commentsModel.setComments([]);
+          this._comments = this._commentsModel.getComments();
+          this._renderPopup({ isLoadError: true, errorMsg });
         });
     } else {
       this._renderPopup();
     }
   }
 
-  _renderPopup() {
+  _renderPopup(error = {}) {
     const oldPopupComponent = this._filmPopupComponent;
-    this._filmPopupComponent = new FilmPopupView(this._film, this._comments);
+    this._filmPopupComponent = new FilmPopupView(this._film, this._comments, error);
     // если попап открыт, удаляем и сохраняем позицию скролла
     if (oldPopupComponent !== null) {
       this._scrollTop = oldPopupComponent.getElement().scrollTop;
