@@ -1,12 +1,13 @@
 import AbstractSmartPresenter from './abstract-smart.js';
 import FilmPopupView from '../view/film-popup.js';
 import { render, remove } from '../utils/render.js';
-import { UPDATE_TYPE } from '../const.js';
+import { UPDATE_TYPE, API_URL } from '../const.js';
 
 export default class FilmPopupPresenter extends AbstractSmartPresenter {
   constructor(container, commentsModel, handleFilmChange, callback) {
     super();
     this._commentsModel = commentsModel;
+    this._comments = null;
     this._popupContainer = container;
     this._filmPopupComponent = null;
     this._scrollTop = 0;
@@ -23,8 +24,27 @@ export default class FilmPopupPresenter extends AbstractSmartPresenter {
 
   init(film) {
     this._film = film;
+    if (!this._comments) {
+      this._commentsModel.getData(`${API_URL.comments}/${this._film.filmInfo.id}`)
+        .then((comments) => {
+          this._commentsModel.setComments(comments);
+          this._comments = this._commentsModel.getComments();
+          this._renderPopup();
+        })
+        .catch((error) => {
+          const errorMsg = error.message;
+          this._commentsModel.setComments([]);
+          this._comments = this._commentsModel.getComments();
+          this._renderPopup({ isLoadError: true, errorMsg });
+        });
+    } else {
+      this._renderPopup();
+    }
+  }
+
+  _renderPopup(error = {}) {
     const oldPopupComponent = this._filmPopupComponent;
-    this._filmPopupComponent = new FilmPopupView(film, this._commentsModel.getComments());
+    this._filmPopupComponent = new FilmPopupView(this._film, this._comments, error);
     // если попап открыт, удаляем и сохраняем позицию скролла
     if (oldPopupComponent !== null) {
       this._scrollTop = oldPopupComponent.getElement().scrollTop;
@@ -52,6 +72,7 @@ export default class FilmPopupPresenter extends AbstractSmartPresenter {
   _removePopup() {
     remove(this._filmPopupComponent);
     this._filmPopupComponent = null;
+    this._comments = null;
     document.body.classList.remove('hide-overflow');
     document.removeEventListener('keydown', this._handleEscKeyDown);
     this._clearPopup();

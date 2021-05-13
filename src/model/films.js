@@ -1,13 +1,14 @@
-import Observer from '../utils/observer.js';
+import AbstractModel from './abstract-model.js';
 
-export default class Films extends Observer {
+export default class Films extends AbstractModel {
   constructor() {
     super();
     this._films = [];
   }
 
-  setFilms(films) {
+  setFilms(updateType, films) {
     this._films = films.slice();
+    this._notify(updateType, this._films);
   }
 
   getFilms() {
@@ -34,5 +35,71 @@ export default class Films extends Observer {
     }
     const updatedFilm = {...film, comments};
     this.updateFilm(updateType, updatedFilm);
+  }
+
+  _adaptFilmToClient(film) {
+    return {
+      filmInfo: {
+        id: film.id,
+        title: film.film_info.title,
+        alternativeTitle: film.film_info.alternative_title,
+        rating: film.film_info.total_rating,
+        ageRating: film.film_info.age_rating,
+        poster: film.film_info.poster,
+        description: film.film_info.description,
+        genres: film.film_info.genre,
+        release: {
+          date: new Date(film.film_info.release.date),
+          country: film.film_info.release.release_country,
+        },
+        duration: film.film_info.runtime,
+        director: film.film_info.director,
+        writers: film.film_info.writers,
+        actors: film.film_info.actors,
+      },
+      userDetails: {
+        isWatchlisted: film.user_details.watchlist,
+        isWatched: film.user_details.already_watched,
+        isFavorite: film.user_details.favorite,
+        date: new Date(film.user_details.watching_date),
+      },
+      comments: film.comments,
+    };
+  }
+
+  adaptToClient(data) {
+    return Array.isArray(data)
+      ? data.map((film) => this._adaptFilmToClient(film))
+      : this._adaptFilmToClient(data);
+  }
+
+  adaptToServer({filmInfo, userDetails, comments}) {
+    return {
+      'id': filmInfo.id,
+      'comments': comments,
+      'film_info': {
+        'title': filmInfo.title,
+        'alternative_title': filmInfo.alternativeTitle,
+        'total_rating': filmInfo.rating,
+        'poster': filmInfo.poster,
+        'age_rating': filmInfo.ageRating,
+        'director': filmInfo.director,
+        'writers': filmInfo.writers,
+        'actors': filmInfo.actors,
+        'release': {
+          'date': filmInfo.release.date.toISOString(),
+          'release_country': filmInfo.release.country,
+        },
+        'runtime': filmInfo.duration,
+        'genre': filmInfo.genres,
+        'description': filmInfo.description,
+      },
+      'user_details': {
+        'watchlist': userDetails.isWatchlisted,
+        'already_watched': userDetails.isWatched,
+        'watching_date': userDetails.date.toISOString(),
+        'favorite': userDetails.isFavorite,
+      },
+    };
   }
 }

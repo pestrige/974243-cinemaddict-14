@@ -1,7 +1,7 @@
-import { generateComment } from '../mock/comment.js';
-import Observer from '../utils/observer.js';
+import AbstractModel from './abstract-model.js';
+import { generateComment } from '../utils/common.js';
 
-export default class Comments extends Observer {
+export default class Comments extends AbstractModel {
   constructor() {
     super();
     this._comments = [];
@@ -9,6 +9,7 @@ export default class Comments extends Observer {
 
   setComments(comments) {
     this._comments = comments.slice();
+    return this._comments;
   }
 
   getComments() {
@@ -16,7 +17,7 @@ export default class Comments extends Observer {
   }
 
   createComment(updateType, text, emoji, film) {
-    const newComment = generateComment(text, emoji, {newDate: true});
+    const newComment = generateComment(text, emoji);
     this._comments = [...this._comments, newComment];
     const commentIndex = this._comments.length - 1;
     this._notify(updateType, film, commentIndex);

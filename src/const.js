@@ -1,14 +1,6 @@
-const MAX_COMMENTS = 50;
-const MAX_SHOWN_COMMENTS = 5;
 const MAX_DESCRIPTION_SIZE = 140;
-const FILMS_CARDS_COUNT = 20;
 const EXTRA_FILMS_CARDS_COUNT = 2;
 const FILMS_PER_STEP = 5;
-const DATE_RANGES = {
-  years: -5,
-  months: 12,
-  days: 31,
-};
 const EMOJIES = {
   smile: 'smile',
   sleeping: 'sleeping',
@@ -37,6 +29,7 @@ const UPDATE_TYPE = {
   patch: 'patch',
   minor: 'minor',
   major: 'major',
+  init: 'init',
 };
 const FILTER_TYPE = {
   none: null,
@@ -74,14 +67,16 @@ const RANG_LEVELS = {
   },
 };
 
+const END_POINT = 'https://14.ecmascript.pages.academy/cinemaddict';
+const API_URL = {
+  movies: 'movies',
+  comments: 'comments',
+};
+
 export {
-  MAX_COMMENTS,
-  MAX_SHOWN_COMMENTS,
   MAX_DESCRIPTION_SIZE,
-  FILMS_CARDS_COUNT,
   FILMS_PER_STEP,
   EXTRA_FILMS_CARDS_COUNT,
-  DATE_RANGES,
   EMOJIES,
   RENDER_POSITION,
   SORT_BY,
@@ -92,5 +87,7 @@ export {
   DAYS_WEEK,
   DATE_PERIOD,
   RANG,
-  RANG_LEVELS
+  RANG_LEVELS,
+  END_POINT,
+  API_URL
 };

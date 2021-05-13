@@ -1,21 +1,7 @@
 import dayjs from 'dayjs';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
-import isBefore from 'dayjs/plugin/isSameOrBefore';
-import { getRandomNumber } from './common.js';
-import { DATE_RANGES, DATE_PERIOD, DAYS_WEEK } from '../const.js';
+import { DATE_PERIOD, DAYS_WEEK } from '../const.js';
 
-// Функции с датой
-export const getRandomDate = () => {
-  dayjs.extend(isBefore);
-  const randomDate = dayjs().add(getRandomNumber(DATE_RANGES.years), 'year')
-    .add(getRandomNumber(DATE_RANGES.months), 'month')
-    .add(getRandomNumber(DATE_RANGES.days), 'day')
-    .toDate();
-
-  return dayjs().isBefore(dayjs(randomDate))
-    ? dayjs().toDate()
-    : randomDate;
-};
 export const getYearFromDate = (date) => dayjs(date).year();
 export const humanizeDate = (date) => dayjs(date).format('D MMMM YYYY');
 export const humanizeFullDate = (date) => dayjs(date).format('YYYY/MM/DD HH:mm');
