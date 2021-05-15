@@ -4,6 +4,7 @@ const Method = {
   GET: 'GET',
   PUT: 'PUT',
   DELETE: 'DELETE',
+  POST: 'POST',
 };
 const SuccessServerStatusRange = {
   MIN: 200,
@@ -46,6 +47,17 @@ export default class Api {
     })
       .then(Api.toJSON)
       .then((data) => this._adaptToClient(data));
+  }
+
+  addData(data) {
+    return this._load({
+      url: `${API_URL.comments}/${data.id}`,
+      method: Method.POST,
+      body: JSON.stringify(data.comment),
+      headers: new Headers({'Content-Type': 'application/json'}),
+    })
+      .then(Api.toJSON)
+      .then(({movie}) => this._adaptToClient(movie));
   }
 
   _deleteCommentFromServer(id) {
