@@ -314,10 +314,23 @@ export default class FilmsList {
 
   // обработчик изменений модели
   // вызывает перерисовку компонентов по типу обновления
-  _handleModelEvent(updateType, data, statsFlag = false) {
+  _handleModelEvent(
+    updateType,
+    data,
+    {
+      statsFlag = false,
+      //isDeteleError = false,
+      isError = false,
+      deletedCommentId = null,
+    } = {}) {
     if (statsFlag) {
       this._clearFilmsBoard();
       this._renderStats();
+      return;
+    }
+
+    if (isError || isError) {
+      this._popupPresenter.shake(deletedCommentId);
       return;
     }
 

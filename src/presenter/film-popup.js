@@ -53,16 +53,9 @@ export default class FilmPopupPresenter extends AbstractSmartPresenter {
     document.body.classList.add('hide-overflow');
     document.addEventListener('keydown', this._handleEscKeyDown);
     this._filmPopupComponent.setCloseButtonClickHandler(this._handleClosePopupButton);
-    this._filmPopupComponent.setControlButtonsClick(this._handleControlButtons);
+    this._filmPopupComponent.setControlButtonsClickHandler(this._handleControlButtons);
     this._filmPopupComponent.setCommentsListClickHandler(this._handleDeleteCommentButton);
     this._filmPopupComponent.setCommentsFormKeydownHandler(this._handleCommentFormSubmit);
-  }
-
-  // обработчик Esc
-  _handleEscKeyDown(evt) {
-    if (evt.key === 'Escape' || evt.key === 'Esc') {
-      this._removePopup();
-    }
   }
 
   _removePopup() {
@@ -74,6 +67,43 @@ export default class FilmPopupPresenter extends AbstractSmartPresenter {
     this._clearPopup();
   }
 
+  _setSavingState() {
+    this._filmPopupComponent.updateState({
+      isSaving: true,
+    });
+  }
+
+  _setDeletingState(commentID) {
+    this._filmPopupComponent.updateState({
+      isDeleting: true,
+      deletingCommentID: commentID,
+    });
+  }
+
+  shake(commentID = null) {
+    const resetState = () => {
+      this._filmPopupComponent.updateState({
+        isDeleting: false,
+        isSaving: false,
+        deletingCommentID: null,
+      });
+    };
+    const elementClass = commentID
+      ? `.film-details__comment[data-id='${commentID}']`
+      : '.film-details__new-comment';
+    const element = this._filmPopupComponent.getElement()
+      .querySelector(elementClass);
+
+    this._filmPopupComponent.shake(element, resetState);
+  }
+
+  // обработчик Esc
+  _handleEscKeyDown(evt) {
+    if (evt.key === 'Escape' || evt.key === 'Esc') {
+      this._removePopup();
+    }
+  }
+
   // обработчик закрытия попапа
   _handleClosePopupButton() {
     this._removePopup();
@@ -81,10 +111,19 @@ export default class FilmPopupPresenter extends AbstractSmartPresenter {
 
   // обновляет модель комментариев
   _handleDeleteCommentButton(commentId, film) {
+    this._setDeletingState(commentId);
     this._commentsModel.deleteComment(UPDATE_TYPE.patch, commentId, film);
   }
 
   _handleCommentFormSubmit(text, emoji, film) {
+    this._setSavingState();
+    //this._removeHandlers();
+    document.removeEventListener('keydown', this._handleEscKeyDown);
+    this._filmPopupComponent.removeCloseButtonClickHandler();
+    this._filmPopupComponent.removeControlButtonsClickHandler();
+    this._filmPopupComponent.removeCommentsListClickHandler();
+    this._filmPopupComponent.removeCommentsFormKeydownHandler();
+
     this._commentsModel.createComment(UPDATE_TYPE.patch, text, emoji, film);
   }
 }

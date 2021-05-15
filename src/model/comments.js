@@ -26,7 +26,8 @@ export default class Comments extends AbstractModel {
     this.addData(data)
       .then((updatedData) => {
         this._notify(updateType, updatedData);
-      });
+      })
+      .catch(() => this._notify(updateType, data, {isError: true}));
   }
 
   deleteComment(updateType, deletedCommentId, film) {
@@ -45,7 +46,10 @@ export default class Comments extends AbstractModel {
               // и запускаем перерисовку
               this._notify(updateType, film);
             });
+        } else {
+          this._notify(updateType, film, {isDeteleError: true, deletedCommentId});
         }
-      });
+      })
+      .catch(() => this._notify(updateType, film, {isError: true, deletedCommentId}));
   }
 }

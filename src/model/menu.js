@@ -20,7 +20,7 @@ export default class Menu extends AbstractModel {
       this._state.activeFilter = linkType;
       this._state.isStatsActive = false;
     }
-    this._notify(updateType, this._state, this._state.isStatsActive);
+    this._notify(updateType, this._state, {statsFlag: this._state.isStatsActive});
   }
 
   getState() {
