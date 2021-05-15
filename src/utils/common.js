@@ -1,17 +1,6 @@
 import dayjs from 'dayjs';
 import { FILTER_TYPE, RANG, RANG_LEVELS } from '../const.js';
 
-// Генерируем комментарий
-export const generateComment = (text, emoji) => {
-  return {
-    id: Math.random(),
-    author: 'Ted Kaczynski',
-    comment: text,
-    date: new Date(),
-    emotion: emoji,
-  };
-};
-
 // Заменяем один элемент в массиве
 export const updateItem = (itemsArray, updatedItem) => {
   const newItemsArray = [...itemsArray];

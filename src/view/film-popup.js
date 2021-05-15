@@ -25,7 +25,13 @@ const createFilmPopup = ({filmInfo, userDetails}, fullComments, state, error) =>
     isWatched,
     isFavorite,
   } = userDetails;
-  const { emojiType, textComment } = state;
+  const {
+    emojiType,
+    textComment,
+    isSaving = false,
+    isDeleting = false,
+    deletingCommentID = null,
+  } = state;
   const { isLoadError, errorMsg } = error;
 
   // создаем список жанров из массива
@@ -56,7 +62,7 @@ const createFilmPopup = ({filmInfo, userDetails}, fullComments, state, error) =>
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${author}</span>
           <span class="film-details__comment-day">${humanizeFullDate(date)}</span>
-          <button class="film-details__comment-delete" type="button">Delete</button>
+          <button ${isSaving || isDeleting ? 'disabled' : ''} class="film-details__comment-delete" type="button">${isDeleting && deletingCommentID === id ? 'Deleting...' : 'Delete'}</button>
         </p>
       </div>
     </li>`;
@@ -76,7 +82,7 @@ const createFilmPopup = ({filmInfo, userDetails}, fullComments, state, error) =>
     return emojies.map((emoji) => {
       const isChecked = emoji === emojiType ? 'checked' : '';
       return `
-<input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${emoji}" value="${emoji}" ${isChecked}>
+<input ${isSaving ? 'disabled' : ''} class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${emoji}" value="${emoji}" ${isChecked}>
 <label class="film-details__emoji-label" for="emoji-${emoji}">
   <img src="./images/emoji/${emoji}.png" width="30" height="30" alt="emoji">
 </label>`;
@@ -86,7 +92,7 @@ const createFilmPopup = ({filmInfo, userDetails}, fullComments, state, error) =>
   // создаем попап
   return `<section class="film-details">
   <div class="film-details__overlay"></div>
-    <form class="film-details__inner" action="" method="get">
+    <form ${isSaving ? 'disabled' : ''} class="film-details__inner" action="" method="get">
       <div class="film-details__top-container">
         <div class="film-details__close">
           <button class="film-details__close-btn" type="button">close</button>
@@ -166,7 +172,7 @@ const createFilmPopup = ({filmInfo, userDetails}, fullComments, state, error) =>
             <div class="film-details__add-emoji-label">${createEmojiImage(emojiType)}</div>
 
             <label class="film-details__comment-label">
-              <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${textComment ? he.encode(textComment) : ''}</textarea>
+              <textarea ${isSaving ? 'disabled' : ''} class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${textComment ? he.encode(textComment) : ''}</textarea>
             </label>
 
             <div class="film-details__emoji-list">${createEmojiList(emojiType)}</div>
@@ -202,7 +208,7 @@ export default class FilmPopup extends SmartView {
   restoreHandlers() {
     this._setEmojiListClickHandler();
     this.setCloseButtonClickHandler(this._callback.closeButtonClick);
-    this.setControlButtonsClick(this._callback.buttonsClick);
+    this.setControlButtonsClickHandler(this._callback.buttonsClick);
     this.setCommentsListClickHandler(this._callback.deleteButtonClick);
     this.setCommentsFormKeydownHandler(this._callback.commentsFormKeydown);
   }
@@ -218,6 +224,9 @@ export default class FilmPopup extends SmartView {
   }
 
   _emojiListClickHandler(evt) {
+    if (this._state.isSaving) {
+      return;
+    }
     const findInputValue = (target) => {
       const label = target.closest('.film-details__emoji-label');
       return label ? label.previousElementSibling.value : false;
@@ -251,14 +260,15 @@ export default class FilmPopup extends SmartView {
       return;
     }
 
-    const commentText = evt.target.value.trim();
-    if (!commentText) {
+    const textComment = evt.target.value.trim();
+    if (!textComment) {
       return;
     }
     if (!this._state.emojiType) {
-      this.updateState({emojiType: EMOJIES.smile});
+      this._state.emojiType = EMOJIES.smile;
     }
-    this._callback.commentsFormKeydown(commentText, this._state.emojiType, this._film);
+    this._state.textComment = textComment;
+    this._callback.commentsFormKeydown(this._state.textComment, this._state.emojiType, this._film);
   }
 
   setCloseButtonClickHandler(callback) {
@@ -268,11 +278,23 @@ export default class FilmPopup extends SmartView {
       .addEventListener('click', this._closeButtonClickHandler);
   }
 
-  setControlButtonsClick(callback) {
+  removeCloseButtonClickHandler() {
+    this.getElement()
+      .querySelector('.film-details__close-btn')
+      .removeEventListener('click', this._closeButtonClickHandler);
+  }
+
+  setControlButtonsClickHandler(callback) {
     this._callback.buttonsClick = callback;
     this.getElement()
       .querySelector('.film-details__controls')
       .addEventListener('click', this._controlButtonsClickHandler);
+  }
+
+  removeControlButtonsClickHandler() {
+    this.getElement()
+      .querySelector('.film-details__controls')
+      .removeEventListener('click', this._controlButtonsClickHandler);
   }
 
   setCommentsListClickHandler(callback) {
@@ -282,11 +304,23 @@ export default class FilmPopup extends SmartView {
       .addEventListener('click', this._commentsListClickHandler);
   }
 
+  removeCommentsListClickHandler() {
+    this.getElement()
+      .querySelector('.film-details__comments-list')
+      .removeEventListener('click', this._commentsListClickHandler);
+  }
+
   setCommentsFormKeydownHandler(callback) {
     this._callback.commentsFormKeydown = callback;
     this.getElement()
       .querySelector('.film-details__comment-input')
       .addEventListener('keydown', this._commentsFormKeydownHandler);
+  }
+
+  removeCommentsFormKeydownHandler() {
+    this.getElement()
+      .querySelector('.film-details__comment-input')
+      .removeEventListener('keydown', this._commentsFormKeydownHandler);
   }
 
   _setEmojiListClickHandler() {

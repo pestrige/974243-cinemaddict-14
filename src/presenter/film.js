@@ -1,14 +1,13 @@
 import AbstractSmartPresenter from './abstract-smart.js';
 import FilmCardBlockView from '../view/film-card-block.js';
 import { render, remove, replace } from '../utils/render.js';
-//import { UPDATE_TYPE } from '../const.js';
 
 export default class FilmPresenter extends AbstractSmartPresenter {
   constructor(container, handleFilmChange) {
     super();
     this._filmContainer = container;
     this._filmComponent = null;
-    //_changeData и _handleControlButtons наследуются от AbstractFilmPresenter
+    //_changeData и _handleControlButtons наследуются от AbstractSmartPresenter
     this._changeData = handleFilmChange;
     this._handleControlButtons = this._handleControlButtons.bind(this);
   }
@@ -31,5 +30,9 @@ export default class FilmPresenter extends AbstractSmartPresenter {
 
   destroy() {
     remove(this._filmComponent);
+  }
+
+  getFilmID() {
+    return this._film.filmInfo.id;
   }
 }
