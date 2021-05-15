@@ -24,15 +24,22 @@ export default class Comments extends AbstractModel {
   }
 
   deleteComment(updateType, deletedCommentId, film) {
-    this._comments = [...this._comments];
-    const index = this._comments.findIndex((comment) => comment.id === Number(deletedCommentId));
-    if (index !== -1) {
-      // TODO: раскомментировать на реальных данных
-      // пока массив не изменяется, чтобы не съезжали индексы элементов
-      // удаляются только индексы комментариев в данных о фильме
-      //this._comments.splice(index, 1);
-    }
-
-    this._notify(updateType, film, index);
+    // обновляем количество комментариев в данных фильма
+    const comments = [...film.comments];
+    const index = comments.findIndex((comment) => comment.id === deletedCommentId);
+    const updatedFilmCardComments = comments.splice(index, 1);
+    const updatedFilm = {...film, updatedFilmCardComments};
+    // удалем комментарий с сервера
+    this._deleteCommentFromServer(deletedCommentId)
+      .then((response) => {
+        if (response.ok) {
+          // обновляем данные фильма на сервере
+          this.updateData(updatedFilm)
+            .then((film) => {
+              // и запускаем перерисовку
+              this._notify(updateType, film);
+            });
+        }
+      });
   }
 }

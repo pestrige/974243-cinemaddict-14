@@ -26,6 +26,7 @@ const SORT_TYPE = {
   rating: 'rating',
 };
 const UPDATE_TYPE = {
+  none: 'none',
   patch: 'patch',
   minor: 'minor',
   major: 'major',
@@ -72,6 +73,10 @@ const API_URL = {
   movies: 'movies',
   comments: 'comments',
 };
+const DATA_TYPE = {
+  films: 'films',
+  other: 'other',
+};
 
 export {
   MAX_DESCRIPTION_SIZE,
@@ -89,5 +94,6 @@ export {
   RANG,
   RANG_LEVELS,
   END_POINT,
-  API_URL
+  API_URL,
+  DATA_TYPE
 };

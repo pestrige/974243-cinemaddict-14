@@ -4,18 +4,18 @@ import { render, remove } from '../utils/render.js';
 import { UPDATE_TYPE, API_URL } from '../const.js';
 
 export default class FilmPopupPresenter extends AbstractSmartPresenter {
-  constructor(container, commentsModel, handleFilmChange, callback) {
+  constructor(container, commentsModel, handleFilmChange, clearPopupCallback) {
     super();
     this._commentsModel = commentsModel;
     this._comments = null;
     this._popupContainer = container;
     this._filmPopupComponent = null;
     this._scrollTop = 0;
-    // _changeData и _handleControlButtons наследуются от AbstractFilmPresenter
+    // _changeData и _handleControlButtons наследуются от AbstractSmartPresenter
     this._changeData = handleFilmChange;
     this._handleControlButtons = this._handleControlButtons.bind(this);
 
-    this._clearPopup = callback;
+    this._clearPopup = clearPopupCallback;
     this._handleEscKeyDown = this._handleEscKeyDown.bind(this);
     this._handleClosePopupButton = this._handleClosePopupButton.bind(this);
     this._handleDeleteCommentButton = this._handleDeleteCommentButton.bind(this);
@@ -24,22 +24,18 @@ export default class FilmPopupPresenter extends AbstractSmartPresenter {
 
   init(film) {
     this._film = film;
-    if (!this._comments) {
-      this._commentsModel.getData(`${API_URL.comments}/${this._film.filmInfo.id}`)
-        .then((comments) => {
-          this._commentsModel.setComments(comments);
-          this._comments = this._commentsModel.getComments();
-          this._renderPopup();
-        })
-        .catch((error) => {
-          const errorMsg = error.message;
-          this._commentsModel.setComments([]);
-          this._comments = this._commentsModel.getComments();
-          this._renderPopup({ isLoadError: true, errorMsg });
-        });
-    } else {
-      this._renderPopup();
-    }
+    this._commentsModel.getData(`${API_URL.comments}/${this._film.filmInfo.id}`)
+      .then((comments) => {
+        this._commentsModel.setComments(comments);
+        this._comments = this._commentsModel.getComments();
+        this._renderPopup();
+      })
+      .catch((error) => {
+        const errorMsg = error.message;
+        this._commentsModel.setComments([]);
+        this._comments = this._commentsModel.getComments();
+        this._renderPopup({ isLoadError: true, errorMsg });
+      });
   }
 
   _renderPopup(error = {}) {
@@ -85,10 +81,10 @@ export default class FilmPopupPresenter extends AbstractSmartPresenter {
 
   // обновляет модель комментариев
   _handleDeleteCommentButton(commentId, film) {
-    this._commentsModel.deleteComment(UPDATE_TYPE.minor, commentId, film);
+    this._commentsModel.deleteComment(UPDATE_TYPE.patch, commentId, film);
   }
 
   _handleCommentFormSubmit(text, emoji, film) {
-    this._commentsModel.createComment(UPDATE_TYPE.minor, text, emoji, film);
+    this._commentsModel.createComment(UPDATE_TYPE.patch, text, emoji, film);
   }
 }

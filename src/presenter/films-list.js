@@ -47,7 +47,6 @@ export default class FilmsList {
     this._handleFilmsList = this._handleFilmsList.bind(this);
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
-    this._handleCommentsModelEvent = this._handleCommentsModelEvent.bind(this);
     this._handleSortButtons = this._handleSortButtons.bind(this);
     this._clearPopupPresenter = this._clearPopupPresenter.bind(this);
   }
@@ -104,10 +103,7 @@ export default class FilmsList {
       this._renderNoFilmsBlock();
     }
     this._renderFooterStats(this._getFilms({totalCount: true}));
-
-    if (this._popupPresenter !== null) {
-      this._popupPresenter.init(update);
-    }
+    this._rerenderPopup(update);
   }
 
   _renderProfileBlock() {
@@ -204,7 +200,7 @@ export default class FilmsList {
     this._popupPresenter = new PopupPresenter(container, this._commentsModel, this._handleViewAction, callback);
     this._popupPresenter.init(film);
     this._filmsSectionComponent.removeFilmCardClickHandler();
-    this._commentsModel.addObserver(this._handleCommentsModelEvent);
+    this._commentsModel.addObserver(this._handleModelEvent);
   }
 
   _renderStats() {
@@ -221,16 +217,22 @@ export default class FilmsList {
   // Методы очистки и перерисовки
   //=====
 
-  _clearFilmsBoard({resetRenderedFilmsCount = false, resetSortType = false} = {}) {
-    const filmsCount = this._getFilms().length;
+  _clearFilmsSection() {
+    // удаляем только фильмы, кнопку и контейнеры для списка фильмов
     this._filmPresentersList
       .forEach((_id, film) => film.destroy());
     this._filmPresentersList.clear();
-    remove(this._profileBlockComponent);
     remove(this._buttonShowMoreComponent);
-    remove(this._sortBlockComponent);
     remove(this._filmsSectionComponent);
+  }
+
+  _clearFilmsBoard({resetRenderedFilmsCount = false, resetSortType = false} = {}) {
+    // удаляем все, что связано с данными
+    const filmsCount = this._getFilms().length;
+    remove(this._profileBlockComponent);
+    remove(this._sortBlockComponent);
     remove(this._footerStatsComponent);
+    this._clearFilmsSection();
 
     if (resetRenderedFilmsCount) {
       this._renderedFilmsCount = FILMS_PER_STEP;
@@ -246,22 +248,22 @@ export default class FilmsList {
   _clearPopupPresenter() {
     this._popupPresenter = null;
     this._filmsSectionComponent.setFilmCardClickHandler(this._handleFilmsList);
-    this._commentsModel.removeObserver(this._handleCommentsModelEvent);
+    this._commentsModel.removeObserver(this._handleModelEvent);
   }
 
-  _rerenderChangedFilm(updatedFilm) {
-    // ищем все экземпляры отрендеренных карточек фильмов по id
-    // так как иногда карточки дублируются в дополнительных блоках
-    this._filmPresentersList.forEach((id, component) => {
-      if (id === updatedFilm.filmInfo.id) {
-        // запускаем их перерисовку
-        component.init(updatedFilm);
-      }
-    });
-    // и перерисовку попапа, если он открыт
+  _rerenderPopup(film) {
     if (this._popupPresenter !== null) {
-      this._popupPresenter.init(updatedFilm);
+      this._popupPresenter.init(film);
     }
+  }
+
+  _rerenderFilms(updatedFilm) {
+    this._filmsModel.updateFilm(false, updatedFilm);
+    this._clearFilmsSection();
+
+    this._rerenderPopup(updatedFilm);
+    this._renderFilmsContainer();
+    this._renderFilmsList(this._getFilms());
   }
 
   //=====
@@ -303,20 +305,16 @@ export default class FilmsList {
     this._renderFilmsBoard();
   }
 
-  // обработчик действий на карточке фильма
+  // обработчик действий на карточке фильма и попапе
   // вызывает обновление данных
   _handleViewAction(updateType, updatedFilm) {
-    const adaptedFilmToServer = this._filmsModel.adaptToServer(updatedFilm);
-    this._filmsModel.updateData(adaptedFilmToServer)
-      .then((response) => {
-        const adaptedFilmToClient = this._filmsModel.adaptToClient(response);
-        this._filmsModel.updateFilm(updateType, adaptedFilmToClient);
-      });
+    this._filmsModel.updateData(updatedFilm)
+      .then((film) => this._filmsModel.updateFilm(updateType, film));
   }
 
   // обработчик изменений модели
   // вызывает перерисовку компонентов по типу обновления
-  _handleModelEvent(updateType, data, statsFlag) {
+  _handleModelEvent(updateType, data, statsFlag = false) {
     if (statsFlag) {
       this._clearFilmsBoard();
       this._renderStats();
@@ -325,7 +323,7 @@ export default class FilmsList {
 
     switch (updateType) {
       case UPDATE_TYPE.patch:
-        this._rerenderChangedFilm(data);
+        this._rerenderFilms(data);
         break;
       case UPDATE_TYPE.minor:
         this._clearFilmsBoard();
@@ -339,18 +337,6 @@ export default class FilmsList {
         this._isLoading = false,
         remove(this._loadingComponent);
         this._renderFilmsBoard(data);
-    }
-  }
-
-  // обработчик изменений модели комментариев
-  // при изменении комментариев запускает изменение модели фильмов,
-  // где хранятся индексы комментариев конкретного фильма,
-  // чтобы при удалении комментария в попапе перерисовались все фильмы
-  _handleCommentsModelEvent(updateType, updatedFilm, commentIndex) {
-    switch (updateType) {
-      case UPDATE_TYPE.minor:
-        this._filmsModel.deleteComment(updateType, updatedFilm, commentIndex);
-        break;
     }
   }
 }

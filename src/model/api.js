@@ -1,8 +1,9 @@
-import { END_POINT, API_URL } from '../const.js';
+import { END_POINT, API_URL, DATA_TYPE } from '../const.js';
 
 const Method = {
   GET: 'GET',
   PUT: 'PUT',
+  DELETE: 'DELETE',
 };
 const SuccessServerStatusRange = {
   MIN: 200,
@@ -15,24 +16,43 @@ export default class Api {
     this._endPoint = END_POINT;
   }
 
-  init() {
+  _getToken() {
     const token = localStorage.getItem('token');
     token ? this._authorization = token : this._generateToken();
   }
 
-  getData(dataUrl) {
+  getData(dataUrl, dataType = DATA_TYPE.other) {
+    this._getToken();
     return this._load({url: dataUrl})
-      .then(Api.toJSON);
+      .then(Api.toJSON)
+      .then((data) => {
+        switch (dataType) {
+          case DATA_TYPE.films:
+            return this._adaptToClient(data);
+          case DATA_TYPE.other:
+          default:
+            return data;
+        }
+      });
   }
 
   updateData(data) {
+    const adaptedData = this._adaptToServer(data);
     return this._load({
-      url: `${API_URL.movies}/${data.id}`,
+      url: `${API_URL.movies}/${adaptedData.id}`,
       method: Method.PUT,
-      body: JSON.stringify(data),
+      body: JSON.stringify(adaptedData),
       headers: new Headers({'Content-Type': 'application/json'}),
     })
-      .then(Api.toJSON);
+      .then(Api.toJSON)
+      .then((data) => this._adaptToClient(data));
+  }
+
+  _deleteCommentFromServer(id) {
+    return this._load({
+      url: `${API_URL.comments}/${id}`,
+      method: Method.DELETE,
+    });
   }
 
   _generateToken() {
@@ -61,5 +81,71 @@ export default class Api {
 
   static catchError(error) {
     throw error;
+  }
+
+  _adaptToClient(data) {
+    return Array.isArray(data)
+      ? data.map((film) => this._adaptFilmToClient(film))
+      : this._adaptFilmToClient(data);
+  }
+
+  _adaptFilmToClient(film) {
+    return {
+      filmInfo: {
+        id: film.id,
+        title: film.film_info.title,
+        alternativeTitle: film.film_info.alternative_title,
+        rating: film.film_info.total_rating,
+        ageRating: film.film_info.age_rating,
+        poster: film.film_info.poster,
+        description: film.film_info.description,
+        genres: film.film_info.genre,
+        release: {
+          date: new Date(film.film_info.release.date),
+          country: film.film_info.release.release_country,
+        },
+        duration: film.film_info.runtime,
+        director: film.film_info.director,
+        writers: film.film_info.writers,
+        actors: film.film_info.actors,
+      },
+      userDetails: {
+        isWatchlisted: film.user_details.watchlist,
+        isWatched: film.user_details.already_watched,
+        isFavorite: film.user_details.favorite,
+        date: new Date(film.user_details.watching_date),
+      },
+      comments: film.comments,
+    };
+  }
+
+  _adaptToServer({filmInfo, userDetails, comments}) {
+    return {
+      'id': filmInfo.id,
+      'comments': comments,
+      'film_info': {
+        'title': filmInfo.title,
+        'alternative_title': filmInfo.alternativeTitle,
+        'total_rating': filmInfo.rating,
+        'poster': filmInfo.poster,
+        'age_rating': filmInfo.ageRating,
+        'director': filmInfo.director,
+        'writers': filmInfo.writers,
+        'actors': filmInfo.actors,
+        'release': {
+          'date': filmInfo.release.date.toISOString(),
+          'release_country': filmInfo.release.country,
+        },
+        'runtime': filmInfo.duration,
+        'genre': filmInfo.genres,
+        'description': filmInfo.description,
+      },
+      'user_details': {
+        'watchlist': userDetails.isWatchlisted,
+        'already_watched': userDetails.isWatched,
+        'watching_date': userDetails.date.toISOString(),
+        'favorite': userDetails.isFavorite,
+      },
+    };
   }
 }
