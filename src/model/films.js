@@ -6,12 +6,12 @@ export default class Films extends AbstractModel {
     this._films = [];
   }
 
-  setFilms(updateType, films) {
+  set(updateType, films) {
     this._films = films.slice();
     this._notify(updateType, this._films);
   }
 
-  getFilms() {
+  get() {
     return this._films;
   }
 

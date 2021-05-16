@@ -11,7 +11,7 @@ export const Emojies = {
 
 // в функцию создания попапа передаем
 // объект с данными по фильму, массив комментариев и состояние
-const createFilmPopup = ({filmInfo, userDetails}, fullComments, state, error) => {
+const createPopupBlock = ({filmInfo, userDetails}, fullComments, state, error) => {
   const {
     title,
     alternativeTitle,
@@ -208,7 +208,7 @@ export default class FilmPopup extends SmartView {
   }
 
   getTemplate() {
-    return createFilmPopup(this._film, this._comments, this._state, this._error);
+    return createPopupBlock(this._film, this._comments, this._state, this._error);
   }
 
   restoreHandlers() {

@@ -2,6 +2,7 @@ import AbstractView from './abstract.js';
 import { FilterType } from '../const.js';
 
 const LINK_CLASS = 'main-navigation__item';
+const STATS_CLASS = 'main-navigation__additional';
 const ACTIVE_CLASS = 'main-navigation__item--active';
 
 const createMenuBlock = (filters, {activeFilter, isStatsActive}) => {
@@ -18,35 +19,36 @@ const createMenuBlock = (filters, {activeFilter, isStatsActive}) => {
 </nav>`;
 };
 
-export default class FiltersBlock extends AbstractView {
-  constructor(filters, filterState) {
+export default class MenuBlock extends AbstractView {
+  constructor(filters, state) {
     super();
     this._filters = filters;
-    this._filterState = filterState;
-    this._filterTypeChangeHandler = this._filterTypeChangeHandler.bind(this);
+    this._state = state;
+    this._typeChangeHandler = this._typeChangeHandler.bind(this);
   }
 
   getTemplate() {
-    return createMenuBlock(this._filters, this._filterState);
+    return createMenuBlock(this._filters, this._state);
   }
 
-  _filterTypeChangeHandler(evt) {
+  _typeChangeHandler(evt) {
     const target = evt.target;
-    if (!target.classList.contains(LINK_CLASS)) {
+    const isTargetCorrect = target.classList.contains(LINK_CLASS) || target.classList.contains(STATS_CLASS);
+    if (!isTargetCorrect) {
       return;
     }
     evt.preventDefault();
     const isActive = (link) => link.classList.contains(ACTIVE_CLASS);
-    if (isActive(evt.target)) {
+    if (isActive(target)) {
       return;
     }
 
-    this._callback.filterClick(evt.target.dataset.type);
+    this._callback.filterClick(target.dataset.type);
   }
 
-  setFilterTypeChangeHandler(callback) {
+  setTypeChangeHandler(callback) {
     this._callback.filterClick = callback;
-    this.getElement().addEventListener('click', this._filterTypeChangeHandler);
+    this.getElement().addEventListener('click', this._typeChangeHandler);
   }
 }
 

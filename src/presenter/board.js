@@ -8,14 +8,14 @@ import FilmsByCommentsView from '../view/films-by-comments.js';
 import NoFilmsBlockView from '../view/no-films-block.js';
 import ShowMoreButtonView from '../view/button-show-more.js';
 import FooterStatsView from '../view/footer-stats.js';
-import FilmPresenter from '../presenter/film.js';
-import PopupPresenter from '../presenter/film-popup.js';
-import StatsPresenter from '../presenter/stats.js';
+import FilmPresenter from './film.js';
+import PopupPresenter from './film-popup.js';
+import StatsPresenter from './stats.js';
 import { render, remove } from '../utils/render.js';
 import { sortByDate, sortByRating, filter } from '../utils/common.js';
 import { FILMS_PER_STEP, SortBy, SortType, EXTRA_FILMS_CARDS_COUNT, UpdateType, FilterType } from '../const.js';
 
-export default class FilmsList {
+export default class Board {
   constructor(filmsContainer, headerContainer, footerContainer, filmsModel, commentsModel, menuModel) {
     this._filmsContainer = filmsContainer;
     this._headerContainer = headerContainer;
@@ -52,14 +52,14 @@ export default class FilmsList {
   }
 
   init() {
-    this._renderFilmsBoard();
+    this._render();
     this._filmsModel.addObserver(this._handleModelEvent);
     this._menuModel.addObserver(this._handleModelEvent);
   }
 
   // Получаем массив отсортированных фильмов из модели
   _getFilms({totalCount = false} = {}) {
-    const films = this._filmsModel.getFilms().slice();
+    const films = this._filmsModel.get().slice();
     const filterType = this._menuModel.getActiveFilter();
     const filteredFilms = filter[filterType](films);
     switch (this._currentSortType) {
@@ -75,7 +75,7 @@ export default class FilmsList {
 
   //получаем массив просмотренных фильмов
   _getWatchedFilms() {
-    const films = this._filmsModel.getFilms().slice();
+    const films = this._filmsModel.get().slice();
     return filter[FilterType.HISTORY](films);
   }
 
@@ -84,7 +84,7 @@ export default class FilmsList {
   //=====
 
   // основной метод отрисовки фильтров, сортировки и фильмов
-  _renderFilmsBoard(update = null) {
+  _render(update = null) {
     if (this._isLoading) {
       render(this._filmsContainer, this._loadingComponent);
       return;
@@ -226,7 +226,7 @@ export default class FilmsList {
     remove(this._filmsSectionComponent);
   }
 
-  _clearFilmsBoard({resetRenderedFilmsCount = false, resetSortType = false} = {}) {
+  _clear({resetRenderedFilmsCount = false, resetSortType = false} = {}) {
     // удаляем все, что связано с данными
     const filmsCount = this._getFilms().length;
     remove(this._profileBlockComponent);
@@ -301,8 +301,8 @@ export default class FilmsList {
   // обработчик кнопок сортировки
   _handleSortButtons(sortType) {
     this._currentSortType = sortType;
-    this._clearFilmsBoard({resetRenderedFilmsCount: true});
-    this._renderFilmsBoard();
+    this._clear({resetRenderedFilmsCount: true});
+    this._render();
   }
 
   // обработчик действий на карточке фильма и попапе
@@ -324,7 +324,7 @@ export default class FilmsList {
       deletedCommentId = null,
     } = {}) {
     if (statsFlag) {
-      this._clearFilmsBoard();
+      this._clear();
       this._renderStats();
       return;
     }
@@ -339,17 +339,17 @@ export default class FilmsList {
         this._rerenderFilms(data);
         break;
       case UpdateType.MINOR:
-        this._clearFilmsBoard();
-        this._renderFilmsBoard(data);
+        this._clear();
+        this._render(data);
         break;
       case UpdateType.MAJOR:
-        this._clearFilmsBoard({resetRenderedFilmsCount: true, resetSortType: true});
-        this._renderFilmsBoard(data);
+        this._clear({resetRenderedFilmsCount: true, resetSortType: true});
+        this._render(data);
         break;
       case UpdateType.INIT:
         this._isLoading = false,
         remove(this._loadingComponent);
-        this._renderFilmsBoard(data);
+        this._render(data);
     }
   }
 }
