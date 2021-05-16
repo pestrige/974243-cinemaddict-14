@@ -1,5 +1,7 @@
 import AbstractView from './abstract.js';
 import { FilterType } from '../const.js';
+
+const LINK_CLASS = 'main-navigation__item';
 const ACTIVE_CLASS = 'main-navigation__item--active';
 
 const createMenuBlock = (filters, {activeFilter, isStatsActive}) => {
@@ -29,11 +31,16 @@ export default class FiltersBlock extends AbstractView {
   }
 
   _filterTypeChangeHandler(evt) {
+    const target = evt.target;
+    if (!target.classList.contains(LINK_CLASS)) {
+      return;
+    }
     evt.preventDefault();
     const isActive = (link) => link.classList.contains(ACTIVE_CLASS);
     if (isActive(evt.target)) {
       return;
     }
+
     this._callback.filterClick(evt.target.dataset.type);
   }
 
