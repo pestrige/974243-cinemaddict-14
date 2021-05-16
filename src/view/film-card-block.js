@@ -55,14 +55,13 @@ export default class FilmCardBlock extends AbstractView {
     this._film = film;
     this._controlButtonsClickHandler = this._controlButtonsClickHandler.bind(this);
   }
+  getTemplate() {
+    return createFilmCardBlock(this._film);
+  }
 
   _controlButtonsClickHandler(evt) {
     evt.preventDefault();
     this._callback.buttonsClick(evt);
-  }
-
-  getTemplate() {
-    return createFilmCardBlock(this._film);
   }
 
   setControlButtonsClick(callback) {

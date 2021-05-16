@@ -19,11 +19,6 @@ export default class FilmsSection extends AbstractView {
     return createFilmsSection();
   }
 
-  _filmCardClickHandler(evt) {
-    evt.preventDefault();
-    this._callback.filmCardClick(evt);
-  }
-
   setFilmCardClickHandler(callback) {
     this._callback.filmCardClick = callback;
     this.getElement().addEventListener('click', this._filmCardClickHandler);
@@ -31,5 +26,10 @@ export default class FilmsSection extends AbstractView {
 
   removeFilmCardClickHandler() {
     this.getElement().removeEventListener('click', this._filmCardClickHandler);
+  }
+
+  _filmCardClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.filmCardClick(evt);
   }
 }

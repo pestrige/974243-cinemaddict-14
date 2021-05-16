@@ -24,6 +24,11 @@ export default class SortBlock extends AbstractView {
     return createSortBlock(this._currentSortType);
   }
 
+  setSortButtonsClickHandler(callback) {
+    this._callback.sortButtonClick = callback;
+    this._element.addEventListener('click', this._sortButtonsHandler);
+  }
+
   _sortButtonsHandler(evt) {
     const currentButton = evt.target;
     if (!currentButton.classList.contains(buttonClass)) {
@@ -36,11 +41,6 @@ export default class SortBlock extends AbstractView {
     }
 
     this._callback.sortButtonClick(currentButton.dataset.sort);
-  }
-
-  setSortButtonsClickHandler(callback) {
-    this._callback.sortButtonClick = callback;
-    this._element.addEventListener('click', this._sortButtonsHandler);
   }
 }
 

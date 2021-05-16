@@ -11,7 +11,8 @@ export default class FilmPopupPresenter extends AbstractSmartPresenter {
     this._container = container;
     this._component = null;
     this._scrollTop = 0;
-    // _changeData и _handleControlButtons наследуются от AbstractSmartPresenter
+    // методы _changeData и _handleControlButtons
+    // наследуются от AbstractSmartPresenter
     this._changeData = handleFilmChange;
     this._handleControlButtons = this._handleControlButtons.bind(this);
 
@@ -20,6 +21,19 @@ export default class FilmPopupPresenter extends AbstractSmartPresenter {
     this._handleCloseButton = this._handleCloseButton.bind(this);
     this._handleDeleteCommentButton = this._handleDeleteCommentButton.bind(this);
     this._handleCommentFormSubmit = this._handleCommentFormSubmit.bind(this);
+  }
+
+  _setSavingState() {
+    this._component.updateState({
+      isSaving: true,
+    });
+  }
+
+  _setDeletingState(commentID) {
+    this._component.updateState({
+      isDeleting: true,
+      deletingCommentID: commentID,
+    });
   }
 
   init(film) {
@@ -36,6 +50,23 @@ export default class FilmPopupPresenter extends AbstractSmartPresenter {
         this._comments = this._commentsModel.get();
         this._render({ isLoadError: true, errorMsg });
       });
+  }
+
+  shake(commentID = null) {
+    const resetState = () => {
+      this._component.updateState({
+        isDeleting: false,
+        isSaving: false,
+        deletingCommentID: null,
+      });
+    };
+    const elementClass = commentID
+      ? `.film-details__comment[data-id='${commentID}']`
+      : '.film-details__new-comment';
+    const element = this._component.getElement()
+      .querySelector(elementClass);
+
+    this._component.shake(element, resetState);
   }
 
   _render(error = {}) {
@@ -67,36 +98,6 @@ export default class FilmPopupPresenter extends AbstractSmartPresenter {
     this._clear();
   }
 
-  _setSavingState() {
-    this._component.updateState({
-      isSaving: true,
-    });
-  }
-
-  _setDeletingState(commentID) {
-    this._component.updateState({
-      isDeleting: true,
-      deletingCommentID: commentID,
-    });
-  }
-
-  shake(commentID = null) {
-    const resetState = () => {
-      this._component.updateState({
-        isDeleting: false,
-        isSaving: false,
-        deletingCommentID: null,
-      });
-    };
-    const elementClass = commentID
-      ? `.film-details__comment[data-id='${commentID}']`
-      : '.film-details__new-comment';
-    const element = this._component.getElement()
-      .querySelector(elementClass);
-
-    this._component.shake(element, resetState);
-  }
-
   // обработчик Esc
   _handleEscKeyDown(evt) {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
@@ -117,7 +118,6 @@ export default class FilmPopupPresenter extends AbstractSmartPresenter {
 
   _handleCommentFormSubmit(text, emoji, film) {
     this._setSavingState();
-    //this._removeHandlers();
     document.removeEventListener('keydown', this._handleEscKeyDown);
     this._component.removeCloseButtonClickHandler();
     this._component.removeControlButtonsClickHandler();

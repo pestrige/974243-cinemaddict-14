@@ -82,21 +82,6 @@ export default class Api {
       .catch(Api.catchError);
   }
 
-  static checkStatus(response) {
-    if (response.status < SuccessServerStatusRange.MIN || response.status > SuccessServerStatusRange.MAX) {
-      throw new Error(`${response.status}: ${response.statusText}`);
-    }
-    return response;
-  }
-
-  static toJSON(response) {
-    return response.json();
-  }
-
-  static catchError(error) {
-    throw error;
-  }
-
   _adaptToClient(data) {
     return Array.isArray(data)
       ? data.map((film) => this._adaptFilmToClient(film))
@@ -161,5 +146,20 @@ export default class Api {
         'favorite': userDetails.isFavorite,
       },
     };
+  }
+
+  static checkStatus(response) {
+    if (response.status < SuccessServerStatusRange.MIN || response.status > SuccessServerStatusRange.MAX) {
+      throw new Error(`${response.status}: ${response.statusText}`);
+    }
+    return response;
+  }
+
+  static toJSON(response) {
+    return response.json();
+  }
+
+  static catchError(error) {
+    throw error;
   }
 }

@@ -31,6 +31,11 @@ export default class MenuBlock extends AbstractView {
     return createMenuBlock(this._filters, this._state);
   }
 
+  setTypeChangeHandler(callback) {
+    this._callback.filterClick = callback;
+    this.getElement().addEventListener('click', this._typeChangeHandler);
+  }
+
   _typeChangeHandler(evt) {
     const target = evt.target;
     const isTargetCorrect = target.classList.contains(LINK_CLASS) || target.classList.contains(STATS_CLASS);
@@ -44,11 +49,6 @@ export default class MenuBlock extends AbstractView {
     }
 
     this._callback.filterClick(target.dataset.type);
-  }
-
-  setTypeChangeHandler(callback) {
-    this._callback.filterClick = callback;
-    this.getElement().addEventListener('click', this._typeChangeHandler);
   }
 }
 

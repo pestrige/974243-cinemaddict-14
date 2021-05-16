@@ -3,7 +3,7 @@ import { remove, render, replace } from '../utils/render.js';
 import { filter } from '../utils/common.js';
 import { FilterType } from '../const.js';
 
-export default class Stats {
+export default class StatsPresenter {
   constructor(container, filmsModel) {
     this._films = filmsModel.get();
     this._container = container;

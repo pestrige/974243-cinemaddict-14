@@ -7,7 +7,8 @@ export default class FilmPresenter extends AbstractSmartPresenter {
     super();
     this._container = container;
     this._component = null;
-    //_changeData и _handleControlButtons наследуются от AbstractSmartPresenter
+    // методы _changeData и _handleControlButtons
+    // наследуются от AbstractSmartPresenter
     this._changeData = handleFilmChange;
     this._handleControlButtons = this._handleControlButtons.bind(this);
   }

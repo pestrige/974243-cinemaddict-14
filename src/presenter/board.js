@@ -1,6 +1,6 @@
 import AbstractView from '../view/abstract.js';
 import ProfileBlockView from '../view/profile-block.js';
-import LoadingView from '../view/loading-block.js';
+import LoadingBlockView from '../view/loading-block.js';
 import SortBlockView from '../view/sort-block.js';
 import FilmsSectionView from '../view/films-section.js';
 import FilmsByRatingView from '../view/films-by-rating.js';
@@ -15,7 +15,7 @@ import { render, remove } from '../utils/render.js';
 import { sortByDate, sortByRating, filter } from '../utils/common.js';
 import { FILMS_PER_STEP, SortBy, SortType, EXTRA_FILMS_CARDS_COUNT, UpdateType, FilterType } from '../const.js';
 
-export default class Board {
+export default class BoardPresenter {
   constructor(filmsContainer, headerContainer, footerContainer, filmsModel, commentsModel, menuModel) {
     this._filmsContainer = filmsContainer;
     this._headerContainer = headerContainer;
@@ -28,7 +28,7 @@ export default class Board {
     this._filmPresentersList = new Map(); // для сохранения всех экземпляров карточек фильмов
     this._isLoading = true;
 
-    this._loadingComponent = new LoadingView();
+    this._loadingBlockComponent = new LoadingBlockView();
     this._profileBlockComponent = null;
     this._sortBlockComponent = null;
     this._filmsSectionComponent = null;
@@ -86,7 +86,7 @@ export default class Board {
   // основной метод отрисовки фильтров, сортировки и фильмов
   _render(update = null) {
     if (this._isLoading) {
-      render(this._filmsContainer, this._loadingComponent);
+      render(this._filmsContainer, this._loadingBlockComponent);
       return;
     }
     if (this._statsPresenter) {
@@ -234,11 +234,9 @@ export default class Board {
     remove(this._footerStatsComponent);
     this._clearFilmsSection();
 
-    if (resetRenderedFilmsCount) {
-      this._renderedFilmsCount = FILMS_PER_STEP;
-    } else {
-      this._renderedFilmsCount = Math.min(filmsCount, this._renderedFilmsCount);
-    }
+    resetRenderedFilmsCount
+      ? this._renderedFilmsCount = FILMS_PER_STEP
+      : this._renderedFilmsCount = Math.min(filmsCount, this._renderedFilmsCount);
 
     if (resetSortType) {
       this._currentSortType = SortType.DEFAULT;
@@ -319,7 +317,6 @@ export default class Board {
     data,
     {
       statsFlag = false,
-      //isDeteleError = false,
       isError = false,
       deletedCommentId = null,
     } = {}) {
@@ -348,7 +345,7 @@ export default class Board {
         break;
       case UpdateType.INIT:
         this._isLoading = false,
-        remove(this._loadingComponent);
+        remove(this._loadingBlockComponent);
         this._render(data);
     }
   }

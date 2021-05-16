@@ -73,9 +73,8 @@ export const getRang = (filmsCount) => {
     return Rang.NOVICE;
   } else if (filmsCount >= FAN.min && filmsCount <= FAN.max) {
     return Rang.FAN;
-  } else {
-    return Rang.MOVIE_BUFF;
   }
+  return Rang.MOVIE_BUFF;
 };
 
 // находим жанры и их количество, сортируем
@@ -88,6 +87,4 @@ export const getSortedGenres = (films) => {
     });
   });
   return [...genresMap.entries()].sort((a, b) => b[1] - a[1]);
-  // return  [...genresMap.entries()]
-  //   .reduce((accum, current) => current[1] > accum[1] ? current : accum)[0];
 };

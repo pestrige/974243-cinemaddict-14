@@ -2,7 +2,7 @@ import FilmsModel from './model/films.js';
 import CommentsModel from './model/comments.js';
 import MenuModel from './model/menu.js';
 import BoardPresenter from './presenter/board.js';
-import FiltersPresenter from './presenter/menu.js';
+import MenuPresenter from './presenter/menu.js';
 import { UpdateType, ApiUrl, DataType } from './const.js';
 
 // Создаем экземпляры моделей
@@ -18,10 +18,10 @@ filmsModel.getData(ApiUrl.MOVIES, DataType.FILMS)
 const header = document.querySelector('.header');
 const main = document.querySelector('.main');
 const footer = document.querySelector('.footer');
-const filtersPresenter = new FiltersPresenter(main, menuModel, filmsModel);
+const menuPresenter = new MenuPresenter(main, menuModel, filmsModel);
 const boardPresenter = new BoardPresenter(main, header, footer, filmsModel, commentsModel, menuModel);
 
 // инициализируем презентер фильтров
-filtersPresenter.init();
+menuPresenter.init();
 // инициализируем презентер списка фильмов
 boardPresenter.init();

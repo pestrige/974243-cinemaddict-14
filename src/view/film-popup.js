@@ -1,4 +1,4 @@
-import SmartView from './abstract-smart.js';
+import AbstractSmartView from './abstract-smart.js';
 import { humanizeDate, humanizeFullDate, humanizeDuration } from '../utils/dates.js';
 import he from 'he';
 
@@ -190,7 +190,7 @@ const createPopupBlock = ({filmInfo, userDetails}, fullComments, state, error) =
 </section>`;
 };
 
-export default class FilmPopup extends SmartView {
+export default class FilmPopup extends AbstractSmartView {
   constructor(film, comments, error) {
     super();
     this._element = null;
@@ -217,6 +217,58 @@ export default class FilmPopup extends SmartView {
     this.setControlButtonsClickHandler(this._callback.buttonsClick);
     this.setCommentsListClickHandler(this._callback.deleteButtonClick);
     this.setCommentsFormKeydownHandler(this._callback.commentsFormKeydown);
+  }
+
+  setCloseButtonClickHandler(callback) {
+    this._callback.closeButtonClick = callback;
+    this.getElement()
+      .querySelector('.film-details__close-btn')
+      .addEventListener('click', this._closeButtonClickHandler);
+  }
+
+  removeCloseButtonClickHandler() {
+    this.getElement()
+      .querySelector('.film-details__close-btn')
+      .removeEventListener('click', this._closeButtonClickHandler);
+  }
+
+  setControlButtonsClickHandler(callback) {
+    this._callback.buttonsClick = callback;
+    this.getElement()
+      .querySelector('.film-details__controls')
+      .addEventListener('click', this._controlButtonsClickHandler);
+  }
+
+  removeControlButtonsClickHandler() {
+    this.getElement()
+      .querySelector('.film-details__controls')
+      .removeEventListener('click', this._controlButtonsClickHandler);
+  }
+
+  setCommentsListClickHandler(callback) {
+    this._callback.deleteButtonClick = callback;
+    this.getElement()
+      .querySelector('.film-details__comments-list')
+      .addEventListener('click', this._commentsListClickHandler);
+  }
+
+  removeCommentsListClickHandler() {
+    this.getElement()
+      .querySelector('.film-details__comments-list')
+      .removeEventListener('click', this._commentsListClickHandler);
+  }
+
+  setCommentsFormKeydownHandler(callback) {
+    this._callback.commentsFormKeydown = callback;
+    this.getElement()
+      .querySelector('.film-details__comment-input')
+      .addEventListener('keydown', this._commentsFormKeydownHandler);
+  }
+
+  removeCommentsFormKeydownHandler() {
+    this.getElement()
+      .querySelector('.film-details__comment-input')
+      .removeEventListener('keydown', this._commentsFormKeydownHandler);
   }
 
   _closeButtonClickHandler(evt) {
@@ -275,58 +327,6 @@ export default class FilmPopup extends SmartView {
     }
     this._state.textComment = textComment;
     this._callback.commentsFormKeydown(this._state.textComment, this._state.emojiType, this._film);
-  }
-
-  setCloseButtonClickHandler(callback) {
-    this._callback.closeButtonClick = callback;
-    this.getElement()
-      .querySelector('.film-details__close-btn')
-      .addEventListener('click', this._closeButtonClickHandler);
-  }
-
-  removeCloseButtonClickHandler() {
-    this.getElement()
-      .querySelector('.film-details__close-btn')
-      .removeEventListener('click', this._closeButtonClickHandler);
-  }
-
-  setControlButtonsClickHandler(callback) {
-    this._callback.buttonsClick = callback;
-    this.getElement()
-      .querySelector('.film-details__controls')
-      .addEventListener('click', this._controlButtonsClickHandler);
-  }
-
-  removeControlButtonsClickHandler() {
-    this.getElement()
-      .querySelector('.film-details__controls')
-      .removeEventListener('click', this._controlButtonsClickHandler);
-  }
-
-  setCommentsListClickHandler(callback) {
-    this._callback.deleteButtonClick = callback;
-    this.getElement()
-      .querySelector('.film-details__comments-list')
-      .addEventListener('click', this._commentsListClickHandler);
-  }
-
-  removeCommentsListClickHandler() {
-    this.getElement()
-      .querySelector('.film-details__comments-list')
-      .removeEventListener('click', this._commentsListClickHandler);
-  }
-
-  setCommentsFormKeydownHandler(callback) {
-    this._callback.commentsFormKeydown = callback;
-    this.getElement()
-      .querySelector('.film-details__comment-input')
-      .addEventListener('keydown', this._commentsFormKeydownHandler);
-  }
-
-  removeCommentsFormKeydownHandler() {
-    this.getElement()
-      .querySelector('.film-details__comment-input')
-      .removeEventListener('keydown', this._commentsFormKeydownHandler);
   }
 
   _setEmojiListClickHandler() {
