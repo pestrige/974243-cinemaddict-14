@@ -1,7 +1,7 @@
 import StatsView from '../view/stats.js';
 import { remove, render, replace } from '../utils/render.js';
 import { filter } from '../utils/common.js';
-import { FILTER_TYPE } from '../const.js';
+import { FilterType } from '../const.js';
 
 export default class Stats {
   constructor(container, filmsModel) {
@@ -12,7 +12,7 @@ export default class Stats {
 
   init() {
     const oldStatsComponent = this._statsComponent;
-    this._statsComponent = new StatsView(filter[FILTER_TYPE.history](this._films));
+    this._statsComponent = new StatsView(filter[FilterType.HISTORY](this._films));
 
     if (oldStatsComponent === null) {
       render(this._container, this._statsComponent);

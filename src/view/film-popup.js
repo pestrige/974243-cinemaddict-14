@@ -1,7 +1,13 @@
 import SmartView from './abstract-smart.js';
 import { humanizeDate, humanizeFullDate, humanizeDuration } from '../utils/dates.js';
-import { EMOJIES } from '../const.js';
 import he from 'he';
+
+export const Emojies = {
+  SMILE: 'smile',
+  SLEEPING: 'sleeping',
+  PUKE: 'puke',
+  ANGRY: 'angry',
+};
 
 // в функцию создания попапа передаем
 // объект с данными по фильму, массив комментариев и состояние
@@ -78,7 +84,7 @@ const createFilmPopup = ({filmInfo, userDetails}, fullComments, state, error) =>
 
   // создаем список Emoji
   const createEmojiList = (emojiType) => {
-    const emojies = Object.values(EMOJIES);
+    const emojies = Object.values(Emojies);
     return emojies.map((emoji) => {
       const isChecked = emoji === emojiType ? 'checked' : '';
       return `
@@ -265,7 +271,7 @@ export default class FilmPopup extends SmartView {
       return;
     }
     if (!this._state.emojiType) {
-      this._state.emojiType = EMOJIES.smile;
+      this._state.emojiType = Emojies.smile;
     }
     this._state.textComment = textComment;
     this._callback.commentsFormKeydown(this._state.textComment, this._state.emojiType, this._film);

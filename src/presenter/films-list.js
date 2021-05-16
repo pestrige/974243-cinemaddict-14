@@ -13,7 +13,7 @@ import PopupPresenter from '../presenter/film-popup.js';
 import StatsPresenter from '../presenter/stats.js';
 import { render, remove } from '../utils/render.js';
 import { sortByDate, sortByRating, filter } from '../utils/common.js';
-import { FILMS_PER_STEP, SORT_BY, SORT_TYPE, EXTRA_FILMS_CARDS_COUNT, UPDATE_TYPE, FILTER_TYPE } from '../const.js';
+import { FILMS_PER_STEP, SortBy, SortType, EXTRA_FILMS_CARDS_COUNT, UpdateType, FilterType } from '../const.js';
 
 export default class FilmsList {
   constructor(filmsContainer, headerContainer, footerContainer, filmsModel, commentsModel, menuModel) {
@@ -24,7 +24,7 @@ export default class FilmsList {
     this._commentsModel = commentsModel;
     this._menuModel = menuModel;
     this._renderedFilmsCount = FILMS_PER_STEP;
-    this._currentSortType = SORT_TYPE.default;
+    this._currentSortType = SortType.DEFAULT;
     this._filmPresentersList = new Map(); // для сохранения всех экземпляров карточек фильмов
     this._isLoading = true;
 
@@ -63,10 +63,10 @@ export default class FilmsList {
     const filterType = this._menuModel.getActiveFilter();
     const filteredFilms = filter[filterType](films);
     switch (this._currentSortType) {
-      case SORT_TYPE.date:
+      case SortType.DATE:
         filteredFilms.sort(sortByDate);
         break;
-      case SORT_TYPE.rating:
+      case SortType.RATING:
         filteredFilms.sort(sortByRating);
         break;
     }
@@ -76,7 +76,7 @@ export default class FilmsList {
   //получаем массив просмотренных фильмов
   _getWatchedFilms() {
     const films = this._filmsModel.getFilms().slice();
-    return filter[FILTER_TYPE.history](films);
+    return filter[FilterType.HISTORY](films);
   }
 
   //=====
@@ -145,18 +145,18 @@ export default class FilmsList {
     render(this._filmsSectionComponent, this._filmsByCommentsComponent);
   }
 
-  _renderFilms(filmsArray) {
+  _renderFilms(films) {
     // рендерим первые N фильмов
-    for (let i = 0; i < Math.min(filmsArray.length, this._renderedFilmsCount); i++) {
-      this._renderFilm(this._filmsListContainer, filmsArray[i]);
+    for (let i = 0; i < Math.min(films.length, this._renderedFilmsCount); i++) {
+      this._renderFilm(this._filmsListContainer, films[i]);
     }
     // рендерим кнопку показа фильмов, если есть еще фильмы
-    if (this._renderedFilmsCount < filmsArray.length) {
+    if (this._renderedFilmsCount < films.length) {
       this._renderButtonShowMore();
     }
   }
 
-  _renderFilmsByKey(container, filmsArray) {
+  _renderFilmsByKey(container, films) {
     if (container instanceof AbstractView) {
       container = container.getElement();
     }
@@ -165,8 +165,8 @@ export default class FilmsList {
     const filmsList = isTopRated
       ? container.querySelector('.films-list--top-rated .films-list__container')
       : container.querySelector('.films-list--most-commented .films-list__container');
-    const [key, value] = isTopRated ? SORT_BY.rating.split('.') : SORT_BY.comments.split('.');
-    const sortedFilms = filmsArray.slice();
+    const [key, value] = isTopRated ? SortBy.RATING.split('.') : SortBy.COMMENTS.split('.');
+    const sortedFilms = films.slice();
 
     // проверка на нулевые рейтинг и комментарии
     const ratingSum = sortedFilms.reduce((sum, current) => sum + Number(current.filmInfo.rating), 0);
@@ -241,7 +241,7 @@ export default class FilmsList {
     }
 
     if (resetSortType) {
-      this._currentSortType = SORT_TYPE.default;
+      this._currentSortType = SortType.DEFAULT;
     }
   }
 
@@ -335,18 +335,18 @@ export default class FilmsList {
     }
 
     switch (updateType) {
-      case UPDATE_TYPE.patch:
+      case UpdateType.PATCH:
         this._rerenderFilms(data);
         break;
-      case UPDATE_TYPE.minor:
+      case UpdateType.MINOR:
         this._clearFilmsBoard();
         this._renderFilmsBoard(data);
         break;
-      case UPDATE_TYPE.major:
+      case UpdateType.MAJOR:
         this._clearFilmsBoard({resetRenderedFilmsCount: true, resetSortType: true});
         this._renderFilmsBoard(data);
         break;
-      case UPDATE_TYPE.init:
+      case UpdateType.INIT:
         this._isLoading = false,
         remove(this._loadingComponent);
         this._renderFilmsBoard(data);

@@ -1,4 +1,6 @@
-import { END_POINT, API_URL, DATA_TYPE } from '../const.js';
+import { ApiUrl, DataType } from '../const.js';
+
+const END_POINT = 'https://14.ecmascript.pages.academy/cinemaddict';
 
 const Method = {
   GET: 'GET',
@@ -22,15 +24,15 @@ export default class Api {
     token ? this._authorization = token : this._generateToken();
   }
 
-  getData(dataUrl, dataType = DATA_TYPE.other) {
+  getData(dataUrl, dataType = DataType.OTHER) {
     this._getToken();
     return this._load({url: dataUrl})
       .then(Api.toJSON)
       .then((data) => {
         switch (dataType) {
-          case DATA_TYPE.films:
+          case DataType.FILMS:
             return this._adaptToClient(data);
-          case DATA_TYPE.other:
+          case DataType.OTHER:
           default:
             return data;
         }
@@ -40,7 +42,7 @@ export default class Api {
   updateData(data) {
     const adaptedData = this._adaptToServer(data);
     return this._load({
-      url: `${API_URL.movies}/${adaptedData.id}`,
+      url: `${ApiUrl.MOVIES}/${adaptedData.id}`,
       method: Method.PUT,
       body: JSON.stringify(adaptedData),
       headers: new Headers({'Content-Type': 'application/json'}),
@@ -51,7 +53,7 @@ export default class Api {
 
   addData(data) {
     return this._load({
-      url: `${API_URL.comments}/${data.id}`,
+      url: `${ApiUrl.COMMENTS}/${data.id}`,
       method: Method.POST,
       body: JSON.stringify(data.comment),
       headers: new Headers({'Content-Type': 'application/json'}),
@@ -62,7 +64,7 @@ export default class Api {
 
   _deleteCommentFromServer(id) {
     return this._load({
-      url: `${API_URL.comments}/${id}`,
+      url: `${ApiUrl.COMMENTS}/${id}`,
       method: Method.DELETE,
     });
   }

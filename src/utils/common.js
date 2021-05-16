@@ -1,14 +1,31 @@
 import dayjs from 'dayjs';
-import { FILTER_TYPE, RANG, RANG_LEVELS } from '../const.js';
+import { FilterType } from '../const.js';
+
+const Rang = {
+  NOVICE: 'Novice',
+  FAN: 'Fan',
+  MOVIE_BUFF: 'Movie Buff',
+};
+
+const RangLevel = {
+  NOVICE: {
+    min: 1,
+    max: 10,
+  },
+  FAN: {
+    min: 11,
+    max: 20,
+  },
+};
 
 // Заменяем один элемент в массиве
-export const updateItem = (itemsArray, updatedItem) => {
-  const newItemsArray = [...itemsArray];
-  const index = newItemsArray.findIndex((item) => item.filmInfo.id === updatedItem.filmInfo.id);
+export const updateItem = (items, updatedItem) => {
+  const newItems = [...items];
+  const index = newItems.findIndex((item) => item.filmInfo.id === updatedItem.filmInfo.id);
   if (index !== -1) {
-    newItemsArray.splice(index, 1, updatedItem);
+    newItems.splice(index, 1, updatedItem);
   }
-  return newItemsArray;
+  return newItems;
 };
 
 // Сортируем по дате
@@ -39,25 +56,25 @@ export const generateFilteredFilmsCounts = (films) => {
 
 // Список отфиотрованных массивов фильмов
 export const filter = {
-  [FILTER_TYPE.none]: (films) => films.slice(),
-  [FILTER_TYPE.all]: (films) => films.slice(),
-  [FILTER_TYPE.watchlist]: (films) => films.filter(({userDetails}) => userDetails['isWatchlisted']),
-  [FILTER_TYPE.history]: (films) => films.filter(({userDetails}) => userDetails['isWatched']),
-  [FILTER_TYPE.favorites]: (films) => films.filter(({userDetails}) => userDetails['isFavorite']),
+  [FilterType.NONE]: (films) => films.slice(),
+  [FilterType.ALL]: (films) => films.slice(),
+  [FilterType.WATCHLIST]: (films) => films.filter(({userDetails}) => userDetails['isWatchlisted']),
+  [FilterType.HISTORY]: (films) => films.filter(({userDetails}) => userDetails['isWatched']),
+  [FilterType.FAVORITE]: (films) => films.filter(({userDetails}) => userDetails['isFavorite']),
 };
 
 // Получаем ранг пользователя по просмотренным фильмам
 export const getRang = (filmsCount) => {
-  const { novice, fan } = RANG_LEVELS;
+  const { NOVICE, FAN } = RangLevel;
   if (!filmsCount) {
     return false;
   }
-  if (filmsCount >= novice.min && filmsCount <= novice.max) {
-    return RANG.novice;
-  } else if (filmsCount >= fan.min && filmsCount <= fan.max) {
-    return RANG.fan;
+  if (filmsCount >= NOVICE.min && filmsCount <= NOVICE.max) {
+    return Rang.NOVICE;
+  } else if (filmsCount >= FAN.min && filmsCount <= FAN.max) {
+    return Rang.FAN;
   } else {
-    return RANG.movieBuff;
+    return Rang.MOVIE_BUFF;
   }
 };
 

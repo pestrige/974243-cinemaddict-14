@@ -2,7 +2,7 @@ import SmartView from './abstract-smart.js';
 import { humanizeDuration, isDateInRange, getDateFrom } from '../utils/dates.js';
 import { getRang, getSortedGenres } from '../utils/common.js';
 import { renderChart } from '../utils/statistic.js';
-import { DATE_PERIOD } from '../const.js';
+import { DatePeriod } from '../const.js';
 
 
 // вычисляем данные для статистики
@@ -51,7 +51,7 @@ const createStatsBlock = (state, films) => {
 
   const createStatsFiltersElement = () => {
     let statsFiltersElement = '';
-    Object.values(DATE_PERIOD).forEach((period) => {
+    Object.values(DatePeriod).forEach((period) => {
       return statsFiltersElement = statsFiltersElement + `<input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-${period}" value="${period}" ${setChecked(period)}>
       <label for="statistic-${period}" class="statistic__filters-label">${humanizePeriod(period)}</label>`;
     });
@@ -98,7 +98,7 @@ export default class Stats extends SmartView {
   constructor(films) {
     super();
     this._films = films;
-    this._state = { period: DATE_PERIOD.all, filmsForPeriod: this._films.slice()};
+    this._state = { period: DatePeriod.ALL, filmsForPeriod: this._films.slice()};
     this._dateFiltersClickHandler = this._dateFiltersClickHandler.bind(this);
     this._setDateFiltersClickHandler();
     this._setChart();
@@ -120,7 +120,7 @@ export default class Stats extends SmartView {
 
   _getFilmsForPeriod(period, films) {
     const filmsForPeriod = new Array();
-    if (period === DATE_PERIOD.all) {
+    if (period === DatePeriod.ALL) {
       return films.slice();
     }
     const dateFrom = getDateFrom(period);

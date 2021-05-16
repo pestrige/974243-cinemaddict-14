@@ -1,7 +1,7 @@
 import AbstractSmartPresenter from './abstract-smart.js';
 import FilmPopupView from '../view/film-popup.js';
 import { render, remove } from '../utils/render.js';
-import { UPDATE_TYPE, API_URL } from '../const.js';
+import { UpdateType, ApiUrl } from '../const.js';
 
 export default class FilmPopupPresenter extends AbstractSmartPresenter {
   constructor(container, commentsModel, handleFilmChange, clearPopupCallback) {
@@ -24,7 +24,7 @@ export default class FilmPopupPresenter extends AbstractSmartPresenter {
 
   init(film) {
     this._film = film;
-    this._commentsModel.getData(`${API_URL.comments}/${this._film.filmInfo.id}`)
+    this._commentsModel.getData(`${ApiUrl.COMMENTS}/${this._film.filmInfo.id}`)
       .then((comments) => {
         this._commentsModel.setComments(comments);
         this._comments = this._commentsModel.getComments();
@@ -112,7 +112,7 @@ export default class FilmPopupPresenter extends AbstractSmartPresenter {
   // обновляет модель комментариев
   _handleDeleteCommentButton(commentId, film) {
     this._setDeletingState(commentId);
-    this._commentsModel.deleteComment(UPDATE_TYPE.patch, commentId, film);
+    this._commentsModel.deleteComment(UpdateType.PATCH, commentId, film);
   }
 
   _handleCommentFormSubmit(text, emoji, film) {
@@ -124,6 +124,6 @@ export default class FilmPopupPresenter extends AbstractSmartPresenter {
     this._filmPopupComponent.removeCommentsListClickHandler();
     this._filmPopupComponent.removeCommentsFormKeydownHandler();
 
-    this._commentsModel.createComment(UPDATE_TYPE.patch, text, emoji, film);
+    this._commentsModel.createComment(UpdateType.PATCH, text, emoji, film);
   }
 }
