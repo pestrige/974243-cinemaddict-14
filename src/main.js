@@ -3,7 +3,7 @@ import CommentsModel from './model/comments.js';
 import MenuModel from './model/menu.js';
 import FilmsListPresenter from './presenter/films-list.js';
 import FiltersPresenter from './presenter/menu.js';
-import { UPDATE_TYPE, API_URL, DATA_TYPE } from './const.js';
+import { UpdateType, ApiUrl, DataType } from './const.js';
 
 // Создаем экземпляры моделей
 const filmsModel = new FilmsModel();
@@ -11,9 +11,9 @@ const commentsModel = new CommentsModel();
 const menuModel = new MenuModel();
 
 // Получаем данные
-filmsModel.getData(API_URL.movies, DATA_TYPE.films)
-  .then((films) => filmsModel.setFilms(UPDATE_TYPE.init, films))
-  .catch(() => filmsModel.setFilms(UPDATE_TYPE.init, []));
+filmsModel.getData(ApiUrl.MOVIES, DataType.FILMS)
+  .then((films) => filmsModel.setFilms(UpdateType.INIT, films))
+  .catch(() => filmsModel.setFilms(UpdateType.INIT, []));
 
 const header = document.querySelector('.header');
 const main = document.querySelector('.main');

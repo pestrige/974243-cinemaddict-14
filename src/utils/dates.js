@@ -1,6 +1,8 @@
 import dayjs from 'dayjs';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
-import { DATE_PERIOD, DAYS_WEEK } from '../const.js';
+import { DatePeriod } from '../const.js';
+
+const DAYS_WEEK = 6;
 
 export const getYearFromDate = (date) => dayjs(date).year();
 export const humanizeDate = (date) => dayjs(date).format('D MMMM YYYY');
@@ -28,13 +30,13 @@ export const isDateInRange = (currentDate, dateFrom) => {
 // Получаем дату конца периода
 export const getDateFrom = (period) => {
   switch (period) {
-    case DATE_PERIOD.today:
+    case DatePeriod.TODAY:
       return dayjs().toDate();
-    case DATE_PERIOD.week:
+    case DatePeriod.WEEK:
       return dayjs().subtract(DAYS_WEEK, 'day').toDate();
-    case DATE_PERIOD.month:
+    case DatePeriod.MONTH:
       return dayjs().subtract(1, 'month').toDate();
-    case DATE_PERIOD.year:
+    case DatePeriod.YEAR:
       return dayjs().subtract(1, 'year').toDate();
   }
 };

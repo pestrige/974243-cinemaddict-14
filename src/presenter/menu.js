@@ -1,7 +1,7 @@
 import FiltersBlockView from '../view/menu-block.js';
 import { generateFilteredFilmsCounts } from '../utils/common.js';
 import { render, replace, remove } from '../utils/render.js';
-import { UPDATE_TYPE } from '../const.js';
+import { UpdateType } from '../const.js';
 
 export default class FilterPresenter {
   constructor(container, menuModel, filmsModel) {
@@ -35,7 +35,7 @@ export default class FilterPresenter {
   }
 
   _handleFilterTypeChange(linkType) {
-    this._menuModel.setState(UPDATE_TYPE.major, linkType);
+    this._menuModel.setState(UpdateType.MAJOR, linkType);
   }
 
   _handleModelEvent() {

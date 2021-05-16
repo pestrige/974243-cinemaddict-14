@@ -1,4 +1,10 @@
-import { BUTTON_TYPE, UPDATE_TYPE } from '../const.js';
+import { UpdateType } from '../const.js';
+
+const ButtonType = {
+  WATCHLIST: 'watchlist',
+  HISTORY: 'history',
+  FAVORITE: 'favorite',
+};
 
 export default class AbstractSmart {
   constructor() {
@@ -16,18 +22,18 @@ export default class AbstractSmart {
     // изменяем ключи на противоположное значение
     // в зависимости от типа кнопки
     switch (buttonType) {
-      case BUTTON_TYPE.watchlist:
+      case ButtonType.WATCHLIST:
         changedUserDetails.isWatchlisted = !this._film.userDetails.isWatchlisted;
         break;
-      case BUTTON_TYPE.history:
+      case ButtonType.HISTORY:
         changedUserDetails.isWatched = !this._film.userDetails.isWatched;
         break;
-      case BUTTON_TYPE.favorite:
+      case ButtonType.FAVORITE:
         changedUserDetails.isFavorite = !this._film.userDetails.isFavorite;
         break;
     }
 
     // и передаем объект с измененными данными фильма
-    this._changeData(UPDATE_TYPE.minor, {...this._film, userDetails: changedUserDetails});
+    this._changeData(UpdateType.MINOR, {...this._film, userDetails: changedUserDetails});
   }
 }

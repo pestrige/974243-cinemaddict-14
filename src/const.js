@@ -1,99 +1,43 @@
-const MAX_DESCRIPTION_SIZE = 140;
-const EXTRA_FILMS_CARDS_COUNT = 2;
-const FILMS_PER_STEP = 5;
-const EMOJIES = {
-  smile: 'smile',
-  sleeping: 'sleeping',
-  puke: 'puke',
-  angry: 'angry',
-};
-const RENDER_POSITION = {
-  start: 'afterbegin',
-  end: 'beforeend',
-};
-const SORT_BY = {
-  rating: 'filmInfo.rating',
-  comments: 'comments.length',
-};
-const BUTTON_TYPE = {
-  watchlist: 'watchlist',
-  history: 'history',
-  favorite: 'favorite',
-};
-const SORT_TYPE = {
-  default: 'default',
-  date: 'date',
-  rating: 'rating',
-};
-const UPDATE_TYPE = {
-  none: 'none',
-  patch: 'patch',
-  minor: 'minor',
-  major: 'major',
-  init: 'init',
-};
-const FILTER_TYPE = {
-  none: null,
-  all: 'all',
-  watchlist: 'watchlist',
-  history: 'history',
-  favorites: 'favorites',
-  stats: 'stats',
-};
+export const MAX_DESCRIPTION_SIZE = 140;
+export const EXTRA_FILMS_CARDS_COUNT = 2;
+export const FILMS_PER_STEP = 5;
 
-const DAYS_WEEK = 6;
-
-const DATE_PERIOD = {
-  all: 'all-time',
-  today: 'today',
-  week: 'week',
-  month: 'month',
-  year: 'year',
+export const SortBy = {
+  RATING: 'filmInfo.rating',
+  COMMENTS: 'comments.length',
 };
-
-const RANG = {
-  novice: 'Novice',
-  fan: 'Fan',
-  movieBuff: 'Movie Buff',
+export const SortType = {
+  DEFAULT: 'default',
+  DATE: 'date',
+  RATING: 'rating',
 };
-
-const RANG_LEVELS = {
-  novice: {
-    min: 1,
-    max: 10,
-  },
-  fan: {
-    min: 11,
-    max: 20,
-  },
+export const UpdateType = {
+  NONE: 'none',
+  PATCH: 'patch',
+  MINOR: 'minor',
+  MAJOR: 'major',
+  INIT: 'init',
 };
-
-const END_POINT = 'https://14.ecmascript.pages.academy/cinemaddict';
-const API_URL = {
-  movies: 'movies',
-  comments: 'comments',
+export const FilterType = {
+  NONE: null,
+  ALL: 'all',
+  WATCHLIST: 'watchlist',
+  HISTORY: 'history',
+  FAVORITE: 'favorites',
+  STATS: 'stats',
 };
-const DATA_TYPE = {
-  films: 'films',
-  other: 'other',
+export const DatePeriod = {
+  ALL: 'all-time',
+  TODAY: 'today',
+  WEEK: 'week',
+  MONTH: 'month',
+  YEAR: 'year',
 };
-
-export {
-  MAX_DESCRIPTION_SIZE,
-  FILMS_PER_STEP,
-  EXTRA_FILMS_CARDS_COUNT,
-  EMOJIES,
-  RENDER_POSITION,
-  SORT_BY,
-  BUTTON_TYPE,
-  SORT_TYPE,
-  UPDATE_TYPE,
-  FILTER_TYPE,
-  DAYS_WEEK,
-  DATE_PERIOD,
-  RANG,
-  RANG_LEVELS,
-  END_POINT,
-  API_URL,
-  DATA_TYPE
+export const ApiUrl = {
+  MOVIES: 'movies',
+  COMMENTS: 'comments',
+};
+export const DataType = {
+  FILMS: 'films',
+  OTHER: 'other',
 };

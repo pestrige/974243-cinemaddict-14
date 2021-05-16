@@ -1,5 +1,10 @@
 import AbstractView from '../view/abstract.js';
-import { RENDER_POSITION, FILMS_PER_STEP, SORT_BY, EXTRA_FILMS_CARDS_COUNT } from '../const.js';
+import { FILMS_PER_STEP, SortBy, EXTRA_FILMS_CARDS_COUNT } from '../const.js';
+
+const RenderPosition = {
+  START: 'afterbegin',
+  END: 'beforeend',
+};
 
 // =====
 // создание DOM элемента
@@ -23,10 +28,10 @@ export const render = (container, element, place) => {
   }
 
   switch (place) {
-    case RENDER_POSITION.start:
+    case RenderPosition.START:
       container.prepend(element);
       break;
-    case RENDER_POSITION.end:
+    case RenderPosition.END:
     default:
       container.append(element);
   }
@@ -68,7 +73,7 @@ export const replace = (oldChild, newChild) => {
 // =====
 // рендер фильмов
 // =====
-export const renderFilms = (container, filmCard, filmsArray, button) => {
+export const renderFilms = (container, filmCard, films, button) => {
   if (container instanceof AbstractView) {
     container = container.getElement();
   }
@@ -76,12 +81,12 @@ export const renderFilms = (container, filmCard, filmsArray, button) => {
   const filmsListContainer = filmsList.querySelector('.films-list__container');
 
   // рендерим первые N фильмов
-  for (let i = 0; i < Math.min(filmsArray.length, FILMS_PER_STEP); i++) {
-    render(filmsListContainer, new filmCard(filmsArray[i]));
+  for (let i = 0; i < Math.min(films.length, FILMS_PER_STEP); i++) {
+    render(filmsListContainer, new filmCard(films[i]));
   }
 
   // рендерим кнопку показа фильмов, если есть еще фильмы
-  if (FILMS_PER_STEP < filmsArray.length) {
+  if (FILMS_PER_STEP < films.length) {
     let renderedFilms = FILMS_PER_STEP;
     const buttonShowMoreComponent = new button();
     render(filmsList, buttonShowMoreComponent);
@@ -89,12 +94,12 @@ export const renderFilms = (container, filmCard, filmsArray, button) => {
     // по клику рендерим больше фильмов
     buttonShowMoreComponent.setClickHandler((evt) => {
       evt.preventDefault();
-      filmsArray
+      films
         .slice(renderedFilms, renderedFilms + FILMS_PER_STEP) // берем кусок массива от уже показанных, до + шаг
         .forEach((film) => render(filmsListContainer, new filmCard(film)));
       renderedFilms += FILMS_PER_STEP; // прибавляем к счетчику показанные фильмы
 
-      if (renderedFilms >= filmsArray.length) {
+      if (renderedFilms >= films.length) {
         remove(buttonShowMoreComponent);
       }
     });
@@ -104,7 +109,7 @@ export const renderFilms = (container, filmCard, filmsArray, button) => {
 // =====
 // рендера фильмов, осортированных по ключу
 // =====
-export const renderFilmsByKey = (container, filmCard, filmsArray) => {
+export const renderFilmsByKey = (container, filmCard, films) => {
   if (container instanceof AbstractView) {
     container = container.getElement();
   }
@@ -113,8 +118,8 @@ export const renderFilmsByKey = (container, filmCard, filmsArray) => {
   const filmsList = isTopRated
     ? container.querySelector('.films-list--top-rated .films-list__container')
     : container.querySelector('.films-list--most-commented .films-list__container');
-  const [key, value] = isTopRated ? SORT_BY.rating.split('.') : SORT_BY.comments.split('.');
-  const sortedFilms = filmsArray.slice();
+  const [key, value] = isTopRated ? SortBy.RATING.split('.') : SortBy.COMMENTS.split('.');
+  const sortedFilms = films.slice();
 
   sortedFilms
     .sort((a, b) => b[key][value] - a[key][value])

@@ -1,20 +1,20 @@
 import AbstractModel from './abstract-model.js';
-import { FILTER_TYPE } from '../const.js';
+import { FilterType } from '../const.js';
 
 export default class Menu extends AbstractModel {
   constructor() {
     super();
-    this._activeFilter = FILTER_TYPE.all;
+    this._activeFilter = FilterType.ALL;
     this._isStatsActive = false;
     this._state = {
-      activeFilter: FILTER_TYPE.all,
+      activeFilter: FilterType.ALL,
       isStatsActive: false,
     };
   }
 
   setState(updateType, linkType) {
-    if (linkType === FILTER_TYPE.stats) {
-      this._state.activeFilter = FILTER_TYPE.none;
+    if (linkType === FilterType.STATS) {
+      this._state.activeFilter = FilterType.NONE;
       this._state.isStatsActive = true;
     } else {
       this._state.activeFilter = linkType;
