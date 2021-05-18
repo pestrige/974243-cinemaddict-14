@@ -79,8 +79,6 @@ const handleFetch = (evt) => {
     return false;
   }
 
-  //console.log(request.url);
-
   evt.respondWith(
     caches.match(request)
       .then((cacheResponse) => {
@@ -114,7 +112,6 @@ const handleFetch = (evt) => {
             return response;
           })
           .catch(() => {
-            //console.log(request, 'request in catch');
             return Promise.reject(request);
           });
       }),
