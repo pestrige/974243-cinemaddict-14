@@ -1,6 +1,6 @@
 import AbstractView from '../view/abstract.js';
 import ProfileBlockView from '../view/profile-block.js';
-import LoadingView from '../view/loading-block.js';
+import LoadingBlockView from '../view/loading-block.js';
 import SortBlockView from '../view/sort-block.js';
 import FilmsSectionView from '../view/films-section.js';
 import FilmsByRatingView from '../view/films-by-rating.js';
@@ -8,27 +8,29 @@ import FilmsByCommentsView from '../view/films-by-comments.js';
 import NoFilmsBlockView from '../view/no-films-block.js';
 import ShowMoreButtonView from '../view/button-show-more.js';
 import FooterStatsView from '../view/footer-stats.js';
-import FilmPresenter from '../presenter/film.js';
-import PopupPresenter from '../presenter/film-popup.js';
-import StatsPresenter from '../presenter/stats.js';
+import FilmPresenter from './film.js';
+import PopupPresenter from './film-popup.js';
+import StatsPresenter from './stats.js';
 import { render, remove } from '../utils/render.js';
 import { sortByDate, sortByRating, filter } from '../utils/common.js';
 import { FILMS_PER_STEP, SortBy, SortType, EXTRA_FILMS_CARDS_COUNT, UpdateType, FilterType } from '../const.js';
+import { showToast } from '../utils/toast.js';
 
-export default class FilmsList {
-  constructor(filmsContainer, headerContainer, footerContainer, filmsModel, commentsModel, menuModel) {
+export default class BoardPresenter {
+  constructor(filmsContainer, headerContainer, footerContainer, filmsModel, commentsModel, menuModel, store) {
     this._filmsContainer = filmsContainer;
     this._headerContainer = headerContainer;
     this._footerContainer = footerContainer;
     this._filmsModel = filmsModel;
     this._commentsModel = commentsModel;
     this._menuModel = menuModel;
+    this._store = store;
     this._renderedFilmsCount = FILMS_PER_STEP;
     this._currentSortType = SortType.DEFAULT;
     this._filmPresentersList = new Map(); // для сохранения всех экземпляров карточек фильмов
     this._isLoading = true;
 
-    this._loadingComponent = new LoadingView();
+    this._loadingBlockComponent = new LoadingBlockView();
     this._profileBlockComponent = null;
     this._sortBlockComponent = null;
     this._filmsSectionComponent = null;
@@ -52,14 +54,14 @@ export default class FilmsList {
   }
 
   init() {
-    this._renderFilmsBoard();
+    this._render();
     this._filmsModel.addObserver(this._handleModelEvent);
     this._menuModel.addObserver(this._handleModelEvent);
   }
 
   // Получаем массив отсортированных фильмов из модели
   _getFilms({totalCount = false} = {}) {
-    const films = this._filmsModel.getFilms().slice();
+    const films = this._filmsModel.getItems().slice();
     const filterType = this._menuModel.getActiveFilter();
     const filteredFilms = filter[filterType](films);
     switch (this._currentSortType) {
@@ -75,7 +77,7 @@ export default class FilmsList {
 
   //получаем массив просмотренных фильмов
   _getWatchedFilms() {
-    const films = this._filmsModel.getFilms().slice();
+    const films = this._filmsModel.getItems().slice();
     return filter[FilterType.HISTORY](films);
   }
 
@@ -84,9 +86,9 @@ export default class FilmsList {
   //=====
 
   // основной метод отрисовки фильтров, сортировки и фильмов
-  _renderFilmsBoard(update = null) {
+  _render(update = null) {
     if (this._isLoading) {
-      render(this._filmsContainer, this._loadingComponent);
+      render(this._filmsContainer, this._loadingBlockComponent);
       return;
     }
     if (this._statsPresenter) {
@@ -197,7 +199,7 @@ export default class FilmsList {
   }
 
   _renderPopup(container, film, callback) {
-    this._popupPresenter = new PopupPresenter(container, this._commentsModel, this._handleViewAction, callback);
+    this._popupPresenter = new PopupPresenter(container, this._commentsModel, this._store, this._handleViewAction, callback);
     this._popupPresenter.init(film);
     this._filmsSectionComponent.removeFilmCardClickHandler();
     this._commentsModel.addObserver(this._handleModelEvent);
@@ -226,7 +228,7 @@ export default class FilmsList {
     remove(this._filmsSectionComponent);
   }
 
-  _clearFilmsBoard({resetRenderedFilmsCount = false, resetSortType = false} = {}) {
+  _clear({resetRenderedFilmsCount = false, resetSortType = false} = {}) {
     // удаляем все, что связано с данными
     const filmsCount = this._getFilms().length;
     remove(this._profileBlockComponent);
@@ -234,11 +236,9 @@ export default class FilmsList {
     remove(this._footerStatsComponent);
     this._clearFilmsSection();
 
-    if (resetRenderedFilmsCount) {
-      this._renderedFilmsCount = FILMS_PER_STEP;
-    } else {
-      this._renderedFilmsCount = Math.min(filmsCount, this._renderedFilmsCount);
-    }
+    resetRenderedFilmsCount
+      ? this._renderedFilmsCount = FILMS_PER_STEP
+      : this._renderedFilmsCount = Math.min(filmsCount, this._renderedFilmsCount);
 
     if (resetSortType) {
       this._currentSortType = SortType.DEFAULT;
@@ -301,14 +301,14 @@ export default class FilmsList {
   // обработчик кнопок сортировки
   _handleSortButtons(sortType) {
     this._currentSortType = sortType;
-    this._clearFilmsBoard({resetRenderedFilmsCount: true});
-    this._renderFilmsBoard();
+    this._clear({resetRenderedFilmsCount: true});
+    this._render();
   }
 
   // обработчик действий на карточке фильма и попапе
   // вызывает обновление данных
   _handleViewAction(updateType, updatedFilm) {
-    this._filmsModel.updateData(updatedFilm)
+    this._filmsModel.updateDataToCache(updatedFilm)
       .then((film) => this._filmsModel.updateFilm(updateType, film));
   }
 
@@ -319,18 +319,21 @@ export default class FilmsList {
     data,
     {
       statsFlag = false,
-      //isDeteleError = false,
       isError = false,
+      isOffline = false,
       deletedCommentId = null,
     } = {}) {
     if (statsFlag) {
-      this._clearFilmsBoard();
+      this._clear();
       this._renderStats();
       return;
     }
 
-    if (isError || isError) {
+    if (isError) {
       this._popupPresenter.shake(deletedCommentId);
+      if (isOffline) {
+        showToast('Can\'t do it in offline');
+      }
       return;
     }
 
@@ -339,17 +342,17 @@ export default class FilmsList {
         this._rerenderFilms(data);
         break;
       case UpdateType.MINOR:
-        this._clearFilmsBoard();
-        this._renderFilmsBoard(data);
+        this._clear();
+        this._render(data);
         break;
       case UpdateType.MAJOR:
-        this._clearFilmsBoard({resetRenderedFilmsCount: true, resetSortType: true});
-        this._renderFilmsBoard(data);
+        this._clear({resetRenderedFilmsCount: true, resetSortType: true});
+        this._render(data);
         break;
       case UpdateType.INIT:
         this._isLoading = false,
-        remove(this._loadingComponent);
-        this._renderFilmsBoard(data);
+        remove(this._loadingBlockComponent);
+        this._render(data);
     }
   }
 }

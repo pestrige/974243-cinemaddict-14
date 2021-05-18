@@ -1,4 +1,5 @@
 import AbstractModel from './abstract-model.js';
+import { isOnline } from '../utils/common.js';
 
 export default class Comments extends AbstractModel {
   constructor() {
@@ -6,12 +7,12 @@ export default class Comments extends AbstractModel {
     this._comments = [];
   }
 
-  setComments(comments) {
+  setItems(comments) {
     this._comments = comments.slice();
     return this._comments;
   }
 
-  getComments() {
+  getItems() {
     return this._comments;
   }
 
@@ -23,6 +24,12 @@ export default class Comments extends AbstractModel {
       },
       id: Number(film.filmInfo.id),
     };
+
+    if (!isOnline()) {
+      this._notify(updateType, data, {isError: true, isOffline: true});
+      return;
+    }
+
     this.addData(data)
       .then((updatedData) => {
         this._notify(updateType, updatedData);
@@ -36,6 +43,12 @@ export default class Comments extends AbstractModel {
     const index = comments.findIndex((comment) => comment.id === deletedCommentId);
     const updatedFilmCardComments = comments.splice(index, 1);
     const updatedFilm = {...film, updatedFilmCardComments};
+
+    if (!isOnline()) {
+      this._notify(updateType, updatedFilm, {isError: true, isOffline: true, deletedCommentId});
+      return;
+    }
+
     // удалем комментарий с сервера
     this._deleteCommentFromServer(deletedCommentId)
       .then((response) => {

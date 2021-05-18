@@ -8,7 +8,7 @@ const createLoadingBlock = () => {
 </section>`;
 };
 
-export default class Loading extends AbstractView {
+export default class LoadingBlock extends AbstractView {
   constructor() {
     super();
   }

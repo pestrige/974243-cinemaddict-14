@@ -7,7 +7,7 @@ const createFilmsByRatingSection = () => {
 </section>`;
 };
 
-export default class FilmsByRatingSection extends AbstractView {
+export default class FilmsByRating extends AbstractView {
   getTemplate() {
     return createFilmsByRatingSection();
   }

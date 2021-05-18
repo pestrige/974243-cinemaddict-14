@@ -108,11 +108,6 @@ export default class Stats extends SmartView {
     return createStatsBlock(this._state, this._films);
   }
 
-  restoreHandlers() {
-    this._setDateFiltersClickHandler();
-    this._setChart();
-  }
-
   _setChart() {
     const statisticCtx = this.getElement().querySelector('.statistic__chart');
     renderChart(statisticCtx, this._state);
@@ -131,6 +126,11 @@ export default class Stats extends SmartView {
       }
     });
     return filmsForPeriod;
+  }
+
+  restoreHandlers() {
+    this._setDateFiltersClickHandler();
+    this._setChart();
   }
 
   _dateFiltersClickHandler(evt) {

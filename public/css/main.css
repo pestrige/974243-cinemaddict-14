@@ -1151,3 +1151,84 @@ button {
 .shake {
   animation: shake 0.6s;
 }
+
+.toast-item {
+  position: fixed;
+  z-index: 4;
+  left: 0;
+  right:0;
+  bottom: 30px;
+  max-width: 0;
+  height: 50px;
+  margin: auto;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background-color: crimson;
+  color: #fff;
+  text-align: center;
+  border-radius: 2px;
+  font-size: 17px;
+  font-weight: bold;
+  white-space: nowrap;
+
+  -webkit-animation: fadein 0.5s, expand 0.5s 0.5s,stay 3s 1s, shrink 0.5s 2s, fadeout 0.5s 2.5s;
+  animation: fadein 0.5s, expand 0.5s 0.5s, stay 3s 1s, shrink 0.5s 4s, fadeout 0.5s 4.5s;
+}
+
+.toast-item__text {
+  color: #fff;
+  margin: 16px;
+  overflow: hidden;
+	white-space: nowrap;
+}
+
+@-webkit-keyframes fadein {
+  from {bottom: 0; opacity: 0;}
+  to {bottom: 30px; opacity: 1;}
+}
+
+@keyframes fadein {
+  from {bottom: 0; opacity: 0;}
+  to {bottom: 30px; opacity: 1;}
+}
+
+@-webkit-keyframes expand {
+  from {min-width: 0;}
+  to {min-width: 350px}
+}
+
+@keyframes expand {
+  from {min-width: 0;}
+  to {min-width: 350px}
+}
+@-webkit-keyframes stay {
+  from {min-width: 350px}
+  to {min-width: 350px}
+}
+
+@keyframes stay {
+  from {min-width: 350px}
+  to {min-width: 350px}
+}
+@-webkit-keyframes shrink {
+  from {min-width: 350px;}
+  to {min-width: 0;}
+}
+
+@keyframes shrink {
+  from {min-width: 350px;}
+  to {min-width: 0;}
+}
+
+@-webkit-keyframes fadeout {
+  from {bottom: 30px; opacity: 1;}
+  to {bottom: 60px; opacity: 0;}
+}
+
+@keyframes fadeout {
+  from {bottom: 30px; opacity: 1;}
+  to {bottom: 60px; opacity: 0;}
+}

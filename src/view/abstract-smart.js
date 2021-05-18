@@ -1,6 +1,6 @@
 import Abstract from './abstract.js';
 
-export default class Smart extends Abstract {
+export default class AbstractSmart extends Abstract {
   constructor() {
     super();
     this._state = {};

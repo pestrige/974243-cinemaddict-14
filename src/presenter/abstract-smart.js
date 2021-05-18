@@ -6,7 +6,7 @@ const ButtonType = {
   FAVORITE: 'favorite',
 };
 
-export default class AbstractSmart {
+export default class AbstractSmartPresenter {
   constructor() {
     this._changeData = null;
   }

@@ -6,18 +6,14 @@ const RenderPosition = {
   END: 'beforeend',
 };
 
-// =====
 // создание DOM элемента
-// =====
 export const createDomElement = (template) => {
   const templateContainer = document.createElement('template');
   templateContainer.innerHTML = template;
   return templateContainer.content.firstElementChild;
 };
 
-// =====
 // рендер компонента
-// =====
 export const render = (container, element, place) => {
   if (container instanceof AbstractView) {
     container = container.getElement();
@@ -37,24 +33,20 @@ export const render = (container, element, place) => {
   }
 };
 
-// =====
 // удаление компонента
-// =====
 export const remove = (component) => {
   if (component === null) {
     return;
   }
-  if (component instanceof AbstractView) {
-    component.getElement().remove();
-    component.removeElement();
-  } else {
+  if (!(component instanceof AbstractView)) {
     throw new Error('Can remove components only');
   }
+
+  component.getElement().remove();
+  component.removeElement();
 };
 
-// =====
 // замена элемента
-// =====
 export const replace = (oldChild, newChild) => {
   if (oldChild instanceof AbstractView) {
     oldChild = oldChild.getElement();
@@ -70,9 +62,7 @@ export const replace = (oldChild, newChild) => {
   parent.replaceChild(newChild, oldChild);
 };
 
-// =====
 // рендер фильмов
-// =====
 export const renderFilms = (container, filmCard, films, button) => {
   if (container instanceof AbstractView) {
     container = container.getElement();
@@ -106,9 +96,7 @@ export const renderFilms = (container, filmCard, films, button) => {
   }
 };
 
-// =====
 // рендера фильмов, осортированных по ключу
-// =====
 export const renderFilmsByKey = (container, filmCard, films) => {
   if (container instanceof AbstractView) {
     container = container.getElement();

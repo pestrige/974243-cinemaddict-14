@@ -5,34 +5,31 @@ import { render, remove, replace } from '../utils/render.js';
 export default class FilmPresenter extends AbstractSmartPresenter {
   constructor(container, handleFilmChange) {
     super();
-    this._filmContainer = container;
-    this._filmComponent = null;
-    //_changeData и _handleControlButtons наследуются от AbstractSmartPresenter
+    this._container = container;
+    this._component = null;
+    // методы _changeData и _handleControlButtons
+    // наследуются от AbstractSmartPresenter
     this._changeData = handleFilmChange;
     this._handleControlButtons = this._handleControlButtons.bind(this);
   }
 
   init(film) {
     this._film = film;
-    const oldFilmComponent = this._filmComponent;
+    const oldComponent = this._component;
 
-    this._filmComponent = new FilmCardBlockView(this._film);
-    this._filmComponent.setControlButtonsClick(this._handleControlButtons);
+    this._component = new FilmCardBlockView(this._film);
+    this._component.setControlButtonsClick(this._handleControlButtons);
 
-    if (oldFilmComponent === null) {
-      render(this._filmContainer, this._filmComponent);
+    if (oldComponent === null) {
+      render(this._container, this._component);
       return;
     }
 
-    replace(oldFilmComponent, this._filmComponent);
-    remove(oldFilmComponent);
+    replace(oldComponent, this._component);
+    remove(oldComponent);
   }
 
   destroy() {
-    remove(this._filmComponent);
-  }
-
-  getFilmID() {
-    return this._film.filmInfo.id;
+    remove(this._component);
   }
 }

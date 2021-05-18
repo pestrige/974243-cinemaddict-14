@@ -1,4 +1,4 @@
-import { ApiUrl, DataType } from '../const.js';
+import { ApiUrl, DataType } from '../../const.js';
 
 const END_POINT = 'https://14.ecmascript.pages.academy/cinemaddict';
 
@@ -24,8 +24,18 @@ export default class Api {
     token ? this._authorization = token : this._generateToken();
   }
 
+  addData(data) {
+    return this._load({
+      url: `${ApiUrl.COMMENTS}/${data.id}`,
+      method: Method.POST,
+      body: JSON.stringify(data.comment),
+      headers: new Headers({'Content-Type': 'application/json'}),
+    })
+      .then(Api.toJSON)
+      .then(({movie}) => this._adaptToClient(movie));
+  }
+
   getData(dataUrl, dataType = DataType.OTHER) {
-    this._getToken();
     return this._load({url: dataUrl})
       .then(Api.toJSON)
       .then((data) => {
@@ -51,15 +61,14 @@ export default class Api {
       .then((data) => this._adaptToClient(data));
   }
 
-  addData(data) {
+  sync(data) {
     return this._load({
-      url: `${ApiUrl.COMMENTS}/${data.id}`,
+      url: `${ApiUrl.MOVIES}/sync`,
       method: Method.POST,
-      body: JSON.stringify(data.comment),
+      body: JSON.stringify(data),
       headers: new Headers({'Content-Type': 'application/json'}),
     })
-      .then(Api.toJSON)
-      .then(({movie}) => this._adaptToClient(movie));
+      .then(Api.toJSON);
   }
 
   _deleteCommentFromServer(id) {
@@ -76,25 +85,11 @@ export default class Api {
   }
 
   _load({url, method = Method.GET, body = null, headers = new Headers()}) {
+    this._getToken();
     headers.append('Authorization', this._authorization);
     return fetch(`${this._endPoint}/${url}`, {method, body, headers})
       .then(Api.checkStatus)
       .catch(Api.catchError);
-  }
-
-  static checkStatus(response) {
-    if (response.status < SuccessServerStatusRange.MIN || response.status > SuccessServerStatusRange.MAX) {
-      throw new Error(`${response.status}: ${response.statusText}`);
-    }
-    return response;
-  }
-
-  static toJSON(response) {
-    return response.json();
-  }
-
-  static catchError(error) {
-    throw error;
   }
 
   _adaptToClient(data) {
@@ -161,5 +156,20 @@ export default class Api {
         'favorite': userDetails.isFavorite,
       },
     };
+  }
+
+  static checkStatus(response) {
+    if (response.status < SuccessServerStatusRange.MIN || response.status > SuccessServerStatusRange.MAX) {
+      throw new Error(`${response.status}: ${response.statusText}`);
+    }
+    return response;
+  }
+
+  static toJSON(response) {
+    return response.json();
+  }
+
+  static catchError(error) {
+    throw error;
   }
 }

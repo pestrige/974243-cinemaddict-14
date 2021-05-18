@@ -39,5 +39,5 @@ export const ApiUrl = {
 };
 export const DataType = {
   FILMS: 'films',
-  OTHER: 'other',
+  COMMENTS: 'comments',
 };

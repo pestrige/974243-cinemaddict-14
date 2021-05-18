@@ -16,12 +16,17 @@ export default class SortBlock extends AbstractView {
   constructor(currentSortType) {
     super();
     this._currentSortType = currentSortType;
-    this._sortBlockElement = this.getElement();
+    this._element = this.getElement();
     this._sortButtonsHandler = this._sortButtonsHandler.bind(this);
   }
 
   getTemplate() {
     return createSortBlock(this._currentSortType);
+  }
+
+  setSortButtonsClickHandler(callback) {
+    this._callback.sortButtonClick = callback;
+    this._element.addEventListener('click', this._sortButtonsHandler);
   }
 
   _sortButtonsHandler(evt) {
@@ -34,18 +39,8 @@ export default class SortBlock extends AbstractView {
     if (currentButton.classList.contains(buttonActiveClass)) {
       return;
     }
-    // // навешиваем активный класс на кнопку
-    // this._sortBlockElement
-    //   .querySelectorAll(`.${buttonClass}`)
-    //   .forEach((button) => button.classList.remove(buttonActiveClass));
-    // currentButton.classList.add(buttonActiveClass);
-    // запускаем коллбэк
-    this._callback.sortButtonClick(currentButton.dataset.sort);
-  }
 
-  setSortButtonsClickHandler(callback) {
-    this._callback.sortButtonClick = callback;
-    this._sortBlockElement.addEventListener('click', this._sortButtonsHandler);
+    this._callback.sortButtonClick(currentButton.dataset.sort);
   }
 }
 

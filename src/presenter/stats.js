@@ -3,27 +3,27 @@ import { remove, render, replace } from '../utils/render.js';
 import { filter } from '../utils/common.js';
 import { FilterType } from '../const.js';
 
-export default class Stats {
+export default class StatsPresenter {
   constructor(container, filmsModel) {
-    this._films = filmsModel.getFilms();
+    this._films = filmsModel.getItems();
     this._container = container;
-    this._statsComponent = null;
+    this._component = null;
   }
 
   init() {
-    const oldStatsComponent = this._statsComponent;
-    this._statsComponent = new StatsView(filter[FilterType.HISTORY](this._films));
+    const oldComponent = this._component;
+    this._component = new StatsView(filter[FilterType.HISTORY](this._films));
 
-    if (oldStatsComponent === null) {
-      render(this._container, this._statsComponent);
+    if (oldComponent === null) {
+      render(this._container, this._component);
       return;
     }
 
-    replace(oldStatsComponent, this._statsComponent);
-    remove(oldStatsComponent);
+    replace(oldComponent, this._component);
+    remove(oldComponent);
   }
 
   destroy() {
-    remove(this._statsComponent);
+    remove(this._component);
   }
 }
