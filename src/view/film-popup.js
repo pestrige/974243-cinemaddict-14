@@ -323,7 +323,7 @@ export default class FilmPopup extends AbstractSmartView {
       return;
     }
     if (!this._state.emojiType) {
-      this._state.emojiType = Emojies.smile;
+      this._state.emojiType = Emojies.SMILE;
     }
     this._state.textComment = textComment;
     this._callback.commentsFormKeydown(this._state.textComment, this._state.emojiType, this._film);
