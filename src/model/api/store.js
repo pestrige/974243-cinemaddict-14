@@ -1,3 +1,5 @@
+import { DataType } from '../../const';
+
 const STORE_PREFIX = 'cinemaaddict-localstorage';
 const STORE_VER = 'v1.0';
 const STORE_NAME = `${STORE_PREFIX}-${STORE_VER}`;
@@ -8,26 +10,29 @@ export default class Store {
     this._storeKey = STORE_NAME;
   }
 
-  getItems(dataType, id = null) {
+  getItems(dataType = DataType.FILMS, id = null) {
+    const cacheName = this._getCacheName(dataType, id);
     try {
-      return JSON.parse(this._storage.getItem(`${this._storeKey}-${dataType}-${id}`)) || {};
+      return JSON.parse(this._storage.getItem(cacheName)) || {};
     } catch (err) {
       return {};
     }
   }
 
   setItems(items, dataType, id) {
+    const cacheName = this._getCacheName(dataType, id);
     this._storage.setItem(
-      `${this._storeKey}-${dataType}-${id}`,
+      cacheName,
       JSON.stringify(items),
     );
   }
 
   setItem(key, value, dataType, id) {
     const store = this.getItems(dataType, id);
+    const cacheName = this._getCacheName(dataType, id);
 
     this._storage.setItem(
-      `${this._storeKey}-${dataType}-${id}`,
+      cacheName,
       JSON.stringify(
         Object.assign({}, store, {
           [key]: value,
@@ -36,14 +41,9 @@ export default class Store {
     );
   }
 
-  removeItem(key) {
-    const store = this.getItems();
-
-    delete store[key];
-
-    this._storage.setItem(
-      this._storeKey,
-      JSON.stringify(store),
-    );
+  _getCacheName(dataType, id) {
+    return dataType === DataType.FILMS
+      ? `${this._storeKey}-${dataType}`
+      : `${this._storeKey}-${dataType}-${id}`;
   }
 }

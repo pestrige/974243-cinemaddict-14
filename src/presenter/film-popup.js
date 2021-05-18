@@ -99,6 +99,7 @@ export default class FilmPopupPresenter extends AbstractSmartPresenter {
     this._clear();
   }
 
+
   // обработчик Esc
   _handleEscKeyDown(evt) {
     if (evt.key === 'Escape' || evt.key === 'Esc') {

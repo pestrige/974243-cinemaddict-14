@@ -7,7 +7,7 @@ import Store from './model/api/store.js';
 import Provider from './model/api/provider.js';
 
 import { UpdateType, ApiUrl, DataType } from './const.js';
-import { isOnline } from './utils/common.js';
+//import { isOnline } from './utils/common.js';
 
 // Создаем экземпляры моделей
 const filmsModel = new FilmsModel();
@@ -22,7 +22,7 @@ const store = provider.getStore(new Store(window.localStorage));
 // Получаем данные
 filmsModel.getDataToCache(ApiUrl.MOVIES, store, {dataType: DataType.FILMS})
   .then(({data}) => {
-    console.log(data, 'in filmsModel.getDataToCache');
+    //console.log(data, 'in filmsModel.getDataToCache');
     filmsModel.setItems(UpdateType.INIT, data);
   })
   .catch(() => filmsModel.setItems(UpdateType.INIT, []));
@@ -45,14 +45,9 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-// мониторим подключение к сети
-if (!isOnline()) {
-  document.title += ' [offline]';
-}
-
 window.addEventListener('online', () => {
   document.title = document.title.replace(' [offline]', '');
-  provider.sync();
+  provider.syncToCache();
 });
 
 window.addEventListener('offline', () => {

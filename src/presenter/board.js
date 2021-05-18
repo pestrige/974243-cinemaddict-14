@@ -14,6 +14,7 @@ import StatsPresenter from './stats.js';
 import { render, remove } from '../utils/render.js';
 import { sortByDate, sortByRating, filter } from '../utils/common.js';
 import { FILMS_PER_STEP, SortBy, SortType, EXTRA_FILMS_CARDS_COUNT, UpdateType, FilterType } from '../const.js';
+import { showToast } from '../utils/toast.js';
 
 export default class BoardPresenter {
   constructor(filmsContainer, headerContainer, footerContainer, filmsModel, commentsModel, menuModel, store) {
@@ -307,7 +308,7 @@ export default class BoardPresenter {
   // обработчик действий на карточке фильма и попапе
   // вызывает обновление данных
   _handleViewAction(updateType, updatedFilm) {
-    this._filmsModel.updateData(updatedFilm)
+    this._filmsModel.updateDataToCache(updatedFilm)
       .then((film) => this._filmsModel.updateFilm(updateType, film));
   }
 
@@ -319,6 +320,7 @@ export default class BoardPresenter {
     {
       statsFlag = false,
       isError = false,
+      isOffline = false,
       deletedCommentId = null,
     } = {}) {
     if (statsFlag) {
@@ -327,8 +329,11 @@ export default class BoardPresenter {
       return;
     }
 
-    if (isError || isError) {
+    if (isError) {
       this._popupPresenter.shake(deletedCommentId);
+      if (isOffline) {
+        showToast('Can\'t do it in offline');
+      }
       return;
     }
 

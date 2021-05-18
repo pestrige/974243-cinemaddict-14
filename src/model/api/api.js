@@ -36,7 +36,6 @@ export default class Api {
   }
 
   getData(dataUrl, dataType = DataType.OTHER) {
-    this._getToken();
     return this._load({url: dataUrl})
       .then(Api.toJSON)
       .then((data) => {
@@ -64,7 +63,7 @@ export default class Api {
 
   sync(data) {
     return this._load({
-      url: `${ApiUrl.MOVIES}/sync}`,
+      url: `${ApiUrl.MOVIES}/sync`,
       method: Method.POST,
       body: JSON.stringify(data),
       headers: new Headers({'Content-Type': 'application/json'}),
@@ -86,6 +85,7 @@ export default class Api {
   }
 
   _load({url, method = Method.GET, body = null, headers = new Headers()}) {
+    this._getToken();
     headers.append('Authorization', this._authorization);
     return fetch(`${this._endPoint}/${url}`, {method, body, headers})
       .then(Api.checkStatus)

@@ -14,6 +14,7 @@ self.addEventListener('install', (evt) => {
           '/index.html',
           '/js/bundle.js',
           '/js/bundle.js.map',
+          '/sw.js',
           '/css/normalize.css',
           '/css/main.css',
           '/fonts/OpenSans-Bold.woff2',
@@ -78,7 +79,7 @@ const handleFetch = (evt) => {
     return false;
   }
 
-  console.log(request.url);
+  //console.log(request.url);
 
   evt.respondWith(
     caches.match(request)
@@ -112,8 +113,8 @@ const handleFetch = (evt) => {
             // Оригинал передаём дальше
             return response;
           })
-          .catch((err) => {
-            console.log(request, 'request in catch');
+          .catch(() => {
+            //console.log(request, 'request in catch');
             return Promise.reject(request);
           });
       }),
