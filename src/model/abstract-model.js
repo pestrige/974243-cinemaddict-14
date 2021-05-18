@@ -1,6 +1,6 @@
-import Api from './api.js';
+import Provider from './api/provider.js';
 
-export default class AbstractModel extends Api {
+export default class AbstractModel extends Provider {
   constructor() {
     super();
     this._observers = [];

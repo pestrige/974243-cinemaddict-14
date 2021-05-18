@@ -1,4 +1,4 @@
-import { ApiUrl, DataType } from '../const.js';
+import { ApiUrl, DataType } from '../../const.js';
 
 const END_POINT = 'https://14.ecmascript.pages.academy/cinemaddict';
 
@@ -22,6 +22,17 @@ export default class Api {
   _getToken() {
     const token = localStorage.getItem('token');
     token ? this._authorization = token : this._generateToken();
+  }
+
+  addData(data) {
+    return this._load({
+      url: `${ApiUrl.COMMENTS}/${data.id}`,
+      method: Method.POST,
+      body: JSON.stringify(data.comment),
+      headers: new Headers({'Content-Type': 'application/json'}),
+    })
+      .then(Api.toJSON)
+      .then(({movie}) => this._adaptToClient(movie));
   }
 
   getData(dataUrl, dataType = DataType.OTHER) {
@@ -51,15 +62,14 @@ export default class Api {
       .then((data) => this._adaptToClient(data));
   }
 
-  addData(data) {
+  sync(data) {
     return this._load({
-      url: `${ApiUrl.COMMENTS}/${data.id}`,
+      url: `${ApiUrl.MOVIES}/sync}`,
       method: Method.POST,
-      body: JSON.stringify(data.comment),
+      body: JSON.stringify(data),
       headers: new Headers({'Content-Type': 'application/json'}),
     })
-      .then(Api.toJSON)
-      .then(({movie}) => this._adaptToClient(movie));
+      .then(Api.toJSON);
   }
 
   _deleteCommentFromServer(id) {

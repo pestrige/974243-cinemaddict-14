@@ -16,13 +16,14 @@ import { sortByDate, sortByRating, filter } from '../utils/common.js';
 import { FILMS_PER_STEP, SortBy, SortType, EXTRA_FILMS_CARDS_COUNT, UpdateType, FilterType } from '../const.js';
 
 export default class BoardPresenter {
-  constructor(filmsContainer, headerContainer, footerContainer, filmsModel, commentsModel, menuModel) {
+  constructor(filmsContainer, headerContainer, footerContainer, filmsModel, commentsModel, menuModel, store) {
     this._filmsContainer = filmsContainer;
     this._headerContainer = headerContainer;
     this._footerContainer = footerContainer;
     this._filmsModel = filmsModel;
     this._commentsModel = commentsModel;
     this._menuModel = menuModel;
+    this._store = store;
     this._renderedFilmsCount = FILMS_PER_STEP;
     this._currentSortType = SortType.DEFAULT;
     this._filmPresentersList = new Map(); // для сохранения всех экземпляров карточек фильмов
@@ -59,7 +60,7 @@ export default class BoardPresenter {
 
   // Получаем массив отсортированных фильмов из модели
   _getFilms({totalCount = false} = {}) {
-    const films = this._filmsModel.get().slice();
+    const films = this._filmsModel.getItems().slice();
     const filterType = this._menuModel.getActiveFilter();
     const filteredFilms = filter[filterType](films);
     switch (this._currentSortType) {
@@ -75,7 +76,7 @@ export default class BoardPresenter {
 
   //получаем массив просмотренных фильмов
   _getWatchedFilms() {
-    const films = this._filmsModel.get().slice();
+    const films = this._filmsModel.getItems().slice();
     return filter[FilterType.HISTORY](films);
   }
 
@@ -197,7 +198,7 @@ export default class BoardPresenter {
   }
 
   _renderPopup(container, film, callback) {
-    this._popupPresenter = new PopupPresenter(container, this._commentsModel, this._handleViewAction, callback);
+    this._popupPresenter = new PopupPresenter(container, this._commentsModel, this._store, this._handleViewAction, callback);
     this._popupPresenter.init(film);
     this._filmsSectionComponent.removeFilmCardClickHandler();
     this._commentsModel.addObserver(this._handleModelEvent);

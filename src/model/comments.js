@@ -6,12 +6,12 @@ export default class Comments extends AbstractModel {
     this._comments = [];
   }
 
-  set(comments) {
+  setItems(comments) {
     this._comments = comments.slice();
     return this._comments;
   }
 
-  get() {
+  getItems() {
     return this._comments;
   }
 

@@ -5,7 +5,7 @@ import { FilterType } from '../const.js';
 
 export default class StatsPresenter {
   constructor(container, filmsModel) {
-    this._films = filmsModel.get();
+    this._films = filmsModel.getItems();
     this._container = container;
     this._component = null;
   }

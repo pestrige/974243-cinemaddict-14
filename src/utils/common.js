@@ -88,3 +88,8 @@ export const getSortedGenres = (films) => {
   });
   return [...genresMap.entries()].sort((a, b) => b[1] - a[1]);
 };
+
+// проверяем доступ к сети
+export const isOnline = () => {
+  return window.navigator.onLine;
+};

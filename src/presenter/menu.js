@@ -18,7 +18,7 @@ export default class MenuPresenter {
   }
 
   _getFiltersCount() {
-    const films = this._filmsModel.get();
+    const films = this._filmsModel.getItems();
     return generateFilteredFilmsCounts(films);
   }
 

@@ -4,11 +4,12 @@ import { render, remove } from '../utils/render.js';
 import { UpdateType, ApiUrl } from '../const.js';
 
 export default class FilmPopupPresenter extends AbstractSmartPresenter {
-  constructor(container, commentsModel, handleFilmChange, clearCallback) {
+  constructor(container, commentsModel, store, handleFilmChange, clearCallback) {
     super();
-    this._commentsModel = commentsModel;
-    this._comments = null;
     this._container = container;
+    this._commentsModel = commentsModel;
+    this._store = store;
+    this._comments = null;
     this._component = null;
     this._scrollTop = 0;
     // методы _changeData и _handleControlButtons
@@ -38,16 +39,16 @@ export default class FilmPopupPresenter extends AbstractSmartPresenter {
 
   init(film) {
     this._film = film;
-    this._commentsModel.getData(`${ApiUrl.COMMENTS}/${this._film.filmInfo.id}`)
-      .then((comments) => {
-        this._commentsModel.set(comments);
-        this._comments = this._commentsModel.get();
-        this._render();
+    this._commentsModel.getDataToCache(`${ApiUrl.COMMENTS}/${this._film.filmInfo.id}`, this._store, {id: this._film.filmInfo.id})
+      .then(({data, isCached}) => {
+        this._commentsModel.setItems(data);
+        this._comments = this._commentsModel.getItems();
+        isCached ? this._render() : this._render({ isLoadError: true, errorMsg: 'no cached comments' });
       })
       .catch((error) => {
         const errorMsg = error.message;
-        this._commentsModel.set([]);
-        this._comments = this._commentsModel.get();
+        this._commentsModel.setItems([]);
+        this._comments = this._commentsModel.getItems();
         this._render({ isLoadError: true, errorMsg });
       });
   }

@@ -54,14 +54,14 @@ const createPopupBlock = ({filmInfo, userDetails}, fullComments, state, error) =
   // создаем комментарии
   const createCommentCount = () => {
     return isLoadError
-      ? `Comments not found. <br>Error ${errorMsg}, reload page please`
+      ? `Comments not found. <br>Error: ${errorMsg}, reload page please`
       : `Comments <span class="film-details__comments-count">${fullComments.length}</span>`;
   };
   const createComments = () => {
     return fullComments.map(({id, author, comment, date, emotion}) => {
       return `<li class="film-details__comment" data-id="${id}">
       <span class="film-details__comment-emoji">
-        <img src="./images/emoji/${emotion}.png" width="55" height="55" alt="emoji-${emotion}">
+        <img src="/images/emoji/${emotion}.png" width="55" height="55" alt="emoji-${emotion}">
       </span>
       <div>
         <p class="film-details__comment-text">${he.encode(comment)}</p>
