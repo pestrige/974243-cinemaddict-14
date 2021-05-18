@@ -57,18 +57,6 @@ export default class Provider extends Api {
     return Promise.resolve(data);
   }
 
-  addDataToCache(data) {
-    if (isOnline()) {
-      return this.addData(data)
-        .then((newData) => {
-          this._store.setItem(newData.id, this._adaptToServer(newData));
-          return newData;
-        });
-    }
-
-    return Promise.reject(new Error('Add task failed'));
-  }
-
   syncToCache() {
     if (isOnline()) {
       const storeFilms = Object.values(this._store.getItems());
